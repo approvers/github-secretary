@@ -1,5 +1,5 @@
-import {Saying} from '../exp/saying';
+import {Analecta} from '../exp/analecta';
 
 export type SayingLoader = {
-  load(): Promise<Saying[]>;
+  load(): Promise<Analecta>;
 };
