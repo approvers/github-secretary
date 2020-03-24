@@ -1,0 +1,13 @@
+{
+  "name": "github-secretary",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/MikuroXina/github-secretary",
+  "author": "MikuroXina <ryosukadnak@gmail.com>",
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": {
+    "@types/node": "^13.9.3",
+    "discord.js": "^12.0.2"
+  }
+}
