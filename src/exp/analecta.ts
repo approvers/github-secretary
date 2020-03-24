@@ -9,7 +9,10 @@ const AnalectaKeyArray = [
 
 export type AnalectaKey = typeof AnalectaKeyArray[number];
 
-export type Analecta = Record<AnalectaKey, string> & {Flavor: string[]};
+export type Analecta = Record<AnalectaKey, string> & {
+  Failure: string[];
+  Flavor: string[];
+};
 
 export namespace Analecta {
   export const validateAnalecta = (obj: any): obj is Analecta => {
