@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { Client, Message } from 'discord.js';
+import { NowRequest, NowResponse } from '@now/node';
 
 dotenv.config();
 
@@ -16,3 +17,8 @@ client.on('message', (msg: Message) => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
+
+export default (request: NowRequest, response: NowResponse): void => {
+  const { name = 'World' } = request.query;
+  response.status(200).send(`Hello ${name}!`);
+};
