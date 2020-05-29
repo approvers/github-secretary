@@ -1,23 +1,25 @@
 import dotenv from 'dotenv';
 import { Client, Message } from 'discord.js';
-import { NowRequest, NowResponse } from '@now/node';
+import { TomlLoader } from '../src/skin/toml-loader';
 
 dotenv.config();
 
-const client = new Client();
+(async () => {
+  const loader = new TomlLoader(process.env.TOML_PATH || './example/laffey.toml');
+  const analecta = await loader.load();
 
-client.on('ready', () => {
-  console.log('I got ready.');
-});
+  const client = new Client();
 
-client.on('message', (msg: Message) => {
-  if (msg.content === 'ラフィー') {
-    msg.reply('じーー......');
-  }
-});
+  client.on('ready', () => {
+    console.log('I got ready.');
+  });
 
-client.login(process.env.DISCORD_TOKEN);
+  client.on('message', (msg: Message) => {
+    if (msg.content === 'ラフィー') {
+      const mes = [...analecta.Flavor].sort(() => Math.random() - 0.5)[0];
+      msg.reply(mes);
+    }
+  });
 
-export default (_request: NowRequest, response: NowResponse): void => {
-  response.status(500).send(`Something went wrong!`);
-};
+  client.login(process.env.DISCORD_TOKEN);
+})().catch((e) => console.error(e));
