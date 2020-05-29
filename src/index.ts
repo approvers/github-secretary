@@ -10,8 +10,8 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg: Message) => {
-  if (msg.content === 'ping') {
-    msg.reply('pong');
+  if (msg.content === 'ラフィー') {
+    msg.reply('じーー......');
   }
 });
 
