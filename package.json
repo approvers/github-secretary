@@ -7,8 +7,8 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "start": "node ./dist/bundle.js",
-    "dev": "webpack --mode=development && node ./dist/bundle.ts",
+    "start": "node ./api/bundle.js",
+    "dev": "webpack --mode=development && node ./api/bundle.ts",
     "build": "webpack --mode=production",
     "test": "jest",
     "lint": "eslint --ext .ts --ignore-path .gitignore ./src/",
