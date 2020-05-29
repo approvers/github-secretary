@@ -10,12 +10,14 @@ dotenv.config();
 
   const client = new Client();
 
+  const callPattern = new RegExp(analecta.CallPattern);
+
   client.on('ready', () => {
     console.log('I got ready.');
   });
 
   client.on('message', (msg: Message) => {
-    if (msg.content === 'ラフィー') {
+    if (callPattern.test(msg.content)) {
       const mes = [...analecta.Flavor].sort(() => Math.random() - 0.5)[0];
       msg.reply(mes);
     }
