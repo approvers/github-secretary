@@ -1,6 +1,6 @@
 import 'jest';
-import {build} from '../op/build';
-import {Analecta} from '../exp/analecta';
+import { build } from '../op/build';
+import { Analecta } from '../exp/analecta';
 
 const testData: Analecta = {
   Subscribe: 'ベンソン級駆逐艦ラフィー、命令を待っている……',
@@ -13,7 +13,7 @@ const testData: Analecta = {
   Failure: [
     'ラフィー、よくわからない……',
     '今日、何かしないといけないこと……覚えていない……',
-    'ラフィーは指揮官が悪いなんて思ってない。うん、思ってない…(ツンツン'
+    'ラフィーは指揮官が悪いなんて思ってない。うん、思ってない…(ツンツン',
   ],
 
   Flavor: [
@@ -21,20 +21,20 @@ const testData: Analecta = {
     '指揮官、一緒にねんねする？',
     'うん……二度寝しよう……',
     '指揮官、疲れた？',
-    '指揮官、元気？'
-  ]
+    '指揮官、元気？',
+  ],
 };
 
 test('Build', (done) => {
   build(
     {
-      load: async () => testData
+      load: async () => testData,
     },
     {
       present: async (analecta) => {
         expect(analecta).toBe(testData);
         done();
-      }
-    }
+      },
+    },
   );
 });

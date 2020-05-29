@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import {Client, Message} from 'discord.js';
+import { Client, Message } from 'discord.js';
 
 dotenv.config();
 
