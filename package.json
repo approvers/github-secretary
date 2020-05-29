@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "dev": "ts-node ./api/server.ts",
-    "build": "",
+    "build": "echo 'No works needed'",
     "test": "jest",
     "lint": "eslint --ext .ts --ignore-path .gitignore ./src/",
     "lint:fix": "yarn lint --fix"
