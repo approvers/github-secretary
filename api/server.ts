@@ -17,6 +17,9 @@ dotenv.config();
   });
 
   client.on('message', (msg: Message) => {
+    if (msg.author.bot) {
+      return;
+    }
     if (callPattern.test(msg.content)) {
       const mes = [...analecta.Flavor].sort(() => Math.random() - 0.5)[0];
       msg.reply(mes);
