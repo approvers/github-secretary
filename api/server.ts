@@ -18,7 +18,6 @@ client.on('message', (msg: Message) => {
 
 client.login(process.env.DISCORD_TOKEN);
 
-export default (request: NowRequest, response: NowResponse): void => {
-  const { name = 'World' } = request.query;
-  response.status(200).send(`Hello ${name}!`);
+export default (_request: NowRequest, response: NowResponse): void => {
+  response.status(500).send(`Something went wrong!`);
 };
