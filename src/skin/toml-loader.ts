@@ -1,7 +1,7 @@
 import { readFile } from 'fs';
 
 import { SayingLoader } from '../abst/saying-loader';
-import { Analecta } from '../exp/analecta';
+import { Analecta, validateAnalecta } from '../exp/analecta';
 
 export class TomlLoader implements SayingLoader {
   constructor(private filename: string) {}
@@ -17,7 +17,7 @@ export class TomlLoader implements SayingLoader {
     if (typeof jsonStr !== 'string') throw 'file read failure';
 
     const analecta = JSON.parse(jsonStr);
-    if (!Analecta.validateAnalecta(analecta)) throw 'invalid toml';
+    if (!validateAnalecta(analecta)) throw 'invalid toml';
     return analecta;
   }
 }
