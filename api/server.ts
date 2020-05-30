@@ -20,6 +20,15 @@ dotenv.config();
     if (msg.author.bot) {
       return;
     }
+    if (msg.content.startsWith('/gh?')) {
+      const dm = await msg.author.createDM();
+      dm.send(`\`\`\`
+/ghr (所属/)レポジトリ名 ==> リポジトリを持ってくる……
+/ghi (所属/)レポジトリ名(/数字) ==> Issue を持ってくる……
+/ghp (所属/)レポジトリ名(/数字) ==> PR を持ってくる……
+\`\`\``);
+      return;
+    }
     await builtProcs(analecta, msg);
   });
 
