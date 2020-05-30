@@ -62,7 +62,8 @@ const externalIssueList = (owner: string) => (repo: string): CommandProcessor =>
     value: `[${title}](${html_url})`,
   }));
   if (list.length <= 0) {
-    return false;
+    msg.reply(analecta.NothingToBring);
+    return true;
   }
 
   msg.channel.send({

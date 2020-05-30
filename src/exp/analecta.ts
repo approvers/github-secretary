@@ -3,6 +3,7 @@ const AnalectaKeyArray = [
   'Unsubscribe',
   'BringIssue',
   'BringPR',
+  'NothingToBring',
   'EnumIssue',
   'EnumPR',
 ] as const;
