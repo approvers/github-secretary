@@ -5,7 +5,7 @@
 
 ## やること
 
-- [] GitHub Organization での活動を通知する
+- [ ] GitHub Organization での活動を通知する
 - [x] 自分や他人から、レポジトリ、Issue、PR を持ってくる
   - [x] Issue/PR を持ってくる
   - [x] レポジトリの Issue/PR を列挙する
