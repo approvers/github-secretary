@@ -16,14 +16,15 @@
   "dependencies": {
     "discord.js": "^12.0.2",
     "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.0",
     "toml": "^3.0.0"
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
     "@types/node": "^13.9.3",
+    "@types/node-fetch": "^2.5.7",
     "@typescript-eslint/eslint-plugin": "^3.0.2",
     "@typescript-eslint/parser": "^3.0.2",
-    "dotenv-webpack": "^1.8.0",
     "eslint": "^7.1.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.3",
