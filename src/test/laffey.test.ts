@@ -23,6 +23,8 @@ const testData: Analecta = {
     '指揮官、疲れた？',
     '指揮官、元気？',
   ],
+
+  CallPattern: '寝る|寝ます|ねる|ねます|落ち|おち|疲れた|ラフィ|らふぃ',
 };
 
 test('Build', (done) => {
