@@ -7,8 +7,8 @@ import { replyFailure } from './reply-failure';
 import { CommandProcessor, connectProcessors } from '../abst/connector';
 import { omitBody } from '../exp/omit';
 
-const ghPattern = /^\/ghi\s+(.+)(\/(.+)(\/(.+))?)?$/;
-const numbersPattern = /[1-9][0-9]*/;
+const ghPattern = /^\/ghi\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
+const numbersPattern = /^[1-9][0-9]*$/;
 
 export const bringIssue = async (analecta: Analecta, msg: Message): Promise<boolean> => {
   if (!ghPattern.test(msg.content)) {
@@ -20,12 +20,14 @@ export const bringIssue = async (analecta: Analecta, msg: Message): Promise<bool
     return false;
   }
 
+  console.log({ matches });
+
   msg.channel.startTyping();
   const res = await connectProcessors([
-    internalIssueList(matches[1]),
-    externalIssueList(matches[1])(matches[3]),
-    internalIssue(matches[1], matches[3]),
     externalIssue(matches[1])(matches[3], matches[5]),
+    internalIssue(matches[1], matches[3]),
+    externalIssueList(matches[1])(matches[3]),
+    internalIssueList(matches[1]),
     replyFailure,
   ])(analecta, msg);
   msg.channel.stopTyping();
