@@ -4,9 +4,10 @@ import { Message } from 'discord.js';
 import { Analecta } from '../exp/analecta';
 import { colorFromState } from '../exp/state-color';
 import { replyFailure } from './reply-failure';
-import { CommandProcessor } from '../abst/connector';
+import { CommandProcessor, connectProcessors } from '../abst/connector';
+import { omitBody } from '../exp/omit';
 
-const ghPattern = /^\/gh\s*(.*)\/(.*)$/;
+const ghPattern = /^\/ghi\s+(.+)\/(.+)(\/(.+))?$/;
 const numbersPattern = /[1-9][0-9]*/;
 
 export const bringIssue = async (analecta: Analecta, msg: Message): Promise<boolean> => {
@@ -19,30 +20,27 @@ export const bringIssue = async (analecta: Analecta, msg: Message): Promise<bool
     return false;
   }
 
-  const repo = matches[1];
-  const dst = matches[2];
-  if (!numbersPattern.test(dst)) {
-    replyFailure(analecta, msg);
-    return false;
-  }
-
   msg.channel.startTyping();
-  internalIssue(repo, dst)(analecta, msg);
+  const res = await connectProcessors([
+    internalIssue(matches[1], matches[2]),
+    externalIssue(matches[1])(matches[2], matches[4]),
+    replyFailure,
+  ])(analecta, msg);
   msg.channel.stopTyping();
-  return true;
+  return res;
 };
 
-const omitBody = (body: string): string => (body.length >= 80 ? body.slice(0, 80) + '...' : body);
-
-const internalIssue = (repo: string, dst: string): CommandProcessor => async (
+const externalIssue = (owner: string) => (repo: string, dst: string): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
 ) => {
-  const apiUrl = `https://api.github.com/repos/approvers/${repo}/issues/${dst}`;
+  if (!numbersPattern.test(dst)) {
+    return false;
+  }
+
+  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/issues/${dst}`;
   const res = await (await fetch(apiUrl)).json();
   if (!res.url) {
-    replyFailure(analecta, msg);
-    msg.channel.stopTyping();
     return false;
   }
 
@@ -71,3 +69,5 @@ const internalIssue = (repo: string, dst: string): CommandProcessor => async (
 
   return true;
 };
+
+const internalIssue = externalIssue('approvers');
