@@ -48,10 +48,13 @@ dotenv.config();
         const {
           state,
           title,
+          body,
           html_url,
           user: { avatar_url, login },
         } = res;
         const color = colorFromState(state);
+        const description =
+          (body as string).length >= 80 ? (body as string).slice(0, 80) + '...' : body;
         msg.channel.send({
           embed: {
             color,
@@ -60,6 +63,7 @@ dotenv.config();
               icon_url: avatar_url,
             },
             url: html_url,
+            description,
             title,
             footer: { text: analecta.BringIssue },
           },
