@@ -48,7 +48,7 @@ dotenv.config();
         const {
           state,
           title,
-          url,
+          html_url,
           user: { avatar_url, login },
         } = res;
         const color = colorFromState(state);
@@ -59,7 +59,7 @@ dotenv.config();
               name: login,
               icon_url: avatar_url,
             },
-            url,
+            url: html_url,
             title,
             footer: { text: analecta.BringIssue },
           },
