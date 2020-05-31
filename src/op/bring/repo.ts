@@ -1,8 +1,8 @@
-import { Analecta } from '../exp/analecta';
+import { Analecta } from '../../exp/analecta';
 import { Message } from 'discord.js';
-import { CommandProcessor, connectProcessors } from '../abst/connector';
+import { CommandProcessor, connectProcessors } from '../../abst/connector';
 import fetch from 'node-fetch';
-import { replyFailure } from './reply-failure';
+import { replyFailure } from '../reply-failure';
 
 const ghPattern = /^\/ghr\s+([^/]+)(\/(.+))?$/;
 

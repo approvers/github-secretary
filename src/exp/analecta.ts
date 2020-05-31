@@ -20,7 +20,10 @@ export type Analecta = Record<AnalectaKey, string> & {
 };
 
 export const validateAnalecta = (obj: unknown): obj is Analecta => {
-  if (typeof obj !== 'object' || obj == null) return false;
+  if (typeof obj !== 'object' || obj == null) {
+    return false;
+  }
+
   for (const value of AnalectaKeyArray) {
     if (!(value in obj)) {
       return false;

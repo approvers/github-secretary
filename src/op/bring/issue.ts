@@ -1,16 +1,16 @@
 import fetch from 'node-fetch';
 import { Message } from 'discord.js';
 
-import { Analecta } from '../exp/analecta';
-import { colorFromState } from '../exp/state-color';
-import { replyFailure } from './reply-failure';
-import { CommandProcessor, connectProcessors } from '../abst/connector';
-import { omitBody } from '../exp/omit';
+import { Analecta } from '../../exp/analecta';
+import { colorFromState } from '../../exp/state-color';
+import { replyFailure } from '../reply-failure';
+import { CommandProcessor, connectProcessors } from '../../abst/connector';
+import { omitBody } from '../../exp/omit';
 
-const ghPattern = /^\/ghp\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
+const ghPattern = /^\/ghi\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
 const numbersPattern = /^[1-9][0-9]*$/;
 
-export const bringPR = async (analecta: Analecta, msg: Message): Promise<boolean> => {
+export const bringIssue = async (analecta: Analecta, msg: Message): Promise<boolean> => {
   if (!ghPattern.test(msg.content)) {
     return false;
   }
@@ -22,17 +22,17 @@ export const bringPR = async (analecta: Analecta, msg: Message): Promise<boolean
 
   msg.channel.startTyping();
   const res = await connectProcessors([
-    externalPR(matches[1])(matches[3], matches[5]),
-    internalPR(matches[1], matches[3]),
-    externalPRList(matches[1])(matches[3]),
-    internalPRList(matches[1]),
+    externalIssue(matches[1])(matches[3], matches[5]),
+    internalIssue(matches[1], matches[3]),
+    externalIssueList(matches[1])(matches[3]),
+    internalIssueList(matches[1]),
     replyFailure,
   ])(analecta, msg);
   msg.channel.stopTyping();
   return res;
 };
 
-const externalPRList = (owner: string) => (repo: string): CommandProcessor => async (
+const externalIssueList = (owner: string) => (repo: string): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
 ) => {
@@ -47,7 +47,7 @@ const externalPRList = (owner: string) => (repo: string): CommandProcessor => as
     owner: { avatar_url, login },
   } = infoRes;
 
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/pulls`;
+  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/issues`;
   const res = await (await fetch(apiUrl)).json();
   if (res.message === 'Not Found') {
     return false;
@@ -77,16 +77,16 @@ const externalPRList = (owner: string) => (repo: string): CommandProcessor => as
       title: repoName,
       fields: list,
       footer: {
-        text: analecta.EnumPR,
+        text: analecta.EnumIssue,
       },
     },
   });
   return true;
 };
 
-const internalPRList = externalPRList('approvers');
+const internalIssueList = externalIssueList('approvers');
 
-const externalPR = (owner: string) => (repo: string, dst: string): CommandProcessor => async (
+const externalIssue = (owner: string) => (repo: string, dst: string): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
 ) => {
@@ -94,7 +94,7 @@ const externalPR = (owner: string) => (repo: string, dst: string): CommandProces
     return false;
   }
 
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/pulls/${dst}`;
+  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/issues/${dst}`;
   const res = await (await fetch(apiUrl)).json();
   if (res.message === 'Not Found') {
     return false;
@@ -119,11 +119,11 @@ const externalPR = (owner: string) => (repo: string, dst: string): CommandProces
       url: html_url,
       description,
       title,
-      footer: { text: analecta.BringPR },
+      footer: { text: analecta.BringIssue },
     },
   });
 
   return true;
 };
 
-const internalPR = externalPR('approvers');
+const internalIssue = externalIssue('approvers');

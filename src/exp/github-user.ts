@@ -1,7 +1,9 @@
+export type NotificationId = string;
+
 export type GitHubUser = {
   userName: string;
   notificationToken: string;
-  currentNotificationIds: string[];
+  currentNotificationIds: NotificationId[];
 };
 
 export type DiscordId = string;

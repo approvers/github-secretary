@@ -1,9 +1,10 @@
-import { DiscordId, GitHubUser } from '../exp/github-user';
 import { Message } from 'discord.js';
-import { Analecta } from '../exp/analecta';
-import { CommandProcessor } from '../abst/connector';
 import fetch from 'node-fetch';
-import { SubscriptionNotifier } from 'src/exp/notify';
+
+import { Analecta } from '../../exp/analecta';
+import { CommandProcessor } from '../../abst/connector';
+import { DiscordId, GitHubUser } from '../../exp/github-user';
+import { SubscriptionNotifier } from 'src/abst/subscription-notifier';
 
 export type UserDatabase = {
   register: (id: DiscordId, user: GitHubUser) => Promise<void>;

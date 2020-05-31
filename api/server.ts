@@ -3,7 +3,7 @@ import { Client, Message } from 'discord.js';
 import { TomlLoader } from '../src/skin/toml-loader';
 import { procs } from '../src/op/';
 import { PlainDB } from '../src/skin/plain-db';
-import { SubscriptionNotifier } from '../src/exp/notify';
+import { SubscriptionNotifier } from '../src/abst/subscription-notifier';
 
 dotenv.config();
 

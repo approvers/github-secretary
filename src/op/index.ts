@@ -1,15 +1,14 @@
 import { Analecta } from '../exp/analecta';
 import { connectProcessors, CommandProcessor } from '../abst/connector';
 
-import { bringIssue } from './bring-issue';
-import { bringPR } from './bring-pr';
-import { bringRepo } from './bring-repo';
+import { bringIssue } from './bring/issue';
+import { bringPR } from './bring/pr';
+import { bringRepo } from './bring/repo';
 import { flavor } from './flavor';
-import { UserDatabase as Subscriber, subscribeNotification } from './subscribe-notification';
-import { UserDatabase as Unsubscriber, unsubscribeNotification } from './unsubscribe-notification';
-import { SubscriptionNotifier } from 'src/exp/notify';
-
-type UserDatabase = Subscriber & Unsubscriber;
+import { subscribeNotification } from './subscribe/subscribe-notification';
+import { unsubscribeNotification } from './subscribe/unsubscribe-notification';
+import { SubscriptionNotifier } from 'src/abst/subscription-notifier';
+import { UserDatabase } from '../abst/user-database';
 
 export const procs = (
   analecta: Analecta,
