@@ -25,12 +25,12 @@ const notify = (
     }[];
 
     const newIds = res.map(({ id }) => id);
-    idsUpdater(newIds);
 
     const newIdSet = new Set([...newIds]);
     for (const oldE of currentNotificationIds) {
       newIdSet.delete(oldE);
     }
+    idsUpdater(newIds);
 
     if (newIdSet.size <= 0) {
       return;
@@ -40,10 +40,6 @@ const notify = (
       name: `#${id}`,
       value: title,
     }));
-
-    if (subjects.length <= 0) {
-      return;
-    }
 
     const dm = await user.createDM();
     dm.send({
