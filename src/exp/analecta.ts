@@ -1,6 +1,7 @@
 const AnalectaKeyArray = [
   'Subscribe',
   'Unsubscribe',
+  'NotSubscribed',
   'BringIssue',
   'BringPR',
   'NothingToBring',

@@ -16,7 +16,17 @@
     "jsx": "preserve",
     "noImplicitAny": true,
     "noImplicitReturns": true,
-    "noEmit": false
+    "noEmit": false,
+    "baseUrl": ".",
+    "paths": {
+      "mutex-promise": [
+        "types/mutex-promise"
+      ]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/typings"
+    ]
   },
   "exclude": [
     "node_modules"
@@ -25,5 +35,5 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ]
+  ],
 }

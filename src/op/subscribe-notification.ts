@@ -8,23 +8,24 @@ export type UserDatabase = {
   register: (id: DiscordId, user: GitHubUser) => Promise<void>;
 };
 
-const registerPattern = /\/ghr ([^:]+):([^:]+)/;
+const subscribePattern = /^\/ghs ([^:]+):([^:]+)/;
 
-export const registerNotification = (db: UserDatabase): CommandProcessor => async (
+export const subscribeNotification = (db: UserDatabase): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  if (registerPattern.test(msg.content)) {
+  if (!subscribePattern.test(msg.content)) {
     return false;
   }
 
-  const matches = msg.content.match(registerPattern);
+  const matches = msg.content.match(subscribePattern);
   if (matches == null || matches[1] == null || matches[2] == null) {
     return false;
   }
+
   const res = await fetch(`https://api.github.com/notifications`, {
     headers: {
-      Authrozation: `Basic ` + Buffer.from(`${matches[1]}:${matches[2]}`).toString('base64'),
+      Authorization: `Basic ` + Buffer.from(`${matches[1]}:${matches[2]}`).toString('base64'),
     },
   });
   if (!res.ok) {

@@ -1,11 +1,13 @@
-import { UserDatabase } from '../op/register-notification';
-import { GitHubUser, DiscordId, GitHubUsers } from '../exp/github-user';
 import { promises } from 'fs';
 import MutexPromise from 'mutex-promise';
 
+import { GitHubUser, DiscordId, GitHubUsers } from '../exp/github-user';
+import { UserDatabase as Unsubscriber } from '../op/unsubscribe-notification';
+import { UserDatabase as Subscriber } from '../op/subscribe-notification';
+
 const { open } = promises;
 
-export class PlainDB implements UserDatabase {
+export class PlainDB implements Subscriber, Unsubscriber {
   private users: GitHubUsers = {};
   private mutex: MutexPromise;
 
@@ -20,8 +22,22 @@ export class PlainDB implements UserDatabase {
 
   register = async (id: DiscordId, user: GitHubUser): Promise<void> => {
     this.users[id] = user;
+    await this.overwrite();
+  };
+
+  unregister = async (id: DiscordId): Promise<boolean> => {
+    if (this.users[id] == null) {
+      return false;
+    }
+    delete this.users[id];
+    await this.overwrite();
+    return true;
+  };
+
+  private overwrite = async (): Promise<void> => {
     await this.mutex
       .promise()
-      .then(() => this.handle.write(JSON.stringify({ users: this.users }), 0)); // for overwrite
+      .then(() => this.handle.truncate(0))
+      .then(() => this.handle.write(JSON.stringify({ users: this.users }), 0));
   };
 }

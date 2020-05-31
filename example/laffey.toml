@@ -1,11 +1,12 @@
 Subscribe = "ベンソン級駆逐艦ラフィー、命令を待っている……"
-Unsubscribe = "わたしがこの体じゃなくなっても、まだ見てくれるの……？"
+Unsubscribe = "了解、命令が来るまで寝る……"
+NotSubscribed = "まだ通知が登録されてなかったよ……"
 BringIssue = "指揮官に、メール……"
 BringPR = "コードレビュー終わったら、一緒にワイン飲もう……"
 NothingToBring = "任務は無いみたい……"
 EnumIssue = "まだ任務がありそう……"
 EnumPR = "うん……そこそこ……？"
-InvalidToken = "トークンの設定がおかしいみたい……"
+InvalidToken = "トークンがおかしいみたい……"
 
 Failure = [
   "ラフィー、よくわからない……",
