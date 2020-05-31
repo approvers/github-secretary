@@ -3,6 +3,7 @@ import { Client, Message } from 'discord.js';
 import { TomlLoader } from '../src/skin/toml-loader';
 import { procs } from '../src/op/';
 import { PlainDB } from '../src/skin/plain-db';
+import { SubscriptionNotifier } from '../src/exp/notify';
 
 dotenv.config();
 
@@ -12,7 +13,8 @@ dotenv.config();
   const analecta = await loader.load();
 
   const client = new Client();
-  const builtProcs = procs(analecta, db);
+  const notifier = new SubscriptionNotifier(analecta, client, db);
+  const builtProcs = procs(analecta, db, notifier);
 
   client.on('ready', () => {
     console.log('I got ready.');

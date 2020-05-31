@@ -3,6 +3,7 @@ import { Message } from 'discord.js';
 import { Analecta } from '../exp/analecta';
 import { CommandProcessor } from '../abst/connector';
 import fetch from 'node-fetch';
+import { SubscriptionNotifier } from 'src/exp/notify';
 
 export type UserDatabase = {
   register: (id: DiscordId, user: GitHubUser) => Promise<void>;
@@ -10,10 +11,10 @@ export type UserDatabase = {
 
 const subscribePattern = /^\/ghs ([^:]+):([^:]+)/;
 
-export const subscribeNotification = (db: UserDatabase): CommandProcessor => async (
-  analecta: Analecta,
-  msg: Message,
-): Promise<boolean> => {
+export const subscribeNotification = (
+  db: UserDatabase,
+  notifier: SubscriptionNotifier,
+): CommandProcessor => async (analecta: Analecta, msg: Message): Promise<boolean> => {
   if (!subscribePattern.test(msg.content)) {
     return false;
   }
@@ -33,10 +34,11 @@ export const subscribeNotification = (db: UserDatabase): CommandProcessor => asy
     return true;
   }
 
-  db.register(msg.author.id, {
+  await db.register(msg.author.id, {
     userName: matches[1],
     notificationToken: matches[2],
   });
+  await notifier.update();
 
   msg.reply(analecta.Subscribe);
   return true;

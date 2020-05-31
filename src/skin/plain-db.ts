@@ -4,10 +4,11 @@ import MutexPromise from 'mutex-promise';
 import { GitHubUser, DiscordId, GitHubUsers } from '../exp/github-user';
 import { UserDatabase as Unsubscriber } from '../op/unsubscribe-notification';
 import { UserDatabase as Subscriber } from '../op/subscribe-notification';
+import { Database as HasNotifications } from 'src/exp/notify';
 
 const { open } = promises;
 
-export class PlainDB implements Subscriber, Unsubscriber {
+export class PlainDB implements Subscriber, Unsubscriber, HasNotifications {
   private users: GitHubUsers = {};
   private mutex: MutexPromise;
 
@@ -32,6 +33,10 @@ export class PlainDB implements Subscriber, Unsubscriber {
     delete this.users[id];
     await this.overwrite();
     return true;
+  };
+
+  subscriptions = async (): Promise<GitHubUsers> => {
+    return { ...this.users };
   };
 
   private overwrite = async (): Promise<void> => {
