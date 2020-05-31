@@ -75,11 +75,12 @@ export class SubscriptionNotifier {
 
   private makeNotifyTask = async ([userId, sub]: [string, GitHubUser]): Promise<() => void> => {
     return notify(
-      60000,
+      10000,
       sub,
       this.analecta,
       (newIds) => {
         this.db.update(userId, newIds);
+        this.update();
       },
       await this.client.users.fetch(userId),
     );
