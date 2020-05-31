@@ -30,7 +30,6 @@ const notify = (
     const right = [...newIds];
     left.sort();
     right.sort();
-    console.log({ left, right });
 
     if (
       currentNotificationIds.length === newIds.length &&
