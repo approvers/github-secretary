@@ -1,9 +1,17 @@
-import { bringIssue } from './bring-issue';
-import { flavor } from './flavor';
-import { bringRepo } from './bring-repo';
-import { connectProcessors, CommandProcessor } from '../abst/connector';
 import { Analecta } from '../exp/analecta';
-import { bringPR } from './bring-pr';
+import { connectProcessors, CommandProcessor } from '../abst/connector';
 
-export const procs = (analecta: Analecta): CommandProcessor =>
-  connectProcessors([flavor(new RegExp(analecta.CallPattern)), bringIssue, bringPR, bringRepo]);
+import { bringIssue } from './bring-issue';
+import { bringPR } from './bring-pr';
+import { bringRepo } from './bring-repo';
+import { flavor } from './flavor';
+import { UserDatabase, registerNotification } from './register-notification';
+
+export const procs = (analecta: Analecta, db: UserDatabase): CommandProcessor =>
+  connectProcessors([
+    flavor(new RegExp(analecta.CallPattern)),
+    bringIssue,
+    bringPR,
+    bringRepo,
+    registerNotification(db),
+  ]);

@@ -2,15 +2,17 @@ import dotenv from 'dotenv';
 import { Client, Message } from 'discord.js';
 import { TomlLoader } from '../src/skin/toml-loader';
 import { procs } from '../src/op/';
+import { PlainDB } from '../src/skin/plain-db';
 
 dotenv.config();
 
 (async () => {
   const loader = new TomlLoader(process.env.TOML_PATH || './example/laffey.toml');
+  const db = await PlainDB.make(process.env.DB_CACHE_PATH || './.cache/users.json');
   const analecta = await loader.load();
 
   const client = new Client();
-  const builtProcs = procs(analecta);
+  const builtProcs = procs(analecta, db);
 
   client.on('ready', () => {
     console.log('I got ready.');

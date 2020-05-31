@@ -6,6 +6,7 @@ const AnalectaKeyArray = [
   'NothingToBring',
   'EnumIssue',
   'EnumPR',
+  'InvalidToken',
 ] as const;
 
 export type AnalectaKey = typeof AnalectaKeyArray[number];

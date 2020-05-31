@@ -5,6 +5,7 @@ BringPR = "コードレビュー終わったら、一緒にワイン飲もう…
 NothingToBring = "任務は無いみたい……"
 EnumIssue = "まだ任務がありそう……"
 EnumPR = "うん……そこそこ……？"
+InvalidToken = "トークンの設定がおかしいみたい……"
 
 Failure = [
   "ラフィー、よくわからない……",
