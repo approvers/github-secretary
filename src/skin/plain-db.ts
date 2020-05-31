@@ -17,14 +17,13 @@ export class PlainDB implements Subscriber, Unsubscriber, HasNotifications {
   }
 
   static async make(fileName: string): Promise<PlainDB> {
-    const handle = await open(fileName, 'w+');
+    const handle = await open(fileName, 'r+').catch(() => open(fileName, 'w+'));
     const obj = new PlainDB(fileName, handle);
     try {
       const buf = await handle.readFile();
       const previousUsers = JSON.parse(buf.toString());
-      obj.users = previousUsers;
-    } catch (e) {
-      console.log(e);
+      obj.users = previousUsers.users;
+    } catch (ignore) {
       obj.users = {};
     }
     return obj;
