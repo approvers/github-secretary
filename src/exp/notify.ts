@@ -26,15 +26,12 @@ const notify = (
 
     const newIds = res.map(({ id }) => id);
 
-    const left = [...currentNotificationIds];
-    const right = [...newIds];
-    left.sort();
-    right.sort();
+    const newIdSet = new Set([...newIds]);
+    for (const oldE of currentNotificationIds) {
+      newIdSet.delete(oldE);
+    }
 
-    if (
-      currentNotificationIds.length === newIds.length &&
-      currentNotificationIds.reduce((acc, e, i) => acc && e === newIds[i], true)
-    ) {
+    if (newIdSet.size <= 0) {
       return;
     }
 
