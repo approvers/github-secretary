@@ -9,7 +9,7 @@ export type UserDatabase = {
   register: (id: DiscordId, user: GitHubUser) => Promise<void>;
 };
 
-const subscribePattern = /^\/ghs ([^/:?]+)\/([^/:?]+)/;
+const subscribePattern = /^\/ghs ([^/:?]+) ([^/:?]+)/;
 
 export const subscribeNotification = (
   db: UserDatabase,
