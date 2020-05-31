@@ -22,5 +22,5 @@ Flavor = [
   "指揮官、元気？"
 ]
 
-BlackPattern = "ち[_\*]*ん|ま[_\*]*ん|ま[_\*]せ|ん[_\*]ぽ"
-CallPattern = "寝る|寝ます|ねる|ねます|落ち|おち|疲れた|ラフィ|らふぃ"
+BlackPattern = "[ぽんHTN]"
+CallPattern = "寝る|寝ます|ねる|ねます|oti|ochi|落ち|おち|疲れた|ラフィ|らふぃ"
