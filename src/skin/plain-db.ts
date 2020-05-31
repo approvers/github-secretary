@@ -47,6 +47,14 @@ export class PlainDB implements Subscriber, Unsubscriber, HasNotifications {
     return { ...this.users };
   };
 
+  update = async (id: string, notificationIds: string[]): Promise<void> => {
+    if (this.users[id] == null) {
+      return;
+    }
+    this.users[id].currentNotificationIds = notificationIds;
+    await this.overwrite();
+  };
+
   private overwrite = async (): Promise<void> => {
     await this.mutex
       .promise()

@@ -37,6 +37,7 @@ export const subscribeNotification = (
   await db.register(msg.author.id, {
     userName: matches[1],
     notificationToken: matches[2],
+    currentNotificationIds: [],
   });
   await notifier.update();
 

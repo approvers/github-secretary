@@ -1,6 +1,7 @@
 export type GitHubUser = {
   userName: string;
   notificationToken: string;
+  currentNotificationIds: string[];
 };
 
 export type DiscordId = string;

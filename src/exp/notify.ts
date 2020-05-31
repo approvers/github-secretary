@@ -1,12 +1,13 @@
 import fetch from 'node-fetch';
-import { GitHubUser, GitHubUsers } from './github-user';
+import { GitHubUser, GitHubUsers, DiscordId } from './github-user';
 import { User, Client } from 'discord.js';
 import { Analecta } from './analecta';
 
 const notify = (
   fetchInterval: number,
-  { userName, notificationToken }: GitHubUser,
+  { userName, notificationToken, currentNotificationIds }: GitHubUser,
   analecta: Analecta,
+  idsUpdater: (ids: string[]) => void,
   user: User,
 ): (() => void) => {
   const timer = setInterval(async () => {
@@ -16,17 +17,33 @@ const notify = (
           `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
       },
     });
-    const res = await rawRes.json();
-
-    const subjects = (res as {
-      id: number;
+    const res = [...(await rawRes.json())] as {
+      id: string;
       subject: {
         title: string;
-        latest_comment_url: string;
       };
-    }[]).map(({ id, subject: { title, latest_comment_url } }) => ({
+    }[];
+
+    const newIds = res.map(({ id }) => id);
+
+    const left = [...currentNotificationIds];
+    const right = [...newIds];
+    left.sort();
+    right.sort();
+    console.log({ left, right });
+
+    if (
+      currentNotificationIds.length === newIds.length &&
+      currentNotificationIds.reduce((acc, e, i) => acc && e === newIds[i], true)
+    ) {
+      return;
+    }
+
+    idsUpdater(newIds);
+
+    const subjects = res.map(({ id, subject: { title } }) => ({
       name: `#${id}`,
-      value: `[${title}](${latest_comment_url})`,
+      value: title,
     }));
 
     if (subjects.length <= 0) {
@@ -36,10 +53,9 @@ const notify = (
     const dm = await user.createDM();
     dm.send({
       embed: {
+        title: analecta.BringIssue,
+        url: `https://github.com/notifications`,
         fields: subjects,
-        footer: {
-          text: analecta.BringIssue,
-        },
       },
     });
   }, fetchInterval);
@@ -50,6 +66,7 @@ const notify = (
 
 export type Database = {
   subscriptions(): Promise<GitHubUsers>;
+  update: (id: DiscordId, notificationIds: string[]) => Promise<void>;
 };
 
 export class SubscriptionNotifier {
@@ -62,12 +79,20 @@ export class SubscriptionNotifier {
   async update(): Promise<void> {
     this.stop();
     const subs = await this.db.subscriptions();
-    this.notifyTasks = await Promise.all(
-      Object.entries(subs).map(async ([userId, sub]) =>
-        notify(60000, sub, this.analecta, await this.client.users.fetch(userId)),
-      ),
-    );
+    this.notifyTasks = await Promise.all(Object.entries(subs).map(this.makeNotifyTask));
   }
+
+  private makeNotifyTask = async ([userId, sub]: [string, GitHubUser]): Promise<() => void> => {
+    return notify(
+      60000,
+      sub,
+      this.analecta,
+      (newIds) => {
+        this.db.update(userId, newIds);
+      },
+      await this.client.users.fetch(userId),
+    );
+  };
 
   private stop(): void {
     for (const task of this.notifyTasks) {
