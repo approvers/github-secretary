@@ -17,7 +17,7 @@ export const procs = (
   notifier: SubscriptionNotifier,
 ): CommandProcessor =>
   connectProcessors([
-    flavor(new RegExp(analecta.CallPattern)),
+    flavor(new RegExp(analecta.CallPattern), new RegExp(analecta.BlackPattern)),
     bringIssue,
     bringPR,
     bringRepo,

@@ -16,6 +16,7 @@ export type Analecta = Record<AnalectaKey, string> & {
   Failure: string[];
   Flavor: string[];
   CallPattern: string;
+  BlackPattern: string;
 };
 
 export const validateAnalecta = (obj: unknown): obj is Analecta => {
