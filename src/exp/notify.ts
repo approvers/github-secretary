@@ -25,6 +25,7 @@ const notify = (
     }[];
 
     const newIds = res.map(({ id }) => id);
+    idsUpdater(newIds);
 
     const newIdSet = new Set([...newIds]);
     for (const oldE of currentNotificationIds) {
@@ -34,8 +35,6 @@ const notify = (
     if (newIdSet.size <= 0) {
       return;
     }
-
-    idsUpdater(newIds);
 
     const subjects = res.map(({ id, subject: { title } }) => ({
       name: `#${id}`,
