@@ -4,7 +4,7 @@ import MutexPromise from 'mutex-promise';
 import { GitHubUser, DiscordId, GitHubUsers, NotificationId } from '../exp/github-user';
 import { Database } from 'src/abst/subscription-database';
 
-const { open } = promises;
+const { open, mkdir } = promises;
 
 export class PlainDB implements Database {
   private users: GitHubUsers = {};
@@ -15,7 +15,10 @@ export class PlainDB implements Database {
   }
 
   static async make(fileName: string): Promise<PlainDB> {
-    const handle = await open(fileName, 'r+').catch(() => open(fileName, 'w+'));
+    const handle = await open(fileName, 'r+').catch(async () => {
+      await mkdir('.cache');
+      return await open(fileName, 'w+');
+    });
     const obj = new PlainDB(fileName, handle);
     try {
       const buf = await handle.readFile();
