@@ -7,8 +7,7 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node ./api/server.ts",
-    "build": "echo 'No works needed'",
+    "start": "ts-node ./api/server.ts",
     "test": "jest",
     "lint": "eslint --ext .ts --ignore-path .gitignore ./src/",
     "lint:fix": "yarn lint --fix"
