@@ -15,7 +15,10 @@ export class TomlLoader implements SayingLoader {
     if (typeof jsonStr !== 'string') throw 'file read failure';
 
     const analecta = toml.parse(jsonStr);
-    if (!validateAnalecta(analecta)) throw 'invalid toml';
+    if (!validateAnalecta(analecta)) {
+      console.log({ analecta });
+      throw 'invalid toml';
+    }
     return analecta;
   }
 }
