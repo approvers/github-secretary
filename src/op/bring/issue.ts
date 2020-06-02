@@ -11,11 +11,12 @@ const ghPattern = /^\/ghi\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
 const numbersPattern = /^[1-9][0-9]*$/;
 
 export const bringIssue = async (analecta: Analecta, msg: Message): Promise<boolean> => {
-  if (!ghPattern.test(msg.content)) {
+  const content = msg.content.split('\n')[0];
+  if (!ghPattern.test(content)) {
     return false;
   }
 
-  const matches = msg.content.match(ghPattern);
+  const matches = content.match(ghPattern);
   if (matches == null) {
     return false;
   }
