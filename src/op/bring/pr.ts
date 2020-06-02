@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { Message } from 'discord.js';
+import { Message, MessageEmbed, EmbedFieldData } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
 import { colorFromState } from '../../exp/state-color';
@@ -53,7 +53,7 @@ const externalPRList = (owner: string) => (repo: string): CommandProcessor => as
     return false;
   }
 
-  const list = (res as {
+  const fields: EmbedFieldData[] = (res as {
     html_url: string;
     title: string;
     number: string;
@@ -61,26 +61,20 @@ const externalPRList = (owner: string) => (repo: string): CommandProcessor => as
     name: `#${number}`,
     value: `[${title}](${html_url})`,
   }));
-  if (list.length <= 0) {
+  if (fields.length <= 0) {
     msg.reply(analecta.NothingToBring);
     return true;
   }
 
-  msg.channel.send({
-    embed: {
-      author: {
-        name: login,
-        url: html_url,
-        icon_url: avatar_url,
-      },
-      color: colorFromState('open'),
-      title: repoName,
-      fields: list,
-      footer: {
-        text: analecta.EnumPR,
-      },
-    },
-  });
+  msg.channel.send(
+    new MessageEmbed()
+      .setColor(colorFromState('open'))
+      .setAuthor(login, avatar_url, html_url)
+      .setURL(html_url)
+      .setTitle(repoName)
+      .setFooter(analecta.EnumPR)
+      .addFields(fields),
+  );
   return true;
 };
 
@@ -109,19 +103,15 @@ const externalPR = (owner: string) => (repo: string, dst: string): CommandProces
   } = res;
   const color = colorFromState(state);
   const description = omitBody(body);
-  msg.channel.send({
-    embed: {
-      color,
-      author: {
-        name: login,
-        icon_url: avatar_url,
-      },
-      url: html_url,
-      description,
-      title,
-      footer: { text: analecta.BringPR },
-    },
-  });
+  msg.channel.send(
+    new MessageEmbed()
+      .setColor(color)
+      .setAuthor(login, avatar_url)
+      .setURL(html_url)
+      .setDescription(description)
+      .setTitle(title)
+      .setFooter(analecta.BringPR),
+  );
 
   return true;
 };

@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { User } from 'discord.js';
+import { User, MessageEmbed } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
 import { GitHubUser, NotificationId } from '../../exp/github-user';
@@ -40,11 +40,10 @@ export const notify = async (analecta: Analecta, user: User, db: Database): Prom
   }));
 
   const dm = await user.createDM();
-  dm.send({
-    embed: {
-      title: analecta.BringIssue,
-      url: `https://github.com/notifications`,
-      fields: subjects,
-    },
-  });
+  dm.send(
+    new MessageEmbed()
+      .addFields(subjects)
+      .setTitle(analecta.BringIssue)
+      .setURL(`https://github.com/notifications`),
+  );
 };

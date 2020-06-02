@@ -1,5 +1,5 @@
 import { Analecta } from '../../exp/analecta';
-import { Message } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 import { CommandProcessor, connectProcessors } from '../../abst/connector';
 import fetch from 'node-fetch';
 import { replyFailure } from '../reply-failure';
@@ -43,18 +43,14 @@ const externalRepo = (owner: string) => (repo: string): CommandProcessor => asyn
     html_url,
     owner: { avatar_url, login },
   } = res;
-  msg.channel.send({
-    embed: {
-      author: {
-        name: login,
-        icon_url: avatar_url,
-      },
-      url: html_url,
-      description,
-      title: name,
-      footer: { text: analecta.Subscribe },
-    },
-  });
+  msg.channel.send(
+    new MessageEmbed()
+      .setAuthor(login, avatar_url)
+      .setURL(html_url)
+      .setDescription(description)
+      .setTitle(name)
+      .setFooter(analecta.Subscribe),
+  );
 
   return true;
 };

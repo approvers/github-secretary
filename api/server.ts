@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
 import { Client, Message } from 'discord.js';
+
 import { TomlLoader } from '../src/skin/toml-loader';
-import { procs } from '../src/op/';
 import { PlainDB } from '../src/skin/plain-db';
+
+import { procs } from '../src/abst/procs';
 import { SubscriptionNotifier } from '../src/abst/subscription-notifier';
 
 dotenv.config();
