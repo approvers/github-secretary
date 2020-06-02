@@ -28,6 +28,7 @@ export const validateAnalecta = (obj: unknown): obj is Analecta => {
 
   for (const value of AnalectaKeyArray) {
     if (!(value in obj)) {
+      console.error(`${value} is not in ${JSON.stringify(obj)}`);
       return false;
     }
   }
