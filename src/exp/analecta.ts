@@ -11,7 +11,7 @@ const AnalectaKeyArray = [
   'CallPattern',
   'BlackPattern',
   'HelpMessage',
-  'ErrrorMessage',
+  'ErrorMessage',
 ] as const;
 
 export type AnalectaKey = typeof AnalectaKeyArray[number];
