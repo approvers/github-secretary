@@ -6,8 +6,24 @@ import { PlainDB } from '../src/skin/plain-db';
 
 import { procs } from '../src/abst/procs';
 import { SubscriptionNotifier } from '../src/abst/subscription-notifier';
+import { Analecta } from 'src/exp/analecta';
+import { CommandProcessor } from 'src/abst/connector';
 
 dotenv.config();
+
+const messageHandler = (analecta: Analecta, builtProcs: CommandProcessor) => async (
+  msg: Message,
+) => {
+  if (msg.author.bot) {
+    return;
+  }
+  if (msg.content.startsWith('/gh?')) {
+    const dm = await msg.author.createDM();
+    dm.send(analecta.HelpMessage);
+    return;
+  }
+  await builtProcs(analecta, msg);
+};
 
 (async () => {
   const loader = new TomlLoader(process.env.TOML_PATH || './example/laffey.toml');
@@ -15,24 +31,16 @@ dotenv.config();
   const analecta = await loader.load();
 
   const client = new Client();
-  const notifier = new SubscriptionNotifier(analecta, client, db);
-  const builtProcs = procs(analecta, db, notifier);
+  const notifier = new SubscriptionNotifier(analecta, client.users, db);
+  db.onUpdate(notifier);
+
+  const builtProcs = procs(analecta, db);
 
   client.on('ready', () => {
     console.log('I got ready.');
   });
 
-  client.on('message', async (msg: Message) => {
-    if (msg.author.bot) {
-      return;
-    }
-    if (msg.content.startsWith('/gh?')) {
-      const dm = await msg.author.createDM();
-      dm.send(analecta.HelpMessage);
-      return;
-    }
-    await builtProcs(analecta, msg);
-  });
+  client.on('message', messageHandler(analecta, builtProcs));
 
   client.login(process.env.DISCORD_TOKEN);
 })().catch((e) => console.error(e));

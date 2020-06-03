@@ -9,20 +9,15 @@ import { flavor } from '../op/flavor';
 import { subscribeNotification } from '../op/subscribe/subscribe-notification';
 import { unsubscribeNotification } from '../op/subscribe/unsubscribe-notification';
 
-import { SubscriptionNotifier } from './subscription-notifier';
 import { UserDatabase } from './user-database';
 
-export const procs = (
-  analecta: Analecta,
-  db: UserDatabase,
-  notifier: SubscriptionNotifier,
-): CommandProcessor =>
+export const procs = (analecta: Analecta, db: UserDatabase): CommandProcessor =>
   connectProcessors([
     flavor(new RegExp(analecta.CallPattern), new RegExp(analecta.BlackPattern, 'm')),
     bringIssue,
     bringPR,
     bringRepo,
-    subscribeNotification(db, notifier),
-    unsubscribeNotification(db, notifier),
+    subscribeNotification(db),
+    unsubscribeNotification(db),
     error,
   ]);

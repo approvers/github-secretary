@@ -1,17 +1,28 @@
 import { promises } from 'fs';
 import MutexPromise from 'mutex-promise';
 
-import { GitHubUser, DiscordId, GitHubUsers, NotificationId } from '../exp/github-user';
-import { Database } from 'src/abst/subscription-database';
+import {
+  GitHubUser,
+  DiscordId,
+  GitHubUsers,
+  NotificationId,
+  cloneGitHubUsers,
+} from '../exp/github-user';
+import { Database, UpdateHandler } from 'src/abst/subscription-database';
 
 const { open, mkdir } = promises;
 
 export class PlainDB implements Database {
   private users: GitHubUsers = {};
   private mutex: MutexPromise;
+  private handlers: UpdateHandler[] = [];
 
   private constructor(fileName: string, private handle: promises.FileHandle) {
     this.mutex = new MutexPromise(`plain-db-${fileName}`);
+  }
+
+  onUpdate(handler: UpdateHandler): void {
+    this.handlers.push(handler);
   }
 
   static async make(fileName: string): Promise<PlainDB> {
@@ -44,10 +55,6 @@ export class PlainDB implements Database {
     return true;
   }
 
-  async subscriptions(): Promise<GitHubUsers> {
-    return { ...this.users };
-  }
-
   async update(id: string, notificationIds: NotificationId[]): Promise<void> {
     if (this.users[id] == null) {
       return;
@@ -61,5 +68,12 @@ export class PlainDB implements Database {
       .promise()
       .then(() => this.handle.truncate(0))
       .then(() => this.handle.write(JSON.stringify({ users: this.users }), 0));
+
+    const newUsers = cloneGitHubUsers(this.users);
+    await Promise.all(
+      this.handlers.map((handler) => async () => {
+        handler.handleUpdate(newUsers);
+      }),
+    );
   }
 }

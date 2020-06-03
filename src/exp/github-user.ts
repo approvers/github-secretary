@@ -9,3 +9,17 @@ export type GitHubUser = {
 export type DiscordId = string;
 
 export type GitHubUsers = Record<DiscordId, GitHubUser>;
+
+export const cloneGitHubUsers = (users: GitHubUsers): GitHubUsers => {
+  return Object.entries(users).reduce(
+    (acc, [id, { userName, notificationToken, currentNotificationIds }]) => ({
+      ...acc,
+      [id]: {
+        userName,
+        notificationToken,
+        currentNotificationIds: [...currentNotificationIds],
+      },
+    }),
+    {},
+  );
+};

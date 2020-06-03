@@ -1,46 +1,60 @@
 import { GitHubUser, GitHubUsers, DiscordId, NotificationId } from '../exp/github-user';
-import { Client } from 'discord.js';
+import { MessageEmbed, User } from 'discord.js';
 import { Analecta } from '../exp/analecta';
-import { notify } from '../op/subscribe/notify';
+import { notify, Database as NotifyController } from '../op/subscribe/notify';
+import { UpdateHandler } from './subscription-database';
 
 export type Database = {
-  subscriptions(): Promise<GitHubUsers>;
+  onUpdate: (handler: UpdateHandler) => void;
   update: (id: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
 };
 
-export class SubscriptionNotifier {
-  notifyTasks: (() => void)[] = [];
+const NOTIFY_INTERVAL = parseInt(process.env.NOTIFY_INTERVAL || '10000', 10);
 
-  constructor(private analecta: Analecta, private client: Client, private db: Database) {
-    this.update();
-  }
+export type UserDic = {
+  fetch: (userId: string) => Promise<User>;
+};
 
-  async update(): Promise<void> {
+export type Updater = {
+  update: (discordId: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
+};
+
+export class SubscriptionNotifier implements UpdateHandler {
+  private notifyTasks: (() => void)[] = [];
+
+  constructor(private analecta: Analecta, private users: UserDic, private updater: Updater) {}
+
+  async handleUpdate(users: GitHubUsers): Promise<void> {
     this.stop();
-    const subs = await this.db.subscriptions();
     this.notifyTasks = await Promise.all(
-      Object.entries(subs).map(([userId, sub]) => this.makeNotifyTask(userId, sub)),
+      Object.entries(users).map(([userId, sub]) => this.makeNotifyTask(userId, sub)),
     );
   }
 
   private makeNotifyTask = (userId: string, sub: GitHubUser): (() => void) => {
-    const notifyInterval = 10000;
-
     const timer = setInterval(
-      async () =>
-        notify(this.analecta, await this.client.users.fetch(userId), {
-          getUser: async () => sub,
-          update: async (newIds: NotificationId[]) => {
-            this.db.update(userId, newIds);
-            this.update();
-          },
-        }),
-      notifyInterval,
+      notify(this.analecta, this.sendMessage(userId), this.notifyController(sub, userId)),
+      NOTIFY_INTERVAL,
     );
     return (): void => {
       clearInterval(timer);
     };
   };
+
+  private sendMessage(userId: string): (mes: MessageEmbed) => Promise<void> {
+    return async (mes: MessageEmbed): Promise<void> => {
+      const user = await this.users.fetch(userId);
+      const dm = await user.createDM();
+      await dm.send(mes);
+    };
+  }
+
+  private notifyController(sub: GitHubUser, userId: string): NotifyController {
+    return {
+      getUser: async (): Promise<GitHubUser> => sub,
+      update: (newIds: NotificationId[]): Promise<void> => this.updater.update(userId, newIds),
+    };
+  }
 
   private stop(): void {
     for (const task of this.notifyTasks) {

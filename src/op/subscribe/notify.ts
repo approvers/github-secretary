@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { User, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
 import { GitHubUser, NotificationId } from '../../exp/github-user';
@@ -9,7 +9,11 @@ export type Database = {
   update(ids: NotificationId[]): Promise<void>;
 };
 
-export const notify = async (analecta: Analecta, user: User, db: Database): Promise<void> => {
+export const notify = (
+  analecta: Analecta,
+  send: (message: MessageEmbed) => Promise<void>,
+  db: Database,
+) => async (): Promise<void> => {
   const { userName, notificationToken, currentNotificationIds } = await db.getUser();
 
   const rawRes = await fetch(`https://api.github.com/notifications`, {
@@ -39,8 +43,7 @@ export const notify = async (analecta: Analecta, user: User, db: Database): Prom
     value: title,
   }));
 
-  const dm = await user.createDM();
-  dm.send(
+  await send(
     new MessageEmbed()
       .addFields(subjects)
       .setTitle(analecta.BringIssue)
