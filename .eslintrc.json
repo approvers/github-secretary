@@ -30,7 +30,11 @@
       },
       "rules": {
         "@typescript-eslint/no-explicit-any": "error",
-        "react/prop-types": "off"
+        "react/prop-types": "off",
+        "complexity": [
+          "error",
+          9
+        ]
       }
     }
   ]
