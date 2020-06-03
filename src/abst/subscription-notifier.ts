@@ -5,7 +5,6 @@ import { notify, Database as NotifyController } from '../op/subscribe/notify';
 import { UpdateHandler } from './subscription-database';
 
 export type Database = {
-  onUpdate: (handler: UpdateHandler) => void;
   update: (id: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
 };
 
