@@ -22,7 +22,10 @@ export const bringRepo = async (analecta: Analecta, msg: Message): Promise<boole
     internalRepo(matches[1]),
     externalRepo(matches[1])(matches[3]),
     replyFailure,
-  ])(analecta, msg);
+  ])(analecta, msg).catch((e) => {
+    msg.channel.stopTyping();
+    throw e;
+  });
   msg.channel.stopTyping();
   return res;
 };

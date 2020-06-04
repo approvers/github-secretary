@@ -28,7 +28,10 @@ export const bringPR = async (analecta: Analecta, msg: Message): Promise<boolean
     externalPRList(matches[1])(matches[3]),
     internalPRList(matches[1]),
     replyFailure,
-  ])(analecta, msg);
+  ])(analecta, msg).catch((e) => {
+    msg.channel.stopTyping();
+    throw e;
+  });
   msg.channel.stopTyping();
   return res;
 };
