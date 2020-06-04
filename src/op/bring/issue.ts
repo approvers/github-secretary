@@ -29,6 +29,7 @@ export const bringIssue = async (analecta: Analecta, msg: Message): Promise<bool
     internalIssueList(matches[1]),
     replyFailure,
   ])(analecta, msg).catch((e) => {
+    replyFailure(analecta, msg);
     msg.channel.stopTyping();
     throw e;
   });
