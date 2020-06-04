@@ -112,7 +112,7 @@ const externalPR = (owner: string) => (repo: string, dst: string): CommandProces
     user: { avatar_url: string; login: string };
   } = res;
   const color = colorFromState(state);
-  const description = body && omitBody(body);
+  const description = body ? omitBody(body) : '';
   msg.channel.send(
     new MessageEmbed()
       .setColor(color)

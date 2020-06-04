@@ -112,7 +112,7 @@ const externalIssue = (owner: string) => (repo: string, dst: string): CommandPro
     user: { avatar_url: string; login: string };
   } = res;
   const color = colorFromState(state);
-  const description = body && omitBody(body);
+  const description = body ? omitBody(body) : '';
 
   msg.channel.send(
     new MessageEmbed()
