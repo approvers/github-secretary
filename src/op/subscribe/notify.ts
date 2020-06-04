@@ -4,6 +4,18 @@ import { MessageEmbed } from 'discord.js';
 import { Analecta } from '../../exp/analecta';
 import { GitHubUser, NotificationId } from '../../exp/github-user';
 
+const fetchErrorHandler = (send: (message: MessageEmbed) => Promise<void>) => (
+  reason: unknown,
+): never => {
+  send(
+    new MessageEmbed()
+      .setColor(0xffc208)
+      .setTitle('通知データ取得のエラー発生')
+      .setDescription(reason),
+  );
+  throw reason;
+};
+
 export type Database = {
   getUser(): Promise<GitHubUser>;
   update(ids: NotificationId[]): Promise<void>;
@@ -20,8 +32,8 @@ export const notify = (
     headers: {
       Authorization: `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
     },
-  });
-  const res = [...(await rawRes.json())] as {
+  }).catch(fetchErrorHandler(send));
+  const res = (await rawRes.json().catch(fetchErrorHandler(send))) as {
     id: NotificationId;
     subject: {
       title: string;
