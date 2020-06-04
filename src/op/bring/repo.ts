@@ -46,6 +46,11 @@ const externalRepo = (owner: string) => (repo: string): CommandProcessor => asyn
     description,
     html_url,
     owner: { avatar_url, login },
+  }: {
+    name: string;
+    description?: string;
+    html_url: string;
+    owner: { avatar_url: string; login: string };
   } = res;
   msg.channel.send(
     new MessageEmbed()
