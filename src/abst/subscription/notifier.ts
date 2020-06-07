@@ -8,7 +8,15 @@ export type Database = {
   update: (id: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
 };
 
-const NOTIFY_INTERVAL = parseInt(process.env.NOTIFY_INTERVAL || '10000', 10);
+const safeParseDecimal = (str: string): number => {
+  const val = parseInt(str, 10);
+  if (Number.isNaN(val)) {
+    throw new Error(`Cannot parse \`str\`: ${str}`);
+  }
+  return val;
+};
+
+const NOTIFY_INTERVAL = safeParseDecimal(process.env.NOTIFY_INTERVAL || '10000');
 
 export type UserDic = {
   fetch: (userId: string) => Promise<User>;
