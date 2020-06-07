@@ -1,8 +1,8 @@
-import { GitHubUser, GitHubUsers, DiscordId, NotificationId } from '../exp/github-user';
+import { GitHubUser, GitHubUsers, DiscordId, NotificationId } from '../../exp/github-user';
 import { MessageEmbed, User } from 'discord.js';
-import { Analecta } from '../exp/analecta';
-import { notify, Database as NotifyController } from '../op/subscribe/notify';
-import { UpdateHandler } from './subscription-database';
+import { Analecta } from '../../exp/analecta';
+import { notify, Database as NotifyController } from '../../op/subscribe/notify';
+import { UpdateHandler } from './database';
 
 export type Database = {
   update: (id: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
@@ -32,7 +32,7 @@ export class SubscriptionNotifier implements UpdateHandler {
 
   private makeNotifyTask = (userId: string, sub: GitHubUser): (() => void) => {
     const timer = setInterval(
-      notify(this.analecta, this.sendMessage(userId), this.notifyController(sub, userId)),
+      () => notify(this.analecta, this.sendMessage(userId), this.notifyController(sub, userId)),
       NOTIFY_INTERVAL,
     );
     return (): void => {
@@ -56,8 +56,8 @@ export class SubscriptionNotifier implements UpdateHandler {
   }
 
   private stop(): void {
-    for (const task of this.notifyTasks) {
-      task();
+    for (const stopTask of this.notifyTasks) {
+      stopTask();
     }
   }
 }

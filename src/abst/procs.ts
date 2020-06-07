@@ -9,7 +9,7 @@ import { flavor } from '../op/flavor';
 import { subscribeNotification } from '../op/subscribe/subscribe-notification';
 import { unsubscribeNotification } from '../op/subscribe/unsubscribe-notification';
 
-import { UserDatabase } from './user-database';
+import { UserDatabase } from './user/database';
 
 export const procs = (analecta: Analecta, db: UserDatabase): CommandProcessor =>
   connectProcessors([

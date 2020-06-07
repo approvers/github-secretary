@@ -21,11 +21,11 @@ export type Database = {
   update(ids: NotificationId[]): Promise<void>;
 };
 
-export const notify = (
+export const notify = async (
   analecta: Analecta,
   send: (message: MessageEmbed) => Promise<void>,
   db: Database,
-) => async (): Promise<void> => {
+): Promise<void> => {
   const { userName, notificationToken, currentNotificationIds } = await db.getUser();
 
   const rawRes = await fetch(`https://api.github.com/notifications`, {
