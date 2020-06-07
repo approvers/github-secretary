@@ -33,7 +33,7 @@ export const notify = async (
       Authorization: `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
     },
   }).catch(fetchErrorHandler(send));
-  const res = (await rawRes.json().catch(fetchErrorHandler(send))) as {
+  const res = [...(await rawRes.json().catch(fetchErrorHandler(send)))] as {
     id: NotificationId;
     subject: {
       title: string;

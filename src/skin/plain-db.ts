@@ -23,6 +23,7 @@ export class PlainDB implements Database {
 
   onUpdate(handler: UpdateHandler): void {
     this.handlers.push(handler);
+    this.overwrite();
   }
 
   static async make(fileName: string): Promise<PlainDB> {
@@ -70,10 +71,6 @@ export class PlainDB implements Database {
       .then(() => this.handle.write(JSON.stringify({ users: this.users }), 0));
 
     const newUsers = cloneGitHubUsers(this.users);
-    await Promise.all(
-      this.handlers.map((handler) => async () => {
-        handler.handleUpdate(newUsers);
-      }),
-    );
+    await Promise.all(this.handlers.map((handler) => handler.handleUpdate(newUsers)));
   }
 }

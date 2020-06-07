@@ -3,7 +3,7 @@ import { UserDatabase as Subscriber } from '../../op/subscribe/subscribe-notific
 import { Database as Updater } from 'src/abst/subscription/notifier';
 import { GitHubUsers } from 'src/exp/github-user';
 
-export type UpdateHandler = { handleUpdate: (users: GitHubUsers) => void };
+export type UpdateHandler = { handleUpdate: (users: GitHubUsers) => Promise<void> };
 
 export type Database = Subscriber &
   Unsubscriber &
