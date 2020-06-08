@@ -5,7 +5,7 @@ import { CommandProcessor } from 'src/abst/connector';
 import { Analecta } from 'src/exp/analecta';
 import { GitHubUser, DiscordId } from 'src/exp/github-user';
 import { replyFailure } from '../reply-failure';
-import { fetchErrorHandler } from 'src/exp/fetch-error-handler';
+import { fetchErrorHandler } from '../../exp/fetch-error-handler';
 
 export type UserDatabase = {
   fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined>;
