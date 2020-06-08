@@ -27,6 +27,7 @@ export const markAsRead = (db: UserDatabase): CommandProcessor => async (
 
   const user = await db.fetchUser(msg.author.id).catch(
     fetchErrorHandler(async (embed) => {
+      msg.channel.stopTyping(true);
       await msg.reply(embed);
     }),
   );
@@ -52,6 +53,7 @@ export const markAsRead = (db: UserDatabase): CommandProcessor => async (
     },
   ).catch(
     fetchErrorHandler(async (embed) => {
+      msg.channel.stopTyping(true);
       await msg.reply(embed);
     }),
   );
