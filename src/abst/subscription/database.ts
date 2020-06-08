@@ -1,12 +1,14 @@
 import { UserDatabase as Unsubscriber } from '../../op/subscribe/unsubscribe-notification';
 import { UserDatabase as Subscriber } from '../../op/subscribe/subscribe-notification';
 import { Database as Updater } from 'src/abst/subscription/notifier';
+import { UserDatabase as Fetcher } from '../../op/subscribe/mark-as-read';
 import { GitHubUsers } from 'src/exp/github-user';
 
 export type UpdateHandler = { handleUpdate: (users: GitHubUsers) => Promise<void> };
 
 export type Database = Subscriber &
   Unsubscriber &
-  Updater & {
+  Updater &
+  Fetcher & {
     onUpdate: (handler: UpdateHandler) => void;
   };

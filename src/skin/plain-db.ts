@@ -21,6 +21,10 @@ export class PlainDB implements Database {
     this.mutex = new MutexPromise(`plain-db-${fileName}`);
   }
 
+  async fetchUser(discordId: string): Promise<GitHubUser | undefined> {
+    return this.users[discordId];
+  }
+
   onUpdate(handler: UpdateHandler): void {
     this.handlers.push(handler);
     this.overwrite();
