@@ -22,7 +22,7 @@ export const procs = (analecta: Analecta, db: UserDatabase, query: Query): Comma
   connectProcessors([
     flavor(new RegExp(analecta.CallPattern), new RegExp(analecta.BlackPattern, 'm')),
     bringIssue(query),
-    bringPR,
+    bringPR(query),
     bringRepo,
     subscribeNotification(db),
     unsubscribeNotification(db),

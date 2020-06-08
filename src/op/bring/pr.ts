@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { Message, MessageEmbed, EmbedFieldData } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
@@ -7,10 +6,55 @@ import { replyFailure } from '../reply-failure';
 import { CommandProcessor, connectProcessors } from '../../abst/connector';
 import { omitBody } from '../../exp/omit';
 
+export type Query = {
+  fetchRepo: (
+    owner: string,
+    repoName: string,
+  ) => Promise<{
+    name: string;
+    html_url: string;
+    owner: { avatar_url: string; login: string };
+  }>;
+  fetchPullRequests: (
+    owner: string,
+    repoName: string,
+  ) => Promise<
+    {
+      html_url: string;
+      title: string;
+      number: string;
+    }[]
+  >;
+  fetchAPullRequest: (
+    owner: string,
+    repoName: string,
+    dst: string,
+  ) => Promise<{
+    state: string;
+    title: string;
+    body?: string;
+    html_url: string;
+    user: { avatar_url: string; login: string };
+  }>;
+};
+
 const ghPattern = /^\/ghp\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
 const numbersPattern = /^[1-9][0-9]*$/;
 
-export const bringPR = async (analecta: Analecta, msg: Message): Promise<boolean> => {
+const genSubCommands = (matches: RegExpMatchArray, query: Query): CommandProcessor[] =>
+  [
+    externalPR(matches[1])(matches[3], matches[5]),
+    internalPR(matches[1], matches[3]),
+    externalPRList(matches[1])(matches[3]),
+    internalPRList(matches[1]),
+  ]
+    .map((e) => e(query))
+    .concat(replyFailure);
+
+export const bringPR = (query: Query) => async (
+  analecta: Analecta,
+  msg: Message,
+): Promise<boolean> => {
   const content = msg.content.split('\n')[0];
   if (!ghPattern.test(content)) {
     return false;
@@ -22,13 +66,7 @@ export const bringPR = async (analecta: Analecta, msg: Message): Promise<boolean
   }
 
   msg.channel.startTyping();
-  const res = await connectProcessors([
-    externalPR(matches[1])(matches[3], matches[5]),
-    internalPR(matches[1], matches[3]),
-    externalPRList(matches[1])(matches[3]),
-    internalPRList(matches[1]),
-    replyFailure,
-  ])(analecta, msg).catch((e) => {
+  const res = await connectProcessors(genSubCommands(matches, query))(analecta, msg).catch((e) => {
     replyFailure(analecta, msg);
     msg.channel.stopTyping();
     throw e;
@@ -37,35 +75,21 @@ export const bringPR = async (analecta: Analecta, msg: Message): Promise<boolean
   return res;
 };
 
-const externalPRList = (owner: string) => (repo: string): CommandProcessor => async (
-  analecta: Analecta,
-  msg: Message,
-) => {
-  const repoInfoApiUrl = `https://api.github.com/repos/${owner}/${repo}`;
-  const infoRes = await (await fetch(repoInfoApiUrl)).json();
-  if (infoRes.message === 'Not Found') {
-    return false;
-  }
+const externalPRList = (owner: string) => (repo: string) => (
+  query: Query,
+): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   const {
     name: repoName,
     html_url,
     owner: { avatar_url, login },
-  } = infoRes;
+  } = await query.fetchRepo(owner, repo);
 
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/pulls`;
-  const res = await (await fetch(apiUrl)).json();
-  if (res.message === 'Not Found') {
-    return false;
-  }
-
-  const fields: EmbedFieldData[] = (res as {
-    html_url: string;
-    title: string;
-    number: string;
-  }[]).map(({ html_url, title, number }) => ({
-    name: `#${number}`,
-    value: `[${title}](${html_url})`,
-  }));
+  const fields: EmbedFieldData[] = (await query.fetchPullRequests(owner, repo)).map(
+    ({ html_url, title, number }) => ({
+      name: `#${number}`,
+      value: `[${title}](${html_url})`,
+    }),
+  );
   if (fields.length <= 0) {
     msg.reply(analecta.NothingToBring);
     return true;
@@ -85,17 +109,10 @@ const externalPRList = (owner: string) => (repo: string): CommandProcessor => as
 
 const internalPRList = externalPRList('approvers');
 
-const externalPR = (owner: string) => (repo: string, dst: string): CommandProcessor => async (
-  analecta: Analecta,
-  msg: Message,
-) => {
+const externalPR = (owner: string) => (repo: string, dst: string) => (
+  query: Query,
+): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   if (!numbersPattern.test(dst)) {
-    return false;
-  }
-
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/pulls/${dst}`;
-  const res = await (await fetch(apiUrl)).json();
-  if (res.message === 'Not Found') {
     return false;
   }
 
@@ -111,7 +128,8 @@ const externalPR = (owner: string) => (repo: string, dst: string): CommandProces
     body?: string;
     html_url: string;
     user: { avatar_url: string; login: string };
-  } = res;
+  } = await query.fetchAPullRequest(owner, repo, dst);
+
   const color = colorFromState(state);
   const description = body ? omitBody(body) : '';
   msg.channel.send(
