@@ -57,7 +57,7 @@ const externalRepo = (owner: string) => (repo: string): CommandProcessor => asyn
     new MessageEmbed()
       .setAuthor(login, avatar_url)
       .setURL(html_url)
-      .setDescription(description)
+      .setDescription(description || '')
       .setTitle(name)
       .setFooter(analecta.Subscribe),
   );
