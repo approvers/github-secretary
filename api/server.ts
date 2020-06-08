@@ -8,6 +8,7 @@ import { procs } from '../src/abst/procs';
 import { SubscriptionNotifier } from '../src/abst/subscription/notifier';
 import { Analecta } from 'src/exp/analecta';
 import { CommandProcessor } from 'src/abst/connector';
+import { GitHubApi } from 'src/skin/github-api';
 
 dotenv.config();
 
@@ -33,8 +34,9 @@ const messageHandler = (analecta: Analecta, builtProcs: CommandProcessor) => asy
   const client = new Client();
   const notifier = new SubscriptionNotifier(analecta, client.users, db);
   db.onUpdate(notifier);
+  const query = new GitHubApi();
 
-  const builtProcs = procs(analecta, db);
+  const builtProcs = procs(analecta, db, query);
 
   client.on('ready', () => {
     console.log('I got ready.');
