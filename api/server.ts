@@ -8,7 +8,7 @@ import { procs } from '../src/abst/procs';
 import { SubscriptionNotifier } from '../src/abst/subscription/notifier';
 import { Analecta } from 'src/exp/analecta';
 import { CommandProcessor } from 'src/abst/connector';
-import { GitHubApi } from 'src/skin/github-api';
+import { GitHubApi } from '../src/skin/github-api';
 
 dotenv.config();
 

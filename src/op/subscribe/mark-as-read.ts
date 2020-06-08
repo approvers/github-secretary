@@ -10,13 +10,13 @@ export type UserDatabase = {
   fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined>;
 };
 
-const markPattern = /^\/ghm ([0-9]+)/;
+const markPattern = /^\/ghm ([0-9]+)$/;
 
 export const markAsRead = (db: UserDatabase): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  if (markPattern.test(msg.content)) {
+  if (!markPattern.test(msg.content)) {
     return false;
   }
 
@@ -33,13 +33,13 @@ export const markAsRead = (db: UserDatabase): CommandProcessor => async (
 
   const user = await db.fetchUser(msg.author.id);
   if (user == null) {
-    await msg.channel.stopTyping();
+    msg.channel.stopTyping();
     await msg.reply(analecta.NotSubscribed);
     return true;
   }
   const { userName, notificationToken, currentNotificationIds } = user;
   if (!currentNotificationIds.includes(notificationIdToMarkAsRead)) {
-    await msg.channel.stopTyping();
+    msg.channel.stopTyping();
     return replyFailure(analecta, msg);
   }
 
@@ -53,7 +53,7 @@ export const markAsRead = (db: UserDatabase): CommandProcessor => async (
       },
     },
   );
-  await msg.channel.stopTyping();
+  msg.channel.stopTyping();
   if (res.status !== 205) {
     return replyFailure(analecta, msg);
   }
