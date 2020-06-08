@@ -1,5 +1,6 @@
 import { Analecta } from '../exp/analecta';
 import { connectProcessors, CommandProcessor } from './connector';
+import { Query } from './query';
 
 import { bringIssue } from '../op/bring/issue';
 import { bringPR } from '../op/bring/pr';
@@ -17,10 +18,10 @@ export type UserDatabase = Subscriber & Unsubscriber & Fetcher;
 
 import { markAsRead } from 'src/op/subscribe/mark-as-read';
 
-export const procs = (analecta: Analecta, db: UserDatabase): CommandProcessor =>
+export const procs = (analecta: Analecta, db: UserDatabase, query: Query): CommandProcessor =>
   connectProcessors([
     flavor(new RegExp(analecta.CallPattern), new RegExp(analecta.BlackPattern, 'm')),
-    bringIssue,
+    bringIssue(query),
     bringPR,
     bringRepo,
     subscribeNotification(db),

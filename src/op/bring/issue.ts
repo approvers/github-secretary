@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { Message, MessageEmbed, EmbedFieldData } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
@@ -7,10 +6,55 @@ import { replyFailure } from '../reply-failure';
 import { CommandProcessor, connectProcessors } from '../../abst/connector';
 import { omitBody } from '../../exp/omit';
 
+export type Query = {
+  fetchRepo: (
+    owner: string,
+    repoName: string,
+  ) => Promise<{
+    name: string;
+    html_url: string;
+    owner: { avatar_url: string; login: string };
+  }>;
+  fetchIssues: (
+    owner: string,
+    repoName: string,
+  ) => Promise<
+    {
+      html_url: string;
+      title: string;
+      number: string;
+    }[]
+  >;
+  fetchAnIssue: (
+    owner: string,
+    repoName: string,
+    dst: string,
+  ) => Promise<{
+    state: string;
+    title: string;
+    body?: string;
+    html_url: string;
+    user: { avatar_url: string; login: string };
+  }>;
+};
+
 const ghPattern = /^\/ghi\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
 const numbersPattern = /^[1-9][0-9]*$/;
 
-export const bringIssue = async (analecta: Analecta, msg: Message): Promise<boolean> => {
+const genSubCommands = (matches: RegExpMatchArray, query: Query): CommandProcessor[] =>
+  [
+    externalIssue(matches[1])(matches[3], matches[5]),
+    internalIssue(matches[1], matches[3]),
+    externalIssueList(matches[1])(matches[3]),
+    internalIssueList(matches[1]),
+  ]
+    .map((e) => e(query))
+    .concat(replyFailure);
+
+export const bringIssue = (query: Query) => async (
+  analecta: Analecta,
+  msg: Message,
+): Promise<boolean> => {
   const content = msg.content.split('\n')[0];
   if (!ghPattern.test(content)) {
     return false;
@@ -22,50 +66,32 @@ export const bringIssue = async (analecta: Analecta, msg: Message): Promise<bool
   }
 
   msg.channel.startTyping();
-  const res = await connectProcessors([
-    externalIssue(matches[1])(matches[3], matches[5]),
-    internalIssue(matches[1], matches[3]),
-    externalIssueList(matches[1])(matches[3]),
-    internalIssueList(matches[1]),
-    replyFailure,
-  ])(analecta, msg).catch((e) => {
-    replyFailure(analecta, msg);
-    msg.channel.stopTyping();
-    throw e;
-  });
+  const res = await connectProcessors(genSubCommands(matches, query))(analecta, msg).catch(
+    (e: unknown) => {
+      replyFailure(analecta, msg);
+      msg.channel.stopTyping();
+      throw e;
+    },
+  );
   msg.channel.stopTyping();
   return res;
 };
 
-const externalIssueList = (owner: string) => (repo: string): CommandProcessor => async (
-  analecta: Analecta,
-  msg: Message,
-) => {
-  const repoInfoApiUrl = `https://api.github.com/repos/${owner}/${repo}`;
-  const infoRes = await (await fetch(repoInfoApiUrl)).json();
-  if (infoRes.message === 'Not Found') {
-    return false;
-  }
+const externalIssueList = (owner: string) => (repo: string) => (
+  query: Query,
+): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   const {
     name: repoName,
     html_url,
     owner: { avatar_url, login },
-  } = infoRes;
+  } = await query.fetchRepo(owner, repo);
 
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/issues`;
-  const res = await (await fetch(apiUrl)).json();
-  if (res.message === 'Not Found') {
-    return false;
-  }
-
-  const fields: EmbedFieldData[] = (res as {
-    html_url: string;
-    title: string;
-    number: string;
-  }[]).map(({ html_url, title, number }) => ({
-    name: `#${number}`,
-    value: `[${title}](${html_url})`,
-  }));
+  const fields: EmbedFieldData[] = (await query.fetchIssues(owner, repo)).map(
+    ({ html_url, title, number }) => ({
+      name: `#${number}`,
+      value: `[${title}](${html_url})`,
+    }),
+  );
   if (fields.length <= 0) {
     msg.reply(analecta.NothingToBring);
     return true;
@@ -85,17 +111,10 @@ const externalIssueList = (owner: string) => (repo: string): CommandProcessor =>
 
 const internalIssueList = externalIssueList('approvers');
 
-const externalIssue = (owner: string) => (repo: string, dst: string): CommandProcessor => async (
-  analecta: Analecta,
-  msg: Message,
-) => {
+const externalIssue = (owner: string) => (repo: string, dst: string) => (
+  query: Query,
+): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   if (!numbersPattern.test(dst)) {
-    return false;
-  }
-
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/issues/${dst}`;
-  const res = await (await fetch(apiUrl)).json();
-  if (res.message === 'Not Found') {
     return false;
   }
 
@@ -105,13 +124,8 @@ const externalIssue = (owner: string) => (repo: string, dst: string): CommandPro
     body,
     html_url,
     user: { avatar_url, login },
-  }: {
-    state: string;
-    title: string;
-    body?: string;
-    html_url: string;
-    user: { avatar_url: string; login: string };
-  } = res;
+  } = await query.fetchAnIssue(owner, repo, dst);
+
   const color = colorFromState(state);
   const description = body ? omitBody(body) : '';
 
