@@ -23,6 +23,7 @@ export const markAsRead = (db: UserDatabase): CommandProcessor => async (
   }
   const notificationIdToMarkAsRead = matches[1];
 
+  msg.channel.stopTyping(true);
   await msg.channel.startTyping();
 
   const user = await db.fetchUser(msg.author.id).catch(
