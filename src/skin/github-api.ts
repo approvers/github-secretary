@@ -1,5 +1,6 @@
 import { Query } from 'src/abst/query';
 import fetch from 'node-fetch';
+import { GitHubUser } from 'src/exp/github-user';
 
 export class GitHubApi implements Query {
   async fetchRepo(
@@ -79,5 +80,32 @@ export class GitHubApi implements Query {
       throw new Error('not found the pull request');
     }
     return res;
+  }
+
+  async markAsRead(user: GitHubUser, notificationIdToMarkAsRead: string): Promise<boolean> {
+    const { userName, notificationToken } = user;
+    const res = await fetch(
+      `https://api.github.com/notifications/threads/${notificationIdToMarkAsRead}`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization:
+            `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
+        },
+      },
+    );
+    if (res.status !== 205) {
+      return false;
+    }
+    return true;
+  }
+
+  async checkNotificationToken(userName: string, token: string): Promise<boolean> {
+    const res = await fetch(`https://api.github.com/notifications`, {
+      headers: {
+        Authorization: `Basic ` + Buffer.from(`${userName}:${token}`).toString('base64'),
+      },
+    });
+    return res.ok;
   }
 }

@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { MessageEmbed } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
@@ -10,24 +9,29 @@ export type Database = {
   update(ids: NotificationId[]): Promise<void>;
 };
 
+export type Query = {
+  fetchNotification(
+    user: GitHubUser,
+  ): Promise<
+    {
+      id: NotificationId;
+      subject: {
+        title: string;
+      };
+    }[]
+  >;
+};
+
 export const notify = async (
   analecta: Analecta,
   send: (message: MessageEmbed) => Promise<void>,
   db: Database,
+  query: Query,
 ): Promise<void> => {
-  const { userName, notificationToken, currentNotificationIds } = await db.getUser();
+  const user = await db.getUser();
+  const { currentNotificationIds } = user;
 
-  const rawRes = await fetch(`https://api.github.com/notifications`, {
-    headers: {
-      Authorization: `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
-    },
-  }).catch(fetchErrorHandler(send));
-  const res = [...(await rawRes.json().catch(fetchErrorHandler(send)))] as {
-    id: NotificationId;
-    subject: {
-      title: string;
-    };
-  }[];
+  const res = await query.fetchNotification(user).catch(fetchErrorHandler(send));
   const newIds = res.map(({ id }) => id);
   const newIdSet = new Set([...newIds]);
   for (const oldE of currentNotificationIds) {

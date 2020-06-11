@@ -1,7 +1,10 @@
-import { GitHubUser, GitHubUsers, DiscordId, NotificationId } from '../../exp/github-user';
+import fetch from 'node-fetch';
 import { MessageEmbed, User } from 'discord.js';
+
+import { GitHubUser, GitHubUsers, DiscordId, NotificationId } from '../../exp/github-user';
 import { Analecta } from '../../exp/analecta';
 import { notify, Database as NotifyController } from '../../op/subscribe/notify';
+import { Query } from '../../op/subscribe/notify';
 import { UpdateHandler } from './database';
 
 export type Database = {
@@ -26,6 +29,31 @@ export type Updater = {
   update: (discordId: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
 };
 
+const notificationQuery: Query = {
+  async fetchNotification({
+    userName,
+    notificationToken,
+  }: GitHubUser): Promise<
+    {
+      id: NotificationId;
+      subject: {
+        title: string;
+      };
+    }[]
+  > {
+    const rawRes = await fetch(`https://api.github.com/notifications`, {
+      headers: {
+        Authorization:
+          `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
+      },
+    });
+    if (!rawRes.ok) {
+      throw 'fail to fetch notifications';
+    }
+    return [...(await rawRes.json())];
+  },
+};
+
 export class SubscriptionNotifier implements UpdateHandler {
   private notifyTasks: (() => void)[] = [];
 
@@ -40,7 +68,13 @@ export class SubscriptionNotifier implements UpdateHandler {
 
   private makeNotifyTask = (userId: string, sub: GitHubUser): (() => void) => {
     const timer = setInterval(
-      () => notify(this.analecta, this.sendMessage(userId), this.notifyController(sub, userId)),
+      () =>
+        notify(
+          this.analecta,
+          this.sendMessage(userId),
+          this.notifyController(sub, userId),
+          notificationQuery,
+        ),
       NOTIFY_INTERVAL,
     );
     return (): void => {

@@ -23,8 +23,8 @@ export const procs = (analecta: Analecta, db: UserDatabase, query: Query): Comma
     bringIssue(query),
     bringPR(query),
     bringRepo(query),
-    subscribeNotification(db),
+    subscribeNotification(db, query),
     unsubscribeNotification(db),
-    markAsRead(db),
+    markAsRead(db, query),
     error,
   ]);

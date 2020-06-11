@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { Message, MessageEmbed } from 'discord.js';
 
 import { CommandProcessor } from 'src/abst/connector';
@@ -11,9 +10,13 @@ export type UserDatabase = {
   fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined>;
 };
 
+export type Query = {
+  markAsRead(user: GitHubUser, notificationIdToMarkAsRead: string): Promise<boolean>;
+};
+
 const markPattern = /^\/ghm ([0-9]+)$/;
 
-export const markAsRead = (db: UserDatabase): CommandProcessor => async (
+export const markAsRead = (db: UserDatabase, query: Query): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
@@ -37,29 +40,20 @@ export const markAsRead = (db: UserDatabase): CommandProcessor => async (
     await msg.reply(analecta.NotSubscribed);
     return true;
   }
-  const { userName, notificationToken, currentNotificationIds } = user;
+  const { currentNotificationIds } = user;
   if (!currentNotificationIds.includes(notificationIdToMarkAsRead)) {
     msg.channel.stopTyping(true);
     return replyFailure(analecta, msg);
   }
 
-  const res = await fetch(
-    `https://api.github.com/notifications/threads/${notificationIdToMarkAsRead}`,
-    {
-      method: 'PATCH',
-      headers: {
-        Authorization:
-          `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
-      },
-    },
-  ).catch(
+  const res = await query.markAsRead(user, notificationIdToMarkAsRead).catch(
     fetchErrorHandler(async (embed) => {
       msg.channel.stopTyping(true);
       await msg.reply(embed);
     }),
   );
   msg.channel.stopTyping();
-  if (res.status !== 205) {
+  if (!res) {
     return replyFailure(analecta, msg);
   }
 
