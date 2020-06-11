@@ -1,6 +1,5 @@
 import { Analecta } from '../exp/analecta';
-import { connectProcessors, CommandProcessor } from './connector';
-import { Query } from './query';
+import { connectProcessors, CommandProcessor } from '../abst/connector';
 
 import { bringIssue } from '../op/bring/issue';
 import { bringPR } from '../op/bring/pr';
@@ -11,11 +10,7 @@ import { subscribeNotification } from '../op/subscribe/subscribe-notification';
 import { unsubscribeNotification } from '../op/subscribe/unsubscribe-notification';
 import { markAsRead } from '../op/subscribe/mark-as-read';
 
-import { UserDatabase as Subscriber } from '../op/subscribe/subscribe-notification';
-import { UserDatabase as Unsubscriber } from '../op/subscribe/unsubscribe-notification';
-import { UserDatabase as Fetcher } from '../op/subscribe/mark-as-read';
-
-export type UserDatabase = Subscriber & Unsubscriber & Fetcher;
+import { UserDatabase, Query } from '../op/interfaces';
 
 export const procs = (analecta: Analecta, db: UserDatabase, query: Query): CommandProcessor =>
   connectProcessors([
@@ -23,8 +18,8 @@ export const procs = (analecta: Analecta, db: UserDatabase, query: Query): Comma
     bringIssue(query),
     bringPR(query),
     bringRepo(query),
-    subscribeNotification(db),
+    subscribeNotification(db, query),
     unsubscribeNotification(db),
-    markAsRead(db),
+    markAsRead(db, query),
     error,
   ]);

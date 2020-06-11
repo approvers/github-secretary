@@ -1,25 +1,31 @@
-export type NotificationId = string;
+import { NotificationId } from './github-notification';
+import { DiscordId } from './discord-id';
 
+declare const nominalGitHubUser: unique symbol;
 export type GitHubUser = {
   userName: string;
   notificationToken: string;
   currentNotificationIds: NotificationId[];
+  [nominalGitHubUser]: never;
 };
 
-export type DiscordId = string;
+export type GitHubUsers = Map<DiscordId, GitHubUser>;
 
-export type GitHubUsers = Record<DiscordId, GitHubUser>;
+export const serialize = (users: GitHubUsers): string => {
+  const obj: { [key: string]: GitHubUser } = {};
+  const it = users.entries();
+  for (let next = it.next(); !next.done; next = it.next()) {
+    const [k, v] = next.value;
+    obj[k as string] = v;
+  }
+  return JSON.stringify(obj);
+};
 
-export const cloneGitHubUsers = (users: GitHubUsers): GitHubUsers => {
-  return Object.entries(users).reduce(
-    (acc, [id, { userName, notificationToken, currentNotificationIds }]) => ({
-      ...acc,
-      [id]: {
-        userName,
-        notificationToken,
-        currentNotificationIds: [...currentNotificationIds],
-      },
-    }),
-    {},
-  );
+export const deserialize = (serial: string): GitHubUsers => {
+  const parsed = JSON.parse(serial);
+  const map = new Map();
+  for (const [k, v] of Object.entries(parsed)) {
+    map.set(k, v);
+  }
+  return map;
 };

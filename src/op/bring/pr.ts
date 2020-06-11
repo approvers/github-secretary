@@ -1,10 +1,11 @@
-import { Message, MessageEmbed, EmbedFieldData } from 'discord.js';
+import { MessageEmbed, EmbedFieldData } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
 import { colorFromState } from '../../exp/state-color';
-import { replyFailure } from '../reply-failure';
+import { replyFailure } from '../../abst/reply-failure';
 import { CommandProcessor, connectProcessors } from '../../abst/connector';
 import { omitBody } from '../../exp/omit';
+import { Message } from '../../abst/message';
 
 export type Query = {
   fetchRepo: (
@@ -13,7 +14,7 @@ export type Query = {
   ) => Promise<{
     name: string;
     html_url: string;
-    owner: { avatar_url: string; login: string };
+    owner: { avatar_url: string; html_url: string; login: string };
   }>;
   fetchPullRequests: (
     owner: string,
@@ -55,24 +56,17 @@ export const bringPR = (query: Query) => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  const content = msg.content.split('\n')[0];
-  if (!ghPattern.test(content)) {
-    return false;
-  }
-
-  const matches = content.match(ghPattern);
+  const matches = await msg.matchCommand(ghPattern);
   if (matches == null) {
     return false;
   }
 
-  msg.channel.startTyping();
-  const res = await connectProcessors(genSubCommands(matches, query))(analecta, msg).catch((e) => {
-    replyFailure(analecta, msg);
-    msg.channel.stopTyping();
-    throw e;
-  });
-  msg.channel.stopTyping();
-  return res;
+  return msg.withTyping(() =>
+    connectProcessors(genSubCommands(matches, query))(analecta, msg).catch((e) => {
+      replyFailure(analecta, msg);
+      throw e;
+    }),
+  );
 };
 
 const externalPRList = (owner: string) => (repo: string) => (
@@ -81,7 +75,7 @@ const externalPRList = (owner: string) => (repo: string) => (
   const {
     name: repoName,
     html_url,
-    owner: { avatar_url, login },
+    owner: { avatar_url, html_url: owner_url, login },
   } = await query.fetchRepo(owner, repo);
 
   const fields: EmbedFieldData[] = (await query.fetchPullRequests(owner, repo)).map(
@@ -91,14 +85,14 @@ const externalPRList = (owner: string) => (repo: string) => (
     }),
   );
   if (fields.length <= 0) {
-    msg.reply(analecta.NothingToBring);
+    await msg.reply(analecta.NothingToBring);
     return true;
   }
 
-  msg.channel.send(
+  await msg.sendEmbed(
     new MessageEmbed()
       .setColor(colorFromState('open'))
-      .setAuthor(login, avatar_url, html_url)
+      .setAuthor(login, avatar_url, owner_url)
       .setURL(html_url)
       .setTitle(repoName)
       .setFooter(analecta.EnumPR)
@@ -132,7 +126,7 @@ const externalPR = (owner: string) => (repo: string, dst: string) => (
 
   const color = colorFromState(state);
   const description = body ? omitBody(body) : '';
-  msg.channel.send(
+  await msg.sendEmbed(
     new MessageEmbed()
       .setColor(color)
       .setAuthor(login, avatar_url)
