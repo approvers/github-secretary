@@ -61,7 +61,7 @@ export const bringIssue = (query: Query) => async (
     return false;
   }
 
-  return msg.withTyping(async () =>
+  return msg.withTyping(() =>
     connectProcessors(genSubCommands(matches, query))(analecta, msg).catch((e: unknown) => {
       replyFailure(analecta, msg);
       throw e;
