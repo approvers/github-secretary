@@ -4,8 +4,12 @@ import { Message as RawMessage, MessageEmbed } from 'discord.js';
 export class DiscordMessage implements Message {
   constructor(private raw: RawMessage) {}
 
-  async match(regex: RegExp): Promise<RegExpMatchArray | null> {
+  async matchPlainText(regex: RegExp): Promise<RegExpMatchArray | null> {
     return regex.exec(this.raw.content);
+  }
+
+  async matchCommand(regex: RegExp): Promise<RegExpMatchArray | null> {
+    return regex.exec(this.raw.content.split('\n')[0]);
   }
 
   async withTyping(callee: () => Promise<boolean>): Promise<boolean> {
