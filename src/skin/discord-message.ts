@@ -19,8 +19,9 @@ export class DiscordMessage implements Message {
 
   async withTyping(callee: () => Promise<boolean>): Promise<boolean> {
     await this.raw.channel.startTyping();
-    const res = await callee();
-    this.raw.channel.stopTyping();
+    const res = await callee().finally(() => {
+      this.raw.channel.stopTyping();
+    });
     return res;
   }
 
