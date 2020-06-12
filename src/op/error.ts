@@ -1,12 +1,12 @@
-import { Message } from 'discord.js';
 import { Analecta } from '../exp/analecta';
 import { CommandProcessor } from '../abst/connector';
+import { Message } from '../abst/message';
 
 export const error: CommandProcessor = async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  if (!msg.content.startsWith('/gh')) {
+  if (!msg.matchCommand(/^\/gh/)) {
     return false;
   }
 
