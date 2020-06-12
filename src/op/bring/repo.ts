@@ -1,7 +1,9 @@
+import { MessageEmbed } from 'discord.js';
+
 import { Analecta } from '../../exp/analecta';
-import { Message, MessageEmbed } from 'discord.js';
 import { CommandProcessor, connectProcessors } from '../../abst/connector';
 import { replyFailure } from '../reply-failure';
+import { Message } from '../../abst/message';
 
 export type Query = {
   fetchRepo: (
@@ -26,24 +28,17 @@ export const bringRepo = (query: Query) => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  const content = msg.content.split('\n')[0];
-  if (!ghPattern.test(content)) {
-    return false;
-  }
-
-  const matches = content.match(ghPattern);
+  const matches = await msg.matchCommand(ghPattern);
   if (matches == null) {
     return false;
   }
 
-  msg.channel.startTyping();
-  const res = await connectProcessors(genSubCommands(matches, query))(analecta, msg).catch((e) => {
-    replyFailure(analecta, msg);
-    msg.channel.stopTyping();
-    throw e;
-  });
-  msg.channel.stopTyping();
-  return res;
+  return msg.withTyping(() =>
+    connectProcessors(genSubCommands(matches, query))(analecta, msg).catch((e) => {
+      replyFailure(analecta, msg);
+      throw e;
+    }),
+  );
 };
 
 const externalRepo = (owner: string) => (repo: string) => (
@@ -56,7 +51,7 @@ const externalRepo = (owner: string) => (repo: string) => (
     owner: { avatar_url, login },
   } = await query.fetchRepo(owner, repo);
 
-  msg.channel.send(
+  msg.sendEmbed(
     new MessageEmbed()
       .setAuthor(login, avatar_url)
       .setURL(html_url)
