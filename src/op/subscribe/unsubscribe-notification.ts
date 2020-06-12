@@ -1,7 +1,7 @@
 import { DiscordId } from '../../exp/github-user';
-import { Message } from 'discord.js';
 import { Analecta } from '../../exp/analecta';
 import { CommandProcessor } from '../../abst/connector';
+import { Message } from '../../abst/message';
 
 export type UserDatabase = {
   unregister: (id: DiscordId) => Promise<boolean>;
@@ -13,16 +13,16 @@ export const unsubscribeNotification = (db: UserDatabase): CommandProcessor => a
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  if (!unsubscribePattern.test(msg.content)) {
+  if (!(await msg.matchCommand(unsubscribePattern))) {
     return false;
   }
 
-  const suceed = await db.unregister(msg.author.id);
+  const suceed = await db.unregister(msg.getAuthorId());
   if (!suceed) {
-    msg.reply(analecta.NotSubscribed);
-    return true;
+    await msg.reply(analecta.NotSubscribed);
+  } else {
+    await msg.reply(analecta.Unsubscribe);
   }
 
-  msg.reply(analecta.Unsubscribe);
   return true;
 };
