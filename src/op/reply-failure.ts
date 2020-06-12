@@ -1,5 +1,5 @@
 import { Analecta } from '../exp/analecta';
-import { Message } from 'discord.js';
+import { Message } from '../abst/message';
 
 export const replyFailure = async (analecta: Analecta, msg: Message): Promise<boolean> => {
   const mes = [...analecta.Failure].sort(() => Math.random() - 0.5)[0];

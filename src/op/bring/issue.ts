@@ -1,10 +1,11 @@
-import { Message, MessageEmbed, EmbedFieldData } from 'discord.js';
+import { MessageEmbed, EmbedFieldData } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
 import { colorFromState } from '../../exp/state-color';
 import { replyFailure } from '../reply-failure';
 import { CommandProcessor, connectProcessors } from '../../abst/connector';
 import { omitBody } from '../../exp/omit';
+import { Message } from '../../abst/message';
 
 export type Query = {
   fetchRepo: (
@@ -55,26 +56,17 @@ export const bringIssue = (query: Query) => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  const content = msg.content.split('\n')[0];
-  if (!ghPattern.test(content)) {
-    return false;
-  }
-
-  const matches = content.match(ghPattern);
+  const matches = await msg.matchCommand(ghPattern);
   if (matches == null) {
     return false;
   }
 
-  msg.channel.startTyping();
-  const res = await connectProcessors(genSubCommands(matches, query))(analecta, msg).catch(
-    (e: unknown) => {
+  return msg.withTyping(async () =>
+    connectProcessors(genSubCommands(matches, query))(analecta, msg).catch((e: unknown) => {
       replyFailure(analecta, msg);
-      msg.channel.stopTyping();
       throw e;
-    },
+    }),
   );
-  msg.channel.stopTyping();
-  return res;
 };
 
 const externalIssueList = (owner: string) => (repo: string) => (
@@ -97,7 +89,7 @@ const externalIssueList = (owner: string) => (repo: string) => (
     return true;
   }
 
-  msg.channel.send(
+  msg.sendEmbed(
     new MessageEmbed()
       .setColor(colorFromState('open'))
       .setAuthor(login, avatar_url, html_url)
@@ -129,7 +121,7 @@ const externalIssue = (owner: string) => (repo: string, dst: string) => (
   const color = colorFromState(state);
   const description = body ? omitBody(body) : '';
 
-  msg.channel.send(
+  msg.sendEmbed(
     new MessageEmbed()
       .setColor(color)
       .setAuthor(login, avatar_url)
