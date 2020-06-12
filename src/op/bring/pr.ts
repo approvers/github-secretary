@@ -14,7 +14,7 @@ export type Query = {
   ) => Promise<{
     name: string;
     html_url: string;
-    owner: { avatar_url: string; login: string };
+    owner: { avatar_url: string; html_url: string; login: string };
   }>;
   fetchPullRequests: (
     owner: string,
@@ -75,7 +75,7 @@ const externalPRList = (owner: string) => (repo: string) => (
   const {
     name: repoName,
     html_url,
-    owner: { avatar_url, login },
+    owner: { avatar_url, html_url: owner_url, login },
   } = await query.fetchRepo(owner, repo);
 
   const fields: EmbedFieldData[] = (await query.fetchPullRequests(owner, repo)).map(
@@ -92,7 +92,7 @@ const externalPRList = (owner: string) => (repo: string) => (
   await msg.sendEmbed(
     new MessageEmbed()
       .setColor(colorFromState('open'))
-      .setAuthor(login, avatar_url, html_url)
+      .setAuthor(login, avatar_url, owner_url)
       .setURL(html_url)
       .setTitle(repoName)
       .setFooter(analecta.EnumPR)
