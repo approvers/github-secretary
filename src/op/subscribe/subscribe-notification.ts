@@ -24,18 +24,14 @@ export const subscribeNotification = (db: UserDatabase, query: Query): CommandPr
     return false;
   }
 
-  await query
-    .checkNotificationToken(matches[1], matches[2])
-    .then((isValidToken) => {
-      if (!isValidToken) {
-        throw new Error('invalid token');
-      }
-    })
-    .catch(
-      fetchErrorHandler(async (mes) => {
-        await msg.reply(mes);
-      }),
-    );
+  const isValidToken = await query.checkNotificationToken(matches[1], matches[2]).catch(
+    fetchErrorHandler(async (mes) => {
+      await msg.reply(mes);
+    }),
+  );
+  if (!isValidToken) {
+    throw new Error('invalid token');
+  }
 
   await db.register(msg.author.id, {
     userName: matches[1],
