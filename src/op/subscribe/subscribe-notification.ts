@@ -1,9 +1,9 @@
 import { Message } from 'discord.js';
-import fetch from 'node-fetch';
 
 import { Analecta } from '../../exp/analecta';
 import { CommandProcessor } from '../../abst/connector';
 import { DiscordId, GitHubUser } from '../../exp/github-user';
+import { fetchErrorHandler } from '../../exp/fetch-error-handler';
 
 export type UserDatabase = {
   register: (id: DiscordId, user: GitHubUser) => Promise<void>;
