@@ -2,7 +2,7 @@ import { MessageEmbed } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
 import { CommandProcessor, connectProcessors } from '../../abst/connector';
-import { replyFailure } from '../reply-failure';
+import { replyFailure } from '../../abst/reply-failure';
 import { Message } from '../../abst/message';
 
 export type Query = {

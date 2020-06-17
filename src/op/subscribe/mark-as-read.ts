@@ -3,7 +3,7 @@ import { MessageEmbed } from 'discord.js';
 import { CommandProcessor } from 'src/abst/connector';
 import { Analecta } from 'src/exp/analecta';
 import { GitHubUser, DiscordId } from 'src/exp/github-user';
-import { replyFailure } from '../reply-failure';
+import { replyFailure } from '../../abst/reply-failure';
 import { fetchErrorHandler } from '../../exp/fetch-error-handler';
 import { Message } from '../../abst/message';
 

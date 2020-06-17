@@ -2,7 +2,7 @@ import { MessageEmbed, EmbedFieldData } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
 import { colorFromState } from '../../exp/state-color';
-import { replyFailure } from '../reply-failure';
+import { replyFailure } from '../../abst/reply-failure';
 import { CommandProcessor, connectProcessors } from '../../abst/connector';
 import { omitBody } from '../../exp/omit';
 import { Message } from '../../abst/message';
