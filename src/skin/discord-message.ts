@@ -1,6 +1,7 @@
-import { Message } from 'src/abst/message';
 import { Message as RawMessage, MessageEmbed } from 'discord.js';
-import { DiscordId } from 'src/exp/github-user';
+
+import { Message } from '../abst/message';
+import { DiscordId } from '../exp/github-user';
 
 export class DiscordMessage implements Message {
   constructor(private raw: RawMessage) {}

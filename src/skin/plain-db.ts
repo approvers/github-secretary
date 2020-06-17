@@ -8,7 +8,7 @@ import {
   NotificationId,
   cloneGitHubUsers,
 } from '../exp/github-user';
-import { Database, UpdateHandler } from 'src/abst/subscription/database';
+import { Database, UpdateHandler } from '../abst/subscription/database';
 
 const { open, mkdir } = promises;
 

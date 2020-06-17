@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js';
 
-import { DiscordId } from 'src/exp/github-user';
+import { DiscordId } from '../exp/github-user';
 
 export type Message = {
   getAuthorId(): DiscordId;

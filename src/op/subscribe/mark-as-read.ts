@@ -1,8 +1,8 @@
 import { MessageEmbed } from 'discord.js';
 
-import { CommandProcessor } from 'src/abst/connector';
-import { Analecta } from 'src/exp/analecta';
-import { GitHubUser, DiscordId } from 'src/exp/github-user';
+import { CommandProcessor } from '../../abst/connector';
+import { Analecta } from '../../exp/analecta';
+import { GitHubUser, DiscordId } from '../../exp/github-user';
 import { replyFailure } from '../../abst/reply-failure';
 import { fetchErrorHandler } from '../../exp/fetch-error-handler';
 import { Message } from '../../abst/message';

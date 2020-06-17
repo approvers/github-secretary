@@ -1,6 +1,7 @@
-import { Query } from 'src/abst/query';
 import fetch from 'node-fetch';
-import { GitHubUser } from 'src/exp/github-user';
+
+import { Query } from '../abst/query';
+import { GitHubUser } from '../exp/github-user';
 
 export class GitHubApi implements Query {
   async fetchRepo(

@@ -1,5 +1,5 @@
 import { TomlLoader } from './toml-loader';
-import { Analecta } from 'src/exp/analecta';
+import { Analecta } from '../exp/analecta';
 
 export async function analectaForTest(): Promise<Analecta> {
   const loader = new TomlLoader('./example/laffey.toml');

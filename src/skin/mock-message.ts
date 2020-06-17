@@ -1,7 +1,8 @@
-import { Message } from 'src/abst/message';
-import { EventEmitter } from 'events';
-import { DiscordId } from 'src/exp/github-user';
 import { MessageEmbed } from 'discord.js';
+import { EventEmitter } from 'events';
+
+import { Message } from '../abst/message';
+import { DiscordId } from '../exp/github-user';
 
 export class MockMessage implements Message {
   emitter = new EventEmitter();
