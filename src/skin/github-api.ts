@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-import { Query } from '../abst/query';
+import { Query } from '../op/interfaces';
 import { GitHubUser } from '../exp/github-user';
 
 export class GitHubApi implements Query {
