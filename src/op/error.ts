@@ -6,7 +6,7 @@ export const error: CommandProcessor = async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  if (!msg.content.startsWith('/gh')) {
+  if ((await msg.matchCommand(/^\/gh/)) == null) {
     return false;
   }
 
