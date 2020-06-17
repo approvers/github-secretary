@@ -4,7 +4,7 @@ import { CommandProcessor } from '../../abst/connector';
 import { Analecta } from '../../exp/analecta';
 import { GitHubUser, DiscordId } from '../../exp/github-user';
 import { replyFailure } from '../../abst/reply-failure';
-import { fetchErrorHandler } from '../../exp/fetch-error-handler';
+import { fetchErrorHandler } from '../../skin/fetch-error-handler';
 import { Message } from '../../abst/message';
 
 export type UserDatabase = {

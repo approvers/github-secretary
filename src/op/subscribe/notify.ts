@@ -2,7 +2,7 @@ import { MessageEmbed } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
 import { GitHubUser, NotificationId } from '../../exp/github-user';
-import { fetchErrorHandler } from '../../exp/fetch-error-handler';
+import { fetchErrorHandler } from '../../skin/fetch-error-handler';
 
 export type Database = {
   getUser(): Promise<GitHubUser>;
