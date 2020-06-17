@@ -1,6 +1,6 @@
 import { Analecta } from '../exp/analecta';
-import { connectProcessors, CommandProcessor } from './connector';
-import { Query } from './query';
+import { connectProcessors, CommandProcessor } from '../abst/connector';
+import { Query } from '../abst/query';
 
 import { bringIssue } from '../op/bring/issue';
 import { bringPR } from '../op/bring/pr';

@@ -4,7 +4,7 @@ import { Client, Message } from 'discord.js';
 import { TomlLoader } from '../src/skin/toml-loader';
 import { PlainDB } from '../src/skin/plain-db';
 
-import { procs } from '../src/abst/procs';
+import { procs } from '../src/skin/procs';
 import { SubscriptionNotifier } from '../src/abst/subscription/notifier';
 import { Analecta } from 'src/exp/analecta';
 import { CommandProcessor } from 'src/abst/connector';
