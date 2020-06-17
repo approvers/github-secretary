@@ -61,7 +61,7 @@ export class SubscriptionNotifier implements UpdateHandler {
 
   constructor(private analecta: Analecta, private users: UserDic, private updater: Updater) {}
 
-  async handleUpdate(users: GitHubUsers): Promise<void> {
+  async handleUpdate(users: Readonly<GitHubUsers>): Promise<void> {
     this.stop();
 
     this.notifyTasks = [...users.entries()].map(([userId, sub]) =>
