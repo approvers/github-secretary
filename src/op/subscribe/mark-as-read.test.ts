@@ -1,15 +1,9 @@
 import { markAsRead } from './mark-as-read';
 import { MockMessage } from '../../skin/mock-message';
-import { TomlLoader } from '../../skin/toml-loader';
-
-async function readyAnalecta() {
-  const loader = new TomlLoader(process.env.TOML_PATH || './example/laffey.toml');
-  const analecta = await loader.load();
-  return analecta;
-}
+import { analectaForTest } from '../../skin/test-analecta';
 
 test('mark a notification as read', async (done) => {
-  const analecta = await readyAnalecta();
+  const analecta = await analectaForTest();
 
   const proc = markAsRead(
     {

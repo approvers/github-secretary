@@ -1,17 +1,11 @@
 import { MessageEmbed } from 'discord.js';
 
 import { MockMessage } from '../../skin/mock-message';
-import { TomlLoader } from '../../skin/toml-loader';
+import { analectaForTest } from '../../skin/test-analecta';
 import { bringRepo } from './repo';
 
-async function readyAnalecta() {
-  const loader = new TomlLoader(process.env.TOML_PATH || './example/laffey.toml');
-  const analecta = await loader.load();
-  return analecta;
-}
-
 test('get a repository', async (done) => {
-  const analecta = await readyAnalecta();
+  const analecta = await analectaForTest();
 
   const message = new MockMessage('/ghr andy/test-project');
   message.emitter.on('reply', () => {

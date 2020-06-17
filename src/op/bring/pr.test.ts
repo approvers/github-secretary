@@ -2,17 +2,11 @@ import { MessageEmbed } from 'discord.js';
 
 import { bringPR } from './pr';
 import { MockMessage } from '../../skin/mock-message';
-import { TomlLoader } from '../../skin/toml-loader';
+import { analectaForTest } from '../../skin/test-analecta';
 import { colorFromState } from '../../exp/state-color';
 
-async function readyAnalecta() {
-  const loader = new TomlLoader(process.env.TOML_PATH || './example/laffey.toml');
-  const analecta = await loader.load();
-  return analecta;
-}
-
 test('get PRs list', async (done) => {
-  const analecta = await readyAnalecta();
+  const analecta = await analectaForTest();
 
   const message = new MockMessage('/ghp andy/test-project');
   message.emitter.on('reply', () => {
@@ -66,7 +60,7 @@ test('get PRs list', async (done) => {
 });
 
 test('get an issue', async (done) => {
-  const analecta = await readyAnalecta();
+  const analecta = await analectaForTest();
 
   const message = new MockMessage('/ghp andy/test-project/1');
   message.emitter.on('reply', () => {
