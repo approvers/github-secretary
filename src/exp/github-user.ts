@@ -1,7 +1,5 @@
-declare const nominalNotificationId: unique symbol;
-export type NotificationId = string & {
-  [nominalNotificationId]: never;
-};
+import { NotificationId } from './notifications';
+import { DiscordId } from './discord-id';
 
 declare const nominalGitHubUser: unique symbol;
 export type GitHubUser = {
@@ -11,23 +9,4 @@ export type GitHubUser = {
   [nominalGitHubUser]: never;
 };
 
-declare const nominalDiscordId: unique symbol;
-export type DiscordId = string & {
-  [nominalDiscordId]: never;
-};
-
-export type GitHubUsers = Record<DiscordId, GitHubUser>;
-
-export const cloneGitHubUsers = (users: GitHubUsers): GitHubUsers => {
-  return Object.entries<GitHubUser>(users).reduce(
-    (acc: GitHubUsers, [id, { userName, notificationToken, currentNotificationIds }]) => ({
-      ...acc,
-      [id]: {
-        userName,
-        notificationToken,
-        currentNotificationIds: [...currentNotificationIds],
-      },
-    }),
-    {},
-  );
-};
+export type GitHubUsers = Map<DiscordId, GitHubUser>;

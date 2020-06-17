@@ -1,7 +1,8 @@
 import { MessageEmbed } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
-import { GitHubUser, NotificationId } from '../../exp/github-user';
+import { GitHubUser } from '../../exp/github-user';
+import { NotificationId } from '../../exp/notifications';
 import { fetchErrorHandler } from '../../skin/fetch-error-handler';
 
 export type Database = {

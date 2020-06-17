@@ -4,7 +4,7 @@ import { Database as Updater } from '../../abst/subscription/notifier';
 import { UserDatabase as Fetcher } from '../../op/subscribe/mark-as-read';
 import { GitHubUsers } from '../../exp/github-user';
 
-export type UpdateHandler = { handleUpdate: (users: GitHubUsers) => Promise<void> };
+export type UpdateHandler = { handleUpdate: (users: Readonly<GitHubUsers>) => Promise<void> };
 
 export type Database = Subscriber &
   Unsubscriber &

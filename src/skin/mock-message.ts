@@ -2,12 +2,12 @@ import { MessageEmbed } from 'discord.js';
 import { EventEmitter } from 'events';
 
 import { Message } from '../abst/message';
-import { DiscordId } from '../exp/github-user';
+import { DiscordId } from '../exp/discord-id';
 
 export class MockMessage implements Message {
   emitter = new EventEmitter();
 
-  constructor(private content: string, private id: DiscordId = '') {}
+  constructor(private content: string, private id: DiscordId = '' as DiscordId) {}
 
   getAuthorId(): DiscordId {
     return this.id;

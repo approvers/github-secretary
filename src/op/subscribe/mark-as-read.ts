@@ -2,10 +2,12 @@ import { MessageEmbed } from 'discord.js';
 
 import { CommandProcessor } from '../../abst/connector';
 import { Analecta } from '../../exp/analecta';
-import { GitHubUser, DiscordId } from '../../exp/github-user';
+import { GitHubUser } from '../../exp/github-user';
+import { DiscordId } from '../../exp/discord-id';
 import { replyFailure } from '../../abst/reply-failure';
 import { fetchErrorHandler } from '../../skin/fetch-error-handler';
 import { Message } from '../../abst/message';
+import { includes } from '../../exp/notifications';
 
 export type UserDatabase = {
   fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined>;
@@ -36,7 +38,7 @@ export const markAsRead = (db: UserDatabase, query: Query): CommandProcessor => 
       }
 
       const { currentNotificationIds } = user;
-      if (!currentNotificationIds.includes(notificationIdToMarkAsRead)) {
+      if (!includes(currentNotificationIds, notificationIdToMarkAsRead)) {
         return replyFailure(analecta, msg);
       }
 

@@ -2,6 +2,7 @@ import fetch from 'node-fetch';
 
 import { Query } from '../op/interfaces';
 import { GitHubUser } from '../exp/github-user';
+import { NotificationId } from 'src/exp/notifications';
 
 export class GitHubApi implements Query {
   async fetchRepo(
@@ -101,12 +102,19 @@ export class GitHubApi implements Query {
     return true;
   }
 
-  async checkNotificationToken(userName: string, token: string): Promise<boolean> {
+  async getGitHubUser(userName: string, token: string): Promise<GitHubUser> {
     const res = await fetch(`https://api.github.com/notifications`, {
       headers: {
         Authorization: `Basic ` + Buffer.from(`${userName}:${token}`).toString('base64'),
       },
     });
-    return res.ok;
+    if (!res.ok) {
+      throw new Error('invalid token');
+    }
+    return {
+      userName,
+      notificationToken: token,
+      currentNotificationIds: [] as NotificationId[],
+    } as GitHubUser;
   }
 }

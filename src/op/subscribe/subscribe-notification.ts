@@ -1,6 +1,7 @@
 import { Analecta } from '../../exp/analecta';
 import { CommandProcessor } from '../../abst/connector';
-import { DiscordId, GitHubUser } from '../../exp/github-user';
+import { GitHubUser } from '../../exp/github-user';
+import { DiscordId } from '../../exp/discord-id';
 import { fetchErrorHandler } from '../../skin/fetch-error-handler';
 import { Message } from '../../abst/message';
 
@@ -9,7 +10,7 @@ export type UserDatabase = {
 };
 
 export type Query = {
-  checkNotificationToken(userName: string, token: string): Promise<boolean>;
+  getGitHubUser(userName: string, token: string): Promise<GitHubUser>;
 };
 
 const subscribePattern = /^\/ghs ([^/:?]+) ([^/:?]+)/;
@@ -23,20 +24,13 @@ export const subscribeNotification = (db: UserDatabase, query: Query): CommandPr
     return false;
   }
 
-  const isValidToken = await query.checkNotificationToken(matches[1], matches[2]).catch(
+  const user = await query.getGitHubUser(matches[1], matches[2]).catch(
     fetchErrorHandler(async (mes) => {
       await msg.sendEmbed(mes);
     }),
   );
-  if (!isValidToken) {
-    throw new Error('invalid token');
-  }
 
-  await db.register(msg.getAuthorId(), {
-    userName: matches[1],
-    notificationToken: matches[2],
-    currentNotificationIds: [],
-  });
+  await db.register(msg.getAuthorId(), user);
 
   await msg.reply(analecta.Subscribe);
   return true;

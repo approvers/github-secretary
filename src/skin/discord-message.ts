@@ -1,13 +1,13 @@
 import { Message as RawMessage, MessageEmbed } from 'discord.js';
 
 import { Message } from '../abst/message';
-import { DiscordId } from '../exp/github-user';
+import { DiscordId } from '../exp/discord-id';
 
 export class DiscordMessage implements Message {
   constructor(private raw: RawMessage) {}
 
   getAuthorId(): DiscordId {
-    return this.raw.author.id;
+    return this.raw.author.id as DiscordId;
   }
 
   async matchPlainText(regex: RegExp): Promise<RegExpMatchArray | null> {
