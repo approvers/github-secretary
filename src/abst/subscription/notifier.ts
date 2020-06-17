@@ -33,12 +33,13 @@ export class SubscriptionNotifier implements UpdateHandler {
 
   async handleUpdate(users: GitHubUsers): Promise<void> {
     this.stop();
-    this.notifyTasks = await Promise.all(
-      Object.entries(users).map(([userId, sub]) => this.makeNotifyTask(userId, sub)),
+
+    this.notifyTasks = [...users.entries()].map(([userId, sub]) =>
+      this.makeNotifyTask(userId as DiscordId, sub),
     );
   }
 
-  private makeNotifyTask = (userId: string, sub: GitHubUser): (() => void) => {
+  private makeNotifyTask = (userId: DiscordId, sub: GitHubUser): (() => void) => {
     const timer = setInterval(
       () => notify(this.analecta, this.sendMessage(userId), this.notifyController(sub, userId)),
       NOTIFY_INTERVAL,
@@ -56,7 +57,7 @@ export class SubscriptionNotifier implements UpdateHandler {
     };
   }
 
-  private notifyController(sub: GitHubUser, userId: string): NotifyController {
+  private notifyController(sub: GitHubUser, userId: DiscordId): NotifyController {
     return {
       getUser: async (): Promise<GitHubUser> => sub,
       update: (newIds: NotificationId[]): Promise<void> => this.updater.update(userId, newIds),

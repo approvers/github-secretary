@@ -1,6 +1,10 @@
 import { Query } from 'src/abst/query';
 import fetch from 'node-fetch';
 
+import { Query } from '../op/interfaces';
+import { GitHubUser } from '../exp/github-user';
+import { NotificationId } from 'src/exp/notifications';
+
 export class GitHubApi implements Query {
   async fetchRepo(
     owner: string,
@@ -79,5 +83,39 @@ export class GitHubApi implements Query {
       throw new Error('not found the pull request');
     }
     return res;
+  }
+
+  async markAsRead(user: GitHubUser, notificationIdToMarkAsRead: string): Promise<boolean> {
+    const { userName, notificationToken } = user;
+    const res = await fetch(
+      `https://api.github.com/notifications/threads/${notificationIdToMarkAsRead}`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization:
+            `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
+        },
+      },
+    );
+    if (res.status !== 205) {
+      return false;
+    }
+    return true;
+  }
+
+  async getGitHubUser(userName: string, token: string): Promise<GitHubUser> {
+    const res = await fetch(`https://api.github.com/notifications`, {
+      headers: {
+        Authorization: `Basic ` + Buffer.from(`${userName}:${token}`).toString('base64'),
+      },
+    });
+    if (!res.ok) {
+      throw new Error('invalid token');
+    }
+    return {
+      userName,
+      notificationToken: token,
+      currentNotificationIds: [] as NotificationId[],
+    } as GitHubUser;
   }
 }

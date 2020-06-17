@@ -9,6 +9,10 @@ export type UserDatabase = {
   register: (id: DiscordId, user: GitHubUser) => Promise<void>;
 };
 
+export type Query = {
+  getGitHubUser(userName: string, token: string): Promise<GitHubUser>;
+};
+
 const subscribePattern = /^\/ghs ([^/:?]+) ([^/:?]+)/;
 
 export const subscribeNotification = (db: UserDatabase): CommandProcessor => async (
@@ -24,21 +28,13 @@ export const subscribeNotification = (db: UserDatabase): CommandProcessor => asy
     return false;
   }
 
-  const res = await fetch(`https://api.github.com/notifications`, {
-    headers: {
-      Authorization: `Basic ` + Buffer.from(`${matches[1]}:${matches[2]}`).toString('base64'),
-    },
-  });
-  if (!res.ok) {
-    msg.reply(analecta.InvalidToken);
-    return true;
-  }
+  const user = await query.getGitHubUser(matches[1], matches[2]).catch(
+    fetchErrorHandler(async (mes) => {
+      await msg.sendEmbed(mes);
+    }),
+  );
 
-  await db.register(msg.author.id, {
-    userName: matches[1],
-    notificationToken: matches[2],
-    currentNotificationIds: [],
-  });
+  await db.register(msg.getAuthorId(), user);
 
   msg.reply(analecta.Subscribe);
   return true;

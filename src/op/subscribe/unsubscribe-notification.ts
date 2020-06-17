@@ -1,5 +1,4 @@
-import { DiscordId } from '../../exp/github-user';
-import { Message } from 'discord.js';
+import { DiscordId } from '../../exp/discord-id';
 import { Analecta } from '../../exp/analecta';
 import { CommandProcessor } from '../../abst/connector';
 
