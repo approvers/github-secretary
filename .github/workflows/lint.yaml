@@ -1,0 +1,19 @@
+name: Lints
+
+on:
+  - push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: "12"
+      - name: Install dependencies
+        run: yarn install --frozen
+      - name: Run lint
+        run: yarn lint
