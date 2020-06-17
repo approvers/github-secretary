@@ -64,9 +64,12 @@ export class SubscriptionNotifier implements UpdateHandler {
   async handleUpdate(users: Readonly<GitHubUsers>): Promise<void> {
     this.stop();
 
-    this.notifyTasks = [...users.entries()].map(([userId, sub]) =>
-      this.makeNotifyTask(userId as DiscordId, sub),
-    );
+    this.notifyTasks = [];
+    const it = users.entries();
+    for (let next = it.next(); !next.done; next = it.next()) {
+      const [userId, sub] = next.value;
+      this.notifyTasks.push(this.makeNotifyTask(userId as DiscordId, sub));
+    }
   }
 
   private makeNotifyTask = (userId: DiscordId, sub: GitHubUser): (() => void) => {
