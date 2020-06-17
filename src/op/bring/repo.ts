@@ -13,7 +13,7 @@ export type Query = {
     name: string;
     description?: string;
     html_url: string;
-    owner: { avatar_url: string; html_url: string; login: string };
+    owner: { avatar_url: string; login: string };
   }>;
 };
 
@@ -48,16 +48,16 @@ const externalRepo = (owner: string) => (repo: string) => (
     name,
     description,
     html_url,
-    owner: { avatar_url, html_url: owner_url, login },
+    owner: { avatar_url, login },
   } = await query.fetchRepo(owner, repo);
 
   msg.sendEmbed(
     new MessageEmbed()
-      .setAuthor(login, avatar_url, owner_url)
+      .setAuthor(login, avatar_url)
       .setURL(html_url)
       .setDescription(description || '')
       .setTitle(name)
-      .setFooter(analecta.BringRepo),
+      .setFooter(analecta.Subscribe),
   );
 
   return true;

@@ -5,7 +5,6 @@ const AnalectaKeyArray = [
   'MarkAsRead',
   'BringIssue',
   'BringPR',
-  'BringRepo',
   'NothingToBring',
   'EnumIssue',
   'EnumPR',

@@ -6,11 +6,11 @@ export const flavor = (callPattern: RegExp, blackPattern: RegExp): CommandProces
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  if (!(await msg.matchPlainText(callPattern)) || (await msg.matchPlainText(blackPattern))) {
+  if (!msg.matchPlainText(callPattern) || msg.matchPlainText(blackPattern)) {
     return false;
   }
 
   const mes = [...analecta.Flavor].sort(() => Math.random() - 0.5)[0];
-  await msg.reply(mes);
+  msg.reply(mes);
   return true;
 };
