@@ -1,7 +1,7 @@
 import { promises } from 'fs';
 import MutexPromise from 'mutex-promise';
 
-import { GitHubUser, GitHubUsers } from '../exp/github-user';
+import { GitHubUser, GitHubUsers, serialize, deserialize } from '../exp/github-user';
 import { DiscordId } from '../exp/discord-id';
 import { NotificationId } from '../exp/notifications';
 import { Database, UpdateHandler } from '../abst/subscription/database';
@@ -34,8 +34,8 @@ export class PlainDB implements Database {
     const obj = new PlainDB(fileName, handle);
     try {
       const buf = await handle.readFile();
-      const previousUsers = JSON.parse(buf.toString());
-      obj.users = previousUsers.users;
+      const users = JSON.parse(buf.toString());
+      obj.users = deserialize(users);
     } catch (ignore) {
       obj.users = new Map();
     }
@@ -70,7 +70,7 @@ export class PlainDB implements Database {
     await this.mutex
       .promise()
       .then(() => this.handle.truncate(0))
-      .then(() => this.handle.write(JSON.stringify({ users: this.users }), 0));
+      .then(() => this.handle.write(serialize(this.users), 0));
 
     await Promise.all(this.handlers.map((handler) => handler.handleUpdate(this.users)));
   }
