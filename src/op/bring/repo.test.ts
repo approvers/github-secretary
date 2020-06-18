@@ -9,7 +9,7 @@ test('get a repository', async (done) => {
 
   const message = new MockMessage('/ghr andy/test-project');
   message.emitter.on('reply', () => {
-    expect('').toStrictEqual('`bringPR` must not reply.');
+    expect('').toStrictEqual('`bringRepo` must not reply.');
     done();
   });
   message.emitter.on('sendEmbed', (embed: MessageEmbed) => {
@@ -19,7 +19,7 @@ test('get a repository', async (done) => {
         .setURL('https://github.com/andy/test-project')
         .setDescription('')
         .setTitle('test-project')
-        .setFooter(analecta.Subscribe),
+        .setFooter(analecta.BringRepo),
     );
     done();
   });
