@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 import { Query } from '../op/interfaces';
 import { GitHubUser } from '../exp/github-user';
-import { NotificationId } from '../exp/notifications';
+import { NotificationId } from '../exp/github-notification';
 
 export class GitHubApi implements Query {
   async fetchRepo(

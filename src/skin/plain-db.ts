@@ -3,7 +3,7 @@ import MutexPromise from 'mutex-promise';
 
 import { GitHubUser, GitHubUsers, serialize, deserialize } from '../exp/github-user';
 import { DiscordId } from '../exp/discord-id';
-import { NotificationId } from '../exp/notifications';
+import { NotificationId } from '../exp/github-notification';
 import { SubscriptionDatabase, UserDatabase, UpdateHandler } from '../op/interfaces';
 
 const { open, mkdir } = promises;

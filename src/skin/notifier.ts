@@ -3,7 +3,7 @@ import { MessageEmbed, User } from 'discord.js';
 
 import { GitHubUser, GitHubUsers } from '../exp/github-user';
 import { DiscordId } from '../exp/discord-id';
-import { NotificationId } from '../exp/notifications';
+import { NotificationId, GitHubNotifications } from '../exp/github-notification';
 import { Analecta } from '../exp/analecta';
 import { notify, Database as NotifyController } from '../op/subscribe/notify';
 import { Query } from '../op/subscribe/notify';
@@ -35,14 +35,7 @@ const notificationQuery: Query = {
   async fetchNotification({
     userName,
     notificationToken,
-  }: GitHubUser): Promise<
-    {
-      id: NotificationId;
-      subject: {
-        title: string;
-      };
-    }[]
-  > {
+  }: GitHubUser): Promise<GitHubNotifications> {
     const rawRes = await fetch(`https://api.github.com/notifications`, {
       headers: {
         Authorization:

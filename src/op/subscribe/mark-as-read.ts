@@ -7,7 +7,7 @@ import { DiscordId } from '../../exp/discord-id';
 import { replyFailure } from '../../abst/reply-failure';
 import { fetchErrorHandler } from '../../skin/fetch-error-handler';
 import { Message } from '../../abst/message';
-import { includes, NotificationId } from '../../exp/notifications';
+import { includes, NotificationId } from '../../exp/github-notification';
 
 export type UserDatabase = {
   fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined>;

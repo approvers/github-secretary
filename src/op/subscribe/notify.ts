@@ -2,7 +2,7 @@ import { MessageEmbed } from 'discord.js';
 
 import { Analecta } from '../../exp/analecta';
 import { GitHubUser } from '../../exp/github-user';
-import { NotificationId } from '../../exp/notifications';
+import { NotificationId, GitHubNotifications } from '../../exp/github-notification';
 import { fetchErrorHandler } from '../../skin/fetch-error-handler';
 
 export type Database = {
@@ -11,16 +11,7 @@ export type Database = {
 };
 
 export type Query = {
-  fetchNotification(
-    user: GitHubUser,
-  ): Promise<
-    {
-      id: NotificationId;
-      subject: {
-        title: string;
-      };
-    }[]
-  >;
+  fetchNotification(user: GitHubUser): Promise<GitHubNotifications>;
 };
 
 export const notify = async (
