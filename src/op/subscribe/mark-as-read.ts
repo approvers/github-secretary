@@ -14,7 +14,7 @@ export type UserDatabase = {
 };
 
 export type Query = {
-  markAsRead(user: GitHubUser, notificationIdToMarkAsRead: NotificationId): Promise<boolean>;
+  markAsRead(user: GitHubUser, notificationId: NotificationId): Promise<boolean>;
 };
 
 const markPattern = /^\/ghm ([0-9]+)$/;

@@ -84,18 +84,15 @@ export class GitHubApi implements Query {
     return res;
   }
 
-  async markAsRead(user: GitHubUser, notificationIdToMarkAsRead: string): Promise<boolean> {
+  async markAsRead(user: GitHubUser, notificationId: string): Promise<boolean> {
     const { userName, notificationToken } = user;
-    const res = await fetch(
-      `https://api.github.com/notifications/threads/${notificationIdToMarkAsRead}`,
-      {
-        method: 'PATCH',
-        headers: {
-          Authorization:
-            `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
-        },
+    const res = await fetch(`https://api.github.com/notifications/threads/${notificationId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization:
+          `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
       },
-    );
+    });
     if (res.status !== 205) {
       return false;
     }
