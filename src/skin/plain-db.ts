@@ -4,11 +4,11 @@ import MutexPromise from 'mutex-promise';
 import { GitHubUser, GitHubUsers, serialize, deserialize } from '../exp/github-user';
 import { DiscordId } from '../exp/discord-id';
 import { NotificationId } from '../exp/notifications';
-import { Database, UpdateHandler } from '../abst/subscription/database';
+import { SubscriptionDatabase, UserDatabase, UpdateHandler } from '../op/interfaces';
 
 const { open, mkdir } = promises;
 
-export class PlainDB implements Database {
+export class PlainDB implements SubscriptionDatabase, UserDatabase {
   private users: GitHubUsers = new Map();
   private mutex: MutexPromise;
   private handlers: UpdateHandler[] = [];
