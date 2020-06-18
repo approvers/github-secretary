@@ -12,7 +12,7 @@ export class GitHubApi implements Query {
     name: string;
     description?: string;
     html_url: string;
-    owner: { avatar_url: string; login: string };
+    owner: { avatar_url: string; html_url: string; login: string };
   }> {
     const repoInfoApiUrl = `https://api.github.com/repos/${owner}/${repoName}`;
     const infoRes = await (await fetch(repoInfoApiUrl)).json();
