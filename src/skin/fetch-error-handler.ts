@@ -1,13 +1,13 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedMessage } from '../exp/embed-message.ts';
 
-export const fetchErrorHandler = (send: (message: MessageEmbed) => Promise<void>) => (
+export const fetchErrorHandler = (send: (message: EmbedMessage) => Promise<void>) => (
   reason: unknown,
 ): never => {
   send(
-    new MessageEmbed()
-      .setColor(0xffc208)
-      .setTitle('通知データ取得のエラー発生')
-      .setDescription(reason),
+    new EmbedMessage()
+      .color(0xffc208)
+      .title('通知データ取得のエラー発生')
+      .description(new String(reason).toString()),
   );
   throw reason;
 };

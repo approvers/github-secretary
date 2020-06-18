@@ -1,9 +1,8 @@
-import { MessageEmbed } from 'discord.js';
-
-import { bringIssue } from './issue';
-import { MockMessage } from '../../skin/mock-message';
-import { colorFromState } from '../../exp/state-color';
-import { analectaForTest } from '../../skin/test-analecta';
+import { bringIssue } from './issue.ts';
+import { analectaForTest } from '../../skin/test-analecta.ts';
+import { MockMessage } from '../../skin/mock-message.ts';
+import { colorFromState } from '../../exp/state-color.ts';
+import { EmbedMessage } from '../../exp/embed-message.ts';
 
 test('get issues list', async (done) => {
   const analecta = await analectaForTest();
@@ -13,20 +12,22 @@ test('get issues list', async (done) => {
     expect('').toStrictEqual('`bringIssue` must not reply.');
     done();
   });
-  message.emitter.on('sendEmbed', (embed: MessageEmbed) => {
+  message.emitter.on('sendEmbed', (embed: EmbedMessage) => {
     expect(embed).toStrictEqual(
-      new MessageEmbed()
-        .setColor(colorFromState('open'))
-        .setAuthor('Andy', 'https://github.com/andy.png', 'https://github.com/andy')
-        .setURL('https://github.com/andy/test-project')
-        .setTitle('test-project')
-        .setFooter(analecta.EnumIssue)
-        .addFields([
-          {
-            name: '#1',
-            value: '[I have an issue](https://github.com/test-peoject/issues/1)',
-          },
-        ]),
+      new EmbedMessage()
+        .color(colorFromState('open'))
+        .author({
+          name: 'Andy',
+          icon_url: 'https://github.com/andy.png',
+          url: 'https://github.com/andy',
+        })
+        .url('https://github.com/andy/test-project')
+        .title('test-project')
+        .footer({ text: analecta.EnumIssue })
+        .field({
+          name: '#1',
+          value: '[I have an issue](https://github.com/test-peoject/issues/1)',
+        }),
     );
     done();
   });
@@ -67,15 +68,15 @@ test('get an issue', async (done) => {
     expect('').toStrictEqual('`bringIssue` must not reply.');
     done();
   });
-  message.emitter.on('sendEmbed', (embed: MessageEmbed) => {
+  message.emitter.on('sendEmbed', (embed: EmbedMessage) => {
     expect(embed).toStrictEqual(
-      new MessageEmbed()
-        .setColor(colorFromState('open'))
-        .setAuthor('Bob', 'https://github.com/bob.png')
-        .setURL('https://github.com/test-peoject/issues/1')
-        .setDescription('')
-        .setTitle('I have an issue')
-        .setFooter(analecta.BringIssue),
+      new EmbedMessage()
+        .color(colorFromState('open'))
+        .author({ name: 'Bob', icon_url: 'https://github.com/bob.png' })
+        .url('https://github.com/test-peoject/issues/1')
+        .description('')
+        .title('I have an issue')
+        .footer({ text: analecta.BringIssue }),
     );
     done();
   });

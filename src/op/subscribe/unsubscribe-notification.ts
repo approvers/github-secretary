@@ -1,7 +1,7 @@
-import { DiscordId } from '../../exp/discord-id';
-import { Analecta } from '../../exp/analecta';
-import { CommandProcessor } from '../../abst/connector';
-import { Message } from '../../abst/message';
+import { DiscordId } from '../../exp/discord-id.ts';
+import { Analecta } from '../../exp/analecta.ts';
+import { CommandProcessor } from '../../abst/connector.ts';
+import { Message } from '../../abst/message.ts';
 
 export type UserDatabase = {
   unregister: (id: DiscordId) => Promise<boolean>;

@@ -1,6 +1,6 @@
-import { Analecta } from '../exp/analecta';
-import { CommandProcessor } from '../abst/connector';
-import { Message } from '../abst/message';
+import { Analecta } from '../exp/analecta.ts';
+import { CommandProcessor } from '../abst/connector.ts';
+import { Message } from '../abst/message.ts';
 
 export const flavor = (callPattern: RegExp, blackPattern: RegExp): CommandProcessor => async (
   analecta: Analecta,

@@ -1,10 +1,11 @@
-import { Message as RawMessage, MessageEmbed } from 'discord.js';
+import { Message as RawMessage, Client } from 'https://deno.land/x/coward@v0.2.1/mod.ts';
 
-import { Message } from '../abst/message';
-import { DiscordId } from '../exp/discord-id';
+import { Message } from '../abst/message.ts';
+import { DiscordId } from '../exp/discord-id.ts';
+import { EmbedMessage } from '../exp/embed-message.ts';
 
 export class DiscordMessage implements Message {
-  constructor(private raw: RawMessage) {}
+  constructor(private raw: RawMessage, private client: Client) {}
 
   getAuthorId(): DiscordId {
     return this.raw.author.id as DiscordId;
@@ -19,21 +20,25 @@ export class DiscordMessage implements Message {
   }
 
   async withTyping(callee: () => Promise<boolean>): Promise<boolean> {
+    // `Trigger Typing Indicator` expires after 10 seconds
+    const triggerTimer = setInterval(() => {
+      this.client.postTypingIndicator(this.raw.channel.id);
+    }, 9000);
+
     let res;
     try {
-      this.raw.channel.startTyping();
       res = await callee();
     } finally {
-      this.raw.channel.stopTyping(true);
+      clearInterval(triggerTimer);
     }
     return res;
   }
 
   async reply(message: string): Promise<void> {
-    await this.raw.reply(message);
+    await this.raw.channel.send(`<@${this.raw.author.id}> ${message}`);
   }
 
-  async sendEmbed(embed: MessageEmbed): Promise<void> {
-    await this.raw.channel.send(embed);
+  async sendEmbed(embed: EmbedMessage): Promise<void> {
+    await this.client.postMessage(this.raw.channel.id, { embed: embed.raw() });
   }
 }

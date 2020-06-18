@@ -1,6 +1,6 @@
-import { analectaForTest } from '../skin/test-analecta';
-import { MockMessage } from '../skin/mock-message';
-import { flavor } from './flavor';
+import { analectaForTest } from '../skin/test-analecta.ts';
+import { MockMessage } from '../skin/mock-message.ts';
+import { flavor } from './flavor.ts';
 
 test('simple action', async (done) => {
   const analecta = await analectaForTest();

@@ -1,6 +1,4 @@
-import { MessageEmbed } from 'discord.js';
-
-import { DiscordId } from '../exp/discord-id';
+import { DiscordId } from '../exp/discord-id.ts';
 
 export type Message = {
   getAuthorId(): DiscordId;

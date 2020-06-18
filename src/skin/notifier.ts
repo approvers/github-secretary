@@ -1,13 +1,13 @@
-import fetch from 'node-fetch';
-import { MessageEmbed, User } from 'discord.js';
+import { User, DMChannel } from 'https://deno.land/x/coward@v0.2.1/mod.ts';
 
-import { GitHubUser, GitHubUsers } from '../exp/github-user';
-import { DiscordId } from '../exp/discord-id';
-import { NotificationId, GitHubNotifications } from '../exp/github-notification';
-import { Analecta } from '../exp/analecta';
-import { notify, Database as NotifyController } from '../op/subscribe/notify';
-import { Query } from '../op/subscribe/notify';
-import { UpdateHandler } from '../op/interfaces';
+import { GitHubUser, GitHubUsers } from '../exp/github-user.ts';
+import { DiscordId } from '../exp/discord-id.ts';
+import { NotificationId, GitHubNotifications } from '../exp/github-notification.ts';
+import { Analecta } from '../exp/analecta.ts';
+import { notify, Database as NotifyController } from '../op/subscribe/notify.ts';
+import { Query } from '../op/subscribe/notify.ts';
+import { UpdateHandler } from '../op/interfaces.ts';
+import { EmbedMessage } from '../exp/embed-message.ts';
 
 export type Database = {
   update: (id: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
@@ -23,8 +23,8 @@ const safeParseDecimal = (str: string): number => {
 
 const NOTIFY_INTERVAL = safeParseDecimal(process.env.NOTIFY_INTERVAL || '10000');
 
-export type UserDic = {
-  fetch: (userId: string) => Promise<User>;
+export type UserDMDic = {
+  fetch: (userId: User['id']) => Promise<DMChannel>;
 };
 
 export type Updater = {
@@ -52,7 +52,7 @@ const notificationQuery: Query = {
 export class SubscriptionNotifier implements UpdateHandler {
   private notifyTasks: (() => void)[] = [];
 
-  constructor(private analecta: Analecta, private users: UserDic, private updater: Updater) {}
+  constructor(private analecta: Analecta, private users: UserDMDic, private updater: Updater) {}
 
   async handleUpdate(users: Readonly<GitHubUsers>): Promise<void> {
     this.stop();
@@ -81,11 +81,10 @@ export class SubscriptionNotifier implements UpdateHandler {
     };
   };
 
-  private sendMessage(userId: string): (mes: MessageEmbed) => Promise<void> {
-    return async (mes: MessageEmbed): Promise<void> => {
-      const user = await this.users.fetch(userId);
-      const dm = await user.createDM();
-      await dm.send(mes);
+  private sendMessage(userId: string): (mes: EmbedMessage) => Promise<void> {
+    return async (mes: EmbedMessage): Promise<void> => {
+      const dm = await this.users.fetch(userId);
+      await dm.send((mes as unknown) as string);
     };
   }
 

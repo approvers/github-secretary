@@ -1,11 +1,10 @@
-import { MessageEmbed, EmbedFieldData } from 'discord.js';
-
-import { Analecta } from '../../exp/analecta';
-import { colorFromState } from '../../exp/state-color';
-import { replyFailure } from '../../abst/reply-failure';
-import { CommandProcessor, connectProcessors } from '../../abst/connector';
-import { omitBody } from '../../exp/omit';
-import { Message } from '../../abst/message';
+import { Analecta } from '../../exp/analecta.ts';
+import { colorFromState } from '../../exp/state-color.ts';
+import { replyFailure } from '../../abst/reply-failure.ts';
+import { CommandProcessor, connectProcessors } from '../../abst/connector.ts';
+import { omitBody } from '../../exp/omit.ts';
+import { Message } from '../../abst/message.ts';
+import { EmbedMessage, EmbedField } from '../../exp/embed-message.ts';
 
 export type Query = {
   fetchRepo: (
@@ -78,7 +77,7 @@ const externalPRList = (owner: string) => (repo: string) => (
     owner: { avatar_url, html_url: owner_url, login },
   } = await query.fetchRepo(owner, repo);
 
-  const fields: EmbedFieldData[] = (await query.fetchPullRequests(owner, repo)).map(
+  const fields: EmbedField[] = (await query.fetchPullRequests(owner, repo)).map(
     ({ html_url, title, number }) => ({
       name: `#${number}`,
       value: `[${title}](${html_url})`,
@@ -90,13 +89,13 @@ const externalPRList = (owner: string) => (repo: string) => (
   }
 
   await msg.sendEmbed(
-    new MessageEmbed()
-      .setColor(colorFromState('open'))
-      .setAuthor(login, avatar_url, owner_url)
-      .setURL(html_url)
-      .setTitle(repoName)
-      .setFooter(analecta.EnumPR)
-      .addFields(fields),
+    new EmbedMessage()
+      .color(colorFromState('open'))
+      .author({ name: login, icon_url: avatar_url, url: owner_url })
+      .url(html_url)
+      .title(repoName)
+      .footer({ text: analecta.EnumPR })
+      .fields(...fields),
   );
   return true;
 };
@@ -127,13 +126,13 @@ const externalPR = (owner: string) => (repo: string, dst: string) => (
   const color = colorFromState(state);
   const description = body ? omitBody(body) : '';
   await msg.sendEmbed(
-    new MessageEmbed()
-      .setColor(color)
-      .setAuthor(login, avatar_url)
-      .setURL(html_url)
-      .setDescription(description)
-      .setTitle(title)
-      .setFooter(analecta.BringPR),
+    new EmbedMessage()
+      .color(color)
+      .author({ name: login, icon_url: avatar_url })
+      .url(html_url)
+      .description(description)
+      .title(title)
+      .footer({ text: analecta.BringPR }),
   );
 
   return true;

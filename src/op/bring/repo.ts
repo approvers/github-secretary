@@ -1,9 +1,8 @@
-import { MessageEmbed } from 'discord.js';
-
-import { Analecta } from '../../exp/analecta';
-import { CommandProcessor, connectProcessors } from '../../abst/connector';
-import { replyFailure } from '../../abst/reply-failure';
-import { Message } from '../../abst/message';
+import { Analecta } from '../../exp/analecta.ts';
+import { CommandProcessor, connectProcessors } from '../../abst/connector.ts';
+import { replyFailure } from '../../abst/reply-failure.ts';
+import { Message } from '../../abst/message.ts';
+import { EmbedMessage } from '../../exp/embed-message.ts';
 
 export type Query = {
   fetchRepo: (
@@ -52,12 +51,12 @@ const externalRepo = (owner: string) => (repo: string) => (
   } = await query.fetchRepo(owner, repo);
 
   msg.sendEmbed(
-    new MessageEmbed()
-      .setAuthor(login, avatar_url, owner_url)
-      .setURL(html_url)
-      .setDescription(description || '')
-      .setTitle(name)
-      .setFooter(analecta.BringRepo),
+    new EmbedMessage()
+      .author({ name: login, icon_url: avatar_url, url: owner_url })
+      .url(html_url)
+      .description(description || '')
+      .title(name)
+      .footer({ text: analecta.BringRepo }),
   );
 
   return true;

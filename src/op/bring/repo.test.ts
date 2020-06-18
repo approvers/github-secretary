@@ -1,8 +1,7 @@
-import { MessageEmbed } from 'discord.js';
-
-import { MockMessage } from '../../skin/mock-message';
-import { analectaForTest } from '../../skin/test-analecta';
-import { bringRepo } from './repo';
+import { MockMessage } from '../../skin/mock-message.ts';
+import { analectaForTest } from '../../skin/test-analecta.ts';
+import { bringRepo } from './repo.ts';
+import { EmbedMessage } from '../../exp/embed-message.ts';
 
 test('get a repository', async (done) => {
   const analecta = await analectaForTest();
@@ -12,14 +11,18 @@ test('get a repository', async (done) => {
     expect('').toStrictEqual('`bringRepo` must not reply.');
     done();
   });
-  message.emitter.on('sendEmbed', (embed: MessageEmbed) => {
+  message.emitter.on('sendEmbed', (embed: EmbedMessage) => {
     expect(embed).toStrictEqual(
-      new MessageEmbed()
-        .setAuthor('Andy', 'https://github.com/andy.png', 'https://github.com/andy')
-        .setURL('https://github.com/andy/test-project')
-        .setDescription('')
-        .setTitle('test-project')
-        .setFooter(analecta.BringRepo),
+      new EmbedMessage()
+        .author({
+          name: 'Andy',
+          icon_url: 'https://github.com/andy.png',
+          url: 'https://github.com/andy',
+        })
+        .url('https://github.com/andy/test-project')
+        .description('')
+        .title('test-project')
+        .footer({ text: analecta.BringRepo }),
     );
     done();
   });

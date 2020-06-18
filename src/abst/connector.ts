@@ -1,5 +1,5 @@
-import { Analecta } from '../exp/analecta';
-import { Message } from './message';
+import { Analecta } from '../exp/analecta.ts';
+import { Message } from './message.ts';
 
 export type CommandProcessor = (analaecta: Analecta, msg: Message) => Promise<boolean>;
 

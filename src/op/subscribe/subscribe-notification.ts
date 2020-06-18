@@ -1,9 +1,9 @@
-import { Analecta } from '../../exp/analecta';
-import { CommandProcessor } from '../../abst/connector';
-import { GitHubUser } from '../../exp/github-user';
-import { DiscordId } from '../../exp/discord-id';
-import { fetchErrorHandler } from '../../skin/fetch-error-handler';
-import { Message } from '../../abst/message';
+import { Analecta } from '../../exp/analecta.ts';
+import { CommandProcessor } from '../../abst/connector.ts';
+import { GitHubUser } from '../../exp/github-user.ts';
+import { DiscordId } from '../../exp/discord-id.ts';
+import { fetchErrorHandler } from '../../skin/fetch-error-handler.ts';
+import { Message } from '../../abst/message.ts';
 
 export type UserDatabase = {
   register: (id: DiscordId, user: GitHubUser) => Promise<void>;

@@ -1,7 +1,7 @@
-import { unsubscribeNotification } from './unsubscribe-notification';
-import { MockMessage } from '../../skin/mock-message';
-import { analectaForTest } from '../../skin/test-analecta';
-import { DiscordId } from '../../exp/discord-id';
+import { unsubscribeNotification } from './unsubscribe-notification.ts';
+import { MockMessage } from '../../skin/mock-message.ts';
+import { analectaForTest } from '../../skin/test-analecta.ts';
+import { DiscordId } from '../../exp/discord-id.ts';
 
 test('subscribe a member', async (done) => {
   const analecta = await analectaForTest();

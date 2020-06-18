@@ -1,8 +1,6 @@
-import fetch from 'node-fetch';
-
-import { Query } from '../op/interfaces';
-import { GitHubUser } from '../exp/github-user';
-import { NotificationId } from '../exp/github-notification';
+import { Query } from '../op/interfaces.ts';
+import { GitHubUser } from '../exp/github-user.ts';
+import { NotificationId } from '../exp/github-notification.ts';
 
 export class GitHubApi implements Query {
   async fetchRepo(

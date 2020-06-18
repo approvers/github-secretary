@@ -1,13 +1,12 @@
-import { MessageEmbed } from 'discord.js';
-
-import { CommandProcessor } from '../../abst/connector';
-import { Analecta } from '../../exp/analecta';
-import { GitHubUser } from '../../exp/github-user';
-import { DiscordId } from '../../exp/discord-id';
-import { replyFailure } from '../../abst/reply-failure';
-import { fetchErrorHandler } from '../../skin/fetch-error-handler';
-import { Message } from '../../abst/message';
-import { includes, NotificationId } from '../../exp/github-notification';
+import { CommandProcessor } from '../../abst/connector.ts';
+import { Analecta } from '../../exp/analecta.ts';
+import { GitHubUser } from '../../exp/github-user.ts';
+import { DiscordId } from '../../exp/discord-id.ts';
+import { replyFailure } from '../../abst/reply-failure.ts';
+import { fetchErrorHandler } from '../../skin/fetch-error-handler.ts';
+import { Message } from '../../abst/message.ts';
+import { includes, NotificationId } from '../../exp/github-notification.ts';
+import { EmbedMessage } from '../../exp/embed-message.ts';
 
 export type UserDatabase = {
   fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined>;
@@ -48,7 +47,7 @@ export const markAsRead = (db: UserDatabase, query: Query): CommandProcessor => 
       }
 
       await msg.sendEmbed(
-        new MessageEmbed().setTitle(analecta.MarkAsRead).setURL(`https://github.com/notifications`),
+        new EmbedMessage().title(analecta.MarkAsRead).url(`https://github.com/notifications`),
       );
       return true;
     })

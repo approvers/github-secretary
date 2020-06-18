@@ -1,11 +1,10 @@
-import { MessageEmbed, EmbedFieldData } from 'discord.js';
-
-import { Analecta } from '../../exp/analecta';
-import { colorFromState } from '../../exp/state-color';
-import { replyFailure } from '../../abst/reply-failure';
-import { CommandProcessor, connectProcessors } from '../../abst/connector';
-import { omitBody } from '../../exp/omit';
-import { Message } from '../../abst/message';
+import { Analecta } from '../../exp/analecta.ts';
+import { colorFromState } from '../../exp/state-color.ts';
+import { replyFailure } from '../../abst/reply-failure.ts';
+import { CommandProcessor, connectProcessors } from '../../abst/connector.ts';
+import { omitBody } from '../../exp/omit.ts';
+import { Message } from '../../abst/message.ts';
+import { EmbedField, EmbedMessage } from '../../exp/embed-message.ts';
 
 export type Query = {
   fetchRepo: (
@@ -78,7 +77,7 @@ const externalIssueList = (owner: string) => (repo: string) => (
     owner: { avatar_url, html_url: owner_url, login },
   } = await query.fetchRepo(owner, repo);
 
-  const fields: EmbedFieldData[] = (await query.fetchIssues(owner, repo)).map(
+  const fields: EmbedField[] = (await query.fetchIssues(owner, repo)).map(
     ({ html_url, title, number }) => ({
       name: `#${number}`,
       value: `[${title}](${html_url})`,
@@ -90,13 +89,13 @@ const externalIssueList = (owner: string) => (repo: string) => (
   }
 
   msg.sendEmbed(
-    new MessageEmbed()
-      .setColor(colorFromState('open'))
-      .setAuthor(login, avatar_url, owner_url)
-      .setURL(html_url)
-      .setTitle(repoName)
-      .setFooter(analecta.EnumIssue)
-      .addFields(fields),
+    new EmbedMessage()
+      .color(colorFromState('open'))
+      .author({ name: login, icon_url: avatar_url, url: owner_url })
+      .url(html_url)
+      .title(repoName)
+      .footer({ text: analecta.EnumIssue })
+      .fields(...fields),
   );
   return true;
 };
@@ -122,13 +121,13 @@ const externalIssue = (owner: string) => (repo: string, dst: string) => (
   const description = body ? omitBody(body) : '';
 
   msg.sendEmbed(
-    new MessageEmbed()
-      .setColor(color)
-      .setAuthor(login, avatar_url)
-      .setURL(html_url)
-      .setDescription(description)
-      .setTitle(title)
-      .setFooter(analecta.BringIssue),
+    new EmbedMessage()
+      .color(color)
+      .author({ name: login, icon_url: avatar_url })
+      .url(html_url)
+      .description(description)
+      .title(title)
+      .footer({ text: analecta.BringIssue }),
   );
 
   return true;

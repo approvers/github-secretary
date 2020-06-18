@@ -1,11 +1,12 @@
-import { MessageEmbed } from 'discord.js';
-import { EventEmitter } from 'events';
+import { Evt } from 'https://deno.land/x/evt/mod.ts';
 
-import { Message } from '../abst/message';
-import { DiscordId } from '../exp/discord-id';
+import { Message } from '../abst/message.ts';
+import { DiscordId } from '../exp/discord-id.ts';
+import { EmbedMessage } from '../exp/embed-message.ts';
 
 export class MockMessage implements Message {
-  emitter = new EventEmitter();
+  replyEvent = new Evt<string>();
+  sendEmbedEvent = new Evt<EmbedMessage>();
 
   constructor(private content: string, private id: DiscordId = '' as DiscordId) {}
 
@@ -26,10 +27,10 @@ export class MockMessage implements Message {
   }
 
   async reply(message: string): Promise<void> {
-    this.emitter.emit('reply', message);
+    this.replyEvent.post(message);
   }
 
-  async sendEmbed(embed: MessageEmbed): Promise<void> {
-    this.emitter.emit('sendEmbed', embed);
+  async sendEmbed(embed: EmbedMessage): Promise<void> {
+    this.sendEmbedEvent.post(embed);
   }
 }

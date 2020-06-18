@@ -1,21 +1,16 @@
-import { promises } from 'fs';
-import MutexPromise from 'mutex-promise';
+import { readFileStr, ensureFile } from 'https://deno.land/std/fs/mod.ts';
+import { Mutex } from 'https://deno.land/x/mutex/mod.ts';
 
-import { GitHubUser, GitHubUsers, serialize, deserialize } from '../exp/github-user';
-import { DiscordId } from '../exp/discord-id';
-import { NotificationId } from '../exp/github-notification';
-import { SubscriptionDatabase, UserDatabase, UpdateHandler } from '../op/interfaces';
-
-const { open, mkdir } = promises;
+import { GitHubUser, GitHubUsers, serialize, deserialize } from '../exp/github-user.ts';
+import { DiscordId } from '../exp/discord-id.ts';
+import { NotificationId } from '../exp/github-notification.ts';
+import { SubscriptionDatabase, UserDatabase, UpdateHandler } from '../op/interfaces.ts';
 
 export class PlainDB implements SubscriptionDatabase, UserDatabase {
   private users: GitHubUsers = new Map();
-  private mutex: MutexPromise;
   private handlers: UpdateHandler[] = [];
 
-  private constructor(fileName: string, private handle: promises.FileHandle) {
-    this.mutex = new MutexPromise(`plain-db-${fileName}`);
-  }
+  private constructor(private fileName: string, private file: Deno.File) {}
 
   async fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined> {
     return this.users.get(discordId);
@@ -27,14 +22,19 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
   }
 
   static async make(fileName: string): Promise<PlainDB> {
-    const handle = await open(fileName, 'r+').catch(async () => {
-      await mkdir('.cache');
-      return await open(fileName, 'w+');
+    await ensureFile(fileName);
+    const handle = await Deno.open(fileName, {
+      read: true,
+      write: true,
+      create: true,
+      truncate: false,
+    }).catch(async () => {
+      await Deno.mkdir('.cache');
+      return await Deno.create(fileName);
     });
     const obj = new PlainDB(fileName, handle);
     try {
-      const buf = await handle.readFile();
-      const users = JSON.parse(buf.toString());
+      const users = await readFileStr(fileName);
       obj.users = deserialize(users);
     } catch (ignore) {
       obj.users = new Map();
@@ -67,10 +67,9 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
   }
 
   private async overwrite(): Promise<void> {
-    await this.mutex
-      .promise()
-      .then(() => this.handle.truncate(0))
-      .then(() => this.handle.write(serialize(this.users), 0));
+    await Mutex.doAtomic(`plain-db-${this.fileName}`, async () => {
+      await this.file.write(new TextEncoder().encode(serialize(this.users)));
+    });
 
     await Promise.all(this.handlers.map((handler) => handler.handleUpdate(this.users)));
   }

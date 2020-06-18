@@ -1,9 +1,8 @@
-import { MessageEmbed } from 'discord.js';
-
-import { Analecta } from '../../exp/analecta';
-import { GitHubUser } from '../../exp/github-user';
-import { NotificationId, GitHubNotifications } from '../../exp/github-notification';
-import { fetchErrorHandler } from '../../skin/fetch-error-handler';
+import { Analecta } from '../../exp/analecta.ts';
+import { GitHubUser } from '../../exp/github-user.ts';
+import { NotificationId, GitHubNotifications } from '../../exp/github-notification.ts';
+import { fetchErrorHandler } from '../../skin/fetch-error-handler.ts';
+import { EmbedMessage, EmbedField } from '../../exp/embed-message.ts';
 
 export type Database = {
   getUser(): Promise<GitHubUser>;
@@ -16,7 +15,7 @@ export type Query = {
 
 export const notify = async (
   analecta: Analecta,
-  send: (message: MessageEmbed) => Promise<void>,
+  send: (message: EmbedMessage) => Promise<void>,
   db: Database,
   query: Query,
 ): Promise<void> => {
@@ -35,15 +34,15 @@ export const notify = async (
     return;
   }
 
-  const subjects = res.map(({ id, subject: { title } }) => ({
+  const subjects: EmbedField[] = res.map(({ id, subject: { title } }) => ({
     name: `#${id}`,
     value: title,
   }));
 
   await send(
-    new MessageEmbed()
-      .addFields(subjects)
-      .setTitle(analecta.BringIssue)
-      .setURL(`https://github.com/notifications`),
+    new EmbedMessage()
+      .fields(...subjects)
+      .title(analecta.BringIssue)
+      .url(`https://github.com/notifications`),
   );
 };

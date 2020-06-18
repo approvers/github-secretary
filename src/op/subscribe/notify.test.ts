@@ -1,9 +1,8 @@
-import { MessageEmbed } from 'discord.js';
-
-import { notify } from './notify';
-import { analectaForTest } from '../../skin/test-analecta';
-import { GitHubUser } from 'src/exp/github-user';
-import { NotificationId, GitHubNotifications } from 'src/exp/github-notification';
+import { notify } from './notify.ts';
+import { analectaForTest } from '../../skin/test-analecta.ts';
+import { GitHubUser } from '../../exp/github-user.ts';
+import { NotificationId, GitHubNotifications } from '../../exp/github-notification.ts';
+import { EmbedMessage } from '../../exp/embed-message.ts';
 
 test('emit a notification', async (done) => {
   const analecta = await analectaForTest();
@@ -13,15 +12,13 @@ test('emit a notification', async (done) => {
       analecta,
       async (message) => {
         expect(message).toEqual(
-          new MessageEmbed()
-            .addFields([
-              {
-                name: '#0123456789',
-                value: 'An Issue',
-              },
-            ])
-            .setTitle(analecta.BringIssue)
-            .setURL(`https://github.com/notifications`),
+          new EmbedMessage()
+            .field({
+              name: '#0123456789',
+              value: 'An Issue',
+            })
+            .title(analecta.BringIssue)
+            .url(`https://github.com/notifications`),
         );
         done();
       },
