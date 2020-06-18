@@ -11,3 +11,12 @@ import { Query as MarkAsReadQuery } from './subscribe/mark-as-read';
 import { Query as SubQuery } from './subscribe/subscribe-notification';
 
 export type Query = IssueQuery & PRQuery & RepoQuery & MarkAsReadQuery & SubQuery;
+
+import { Database as Updater } from '../skin/notifier';
+import { GitHubUsers } from '../exp/github-user';
+
+export type UpdateHandler = { handleUpdate: (users: Readonly<GitHubUsers>) => Promise<void> };
+
+export type SubscriptionDatabase = Updater & {
+  onUpdate: (handler: UpdateHandler) => void;
+};
