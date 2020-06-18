@@ -1,12 +1,12 @@
-import { Message } from 'discord.js';
 import { Analecta } from '../exp/analecta';
 import { CommandProcessor } from '../abst/connector';
+import { Message } from '../abst/message';
 
 export const flavor = (callPattern: RegExp, blackPattern: RegExp): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  if (!callPattern.test(msg.content) || blackPattern.test(msg.content)) {
+  if (!msg.matchPlainText(callPattern) || msg.matchPlainText(blackPattern)) {
     return false;
   }
 

@@ -1,45 +1,37 @@
-import { Message } from 'discord.js';
-import fetch from 'node-fetch';
-
 import { Analecta } from '../../exp/analecta';
 import { CommandProcessor } from '../../abst/connector';
-import { DiscordId, GitHubUser } from '../../exp/github-user';
+import { GitHubUser } from '../../exp/github-user';
+import { DiscordId } from '../../exp/discord-id';
+import { fetchErrorHandler } from '../../skin/fetch-error-handler';
+import { Message } from '../../abst/message';
 
 export type UserDatabase = {
   register: (id: DiscordId, user: GitHubUser) => Promise<void>;
 };
 
+export type Query = {
+  getGitHubUser(userName: string, token: string): Promise<GitHubUser>;
+};
+
 const subscribePattern = /^\/ghs ([^/:?]+) ([^/:?]+)/;
 
-export const subscribeNotification = (db: UserDatabase): CommandProcessor => async (
+export const subscribeNotification = (db: UserDatabase, query: Query): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  if (!subscribePattern.test(msg.content)) {
-    return false;
-  }
-
-  const matches = msg.content.match(subscribePattern);
+  const matches = await msg.matchCommand(subscribePattern);
   if (matches == null || matches[1] == null || matches[2] == null) {
     return false;
   }
 
-  const res = await fetch(`https://api.github.com/notifications`, {
-    headers: {
-      Authorization: `Basic ` + Buffer.from(`${matches[1]}:${matches[2]}`).toString('base64'),
-    },
-  });
-  if (!res.ok) {
-    msg.reply(analecta.InvalidToken);
-    return true;
-  }
+  const user = await query.getGitHubUser(matches[1], matches[2]).catch(
+    fetchErrorHandler(async (mes) => {
+      await msg.sendEmbed(mes);
+    }),
+  );
 
-  await db.register(msg.author.id, {
-    userName: matches[1],
-    notificationToken: matches[2],
-    currentNotificationIds: [],
-  });
+  await db.register(msg.getAuthorId(), user);
 
-  msg.reply(analecta.Subscribe);
+  await msg.reply(analecta.Subscribe);
   return true;
 };

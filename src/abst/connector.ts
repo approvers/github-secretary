@@ -1,5 +1,5 @@
 import { Analecta } from '../exp/analecta';
-import { Message } from 'discord.js';
+import { Message } from './message';
 
 export type CommandProcessor = (analaecta: Analecta, msg: Message) => Promise<boolean>;
 

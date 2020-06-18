@@ -1,70 +1,60 @@
-import fetch from 'node-fetch';
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 
-import { CommandProcessor } from 'src/abst/connector';
-import { Analecta } from 'src/exp/analecta';
-import { GitHubUser, DiscordId } from 'src/exp/github-user';
-import { replyFailure } from '../reply-failure';
-import { fetchErrorHandler } from '../../exp/fetch-error-handler';
+import { CommandProcessor } from '../../abst/connector';
+import { Analecta } from '../../exp/analecta';
+import { GitHubUser } from '../../exp/github-user';
+import { DiscordId } from '../../exp/discord-id';
+import { replyFailure } from '../../abst/reply-failure';
+import { fetchErrorHandler } from '../../skin/fetch-error-handler';
+import { Message } from '../../abst/message';
+import { includes, NotificationId } from '../../exp/github-notification';
 
 export type UserDatabase = {
   fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined>;
 };
 
+export type Query = {
+  markAsRead(user: GitHubUser, notificationId: NotificationId): Promise<boolean>;
+};
+
 const markPattern = /^\/ghm ([0-9]+)$/;
 
-export const markAsRead = (db: UserDatabase): CommandProcessor => async (
+export const markAsRead = (db: UserDatabase, query: Query): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
-  const matches = markPattern.exec(msg.content);
+  const matches = await msg.matchCommand(markPattern);
   if (matches == null) {
     return false;
   }
-  const notificationIdToMarkAsRead = matches[1];
+  const notificationIdToMarkAsRead = matches[1] as NotificationId;
 
-  msg.channel.stopTyping(true);
-  await msg.channel.startTyping();
+  return msg
+    .withTyping(async () => {
+      const user = await db.fetchUser(msg.getAuthorId());
+      if (user == null) {
+        await msg.reply(analecta.NotSubscribed);
+        return true;
+      }
 
-  const user = await db.fetchUser(msg.author.id).catch(
-    fetchErrorHandler(async (embed) => {
-      msg.channel.stopTyping(true);
-      await msg.reply(embed);
-    }),
-  );
-  if (user == null) {
-    msg.channel.stopTyping(true);
-    await msg.reply(analecta.NotSubscribed);
-    return true;
-  }
-  const { userName, notificationToken, currentNotificationIds } = user;
-  if (!currentNotificationIds.includes(notificationIdToMarkAsRead)) {
-    msg.channel.stopTyping(true);
-    return replyFailure(analecta, msg);
-  }
+      const { currentNotificationIds } = user;
+      if (!includes(currentNotificationIds, notificationIdToMarkAsRead)) {
+        return replyFailure(analecta, msg);
+      }
 
-  const res = await fetch(
-    `https://api.github.com/notifications/threads/${notificationIdToMarkAsRead}`,
-    {
-      method: 'PATCH',
-      headers: {
-        Authorization:
-          `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
-      },
-    },
-  ).catch(
-    fetchErrorHandler(async (embed) => {
-      msg.channel.stopTyping(true);
-      await msg.reply(embed);
-    }),
-  );
-  msg.channel.stopTyping();
-  if (res.status !== 205) {
-    return replyFailure(analecta, msg);
-  }
+      const res = await query.markAsRead(user, notificationIdToMarkAsRead);
+      if (!res) {
+        return replyFailure(analecta, msg);
+      }
 
-  await msg.reply(
-    new MessageEmbed().setTitle(analecta.MarkAsRead).setURL(`https://github.com/notifications`),
-  );
-  return true;
+      await msg.sendEmbed(
+        new MessageEmbed().setTitle(analecta.MarkAsRead).setURL(`https://github.com/notifications`),
+      );
+      return true;
+    })
+    .catch(
+      fetchErrorHandler(async (embed) => {
+        await msg.sendEmbed(embed);
+      }),
+    );
 };

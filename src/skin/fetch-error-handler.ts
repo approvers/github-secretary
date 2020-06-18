@@ -1,4 +1,5 @@
 import { MessageEmbed } from 'discord.js';
+
 export const fetchErrorHandler = (send: (message: MessageEmbed) => Promise<void>) => (
   reason: unknown,
 ): never => {

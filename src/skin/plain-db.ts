@@ -1,19 +1,15 @@
 import { promises } from 'fs';
 import MutexPromise from 'mutex-promise';
 
-import {
-  GitHubUser,
-  DiscordId,
-  GitHubUsers,
-  NotificationId,
-  cloneGitHubUsers,
-} from '../exp/github-user';
-import { Database, UpdateHandler } from 'src/abst/subscription/database';
+import { GitHubUser, GitHubUsers, serialize, deserialize } from '../exp/github-user';
+import { DiscordId } from '../exp/discord-id';
+import { NotificationId } from '../exp/github-notification';
+import { SubscriptionDatabase, UserDatabase, UpdateHandler } from '../op/interfaces';
 
 const { open, mkdir } = promises;
 
-export class PlainDB implements Database {
-  private users: GitHubUsers = {};
+export class PlainDB implements SubscriptionDatabase, UserDatabase {
+  private users: GitHubUsers = new Map();
   private mutex: MutexPromise;
   private handlers: UpdateHandler[] = [];
 
@@ -21,8 +17,8 @@ export class PlainDB implements Database {
     this.mutex = new MutexPromise(`plain-db-${fileName}`);
   }
 
-  async fetchUser(discordId: string): Promise<GitHubUser | undefined> {
-    return this.users[discordId];
+  async fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined> {
+    return this.users.get(discordId);
   }
 
   onUpdate(handler: UpdateHandler): void {
@@ -38,33 +34,35 @@ export class PlainDB implements Database {
     const obj = new PlainDB(fileName, handle);
     try {
       const buf = await handle.readFile();
-      const previousUsers = JSON.parse(buf.toString());
-      obj.users = previousUsers.users;
+      const users = JSON.parse(buf.toString());
+      obj.users = deserialize(users);
     } catch (ignore) {
-      obj.users = {};
+      obj.users = new Map();
     }
     return obj;
   }
 
   async register(id: DiscordId, user: GitHubUser): Promise<void> {
-    this.users[id] = user;
+    this.users.set(id, user);
     await this.overwrite();
   }
 
   async unregister(id: DiscordId): Promise<boolean> {
-    if (this.users[id] == null) {
+    if (this.users.get(id) == null) {
       return false;
     }
-    delete this.users[id];
+    this.users.delete(id);
     await this.overwrite();
     return true;
   }
 
-  async update(id: string, notificationIds: NotificationId[]): Promise<void> {
-    if (this.users[id] == null) {
+  async update(id: DiscordId, notificationIds: NotificationId[]): Promise<void> {
+    const entry = this.users.get(id);
+    if (entry == null) {
       return;
     }
-    this.users[id].currentNotificationIds = notificationIds;
+    entry.currentNotificationIds = notificationIds;
+    this.users.set(id, entry);
     await this.overwrite();
   }
 
@@ -72,9 +70,8 @@ export class PlainDB implements Database {
     await this.mutex
       .promise()
       .then(() => this.handle.truncate(0))
-      .then(() => this.handle.write(JSON.stringify({ users: this.users }), 0));
+      .then(() => this.handle.write(serialize(this.users), 0));
 
-    const newUsers = cloneGitHubUsers(this.users);
-    await Promise.all(this.handlers.map((handler) => handler.handleUpdate(newUsers)));
+    await Promise.all(this.handlers.map((handler) => handler.handleUpdate(this.users)));
   }
 }

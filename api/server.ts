@@ -4,11 +4,12 @@ import { Client, Message } from 'discord.js';
 import { TomlLoader } from '../src/skin/toml-loader';
 import { PlainDB } from '../src/skin/plain-db';
 
-import { procs } from '../src/abst/procs';
-import { SubscriptionNotifier } from '../src/abst/subscription/notifier';
-import { Analecta } from 'src/exp/analecta';
-import { CommandProcessor } from 'src/abst/connector';
+import { procs } from '../src/skin/procs';
+import { SubscriptionNotifier } from '../src/skin/notifier';
+import { Analecta } from '../src/exp/analecta';
+import { CommandProcessor } from '../src/abst/connector';
 import { GitHubApi } from '../src/skin/github-api';
+import { DiscordMessage } from '../src/skin/discord-message';
 
 dotenv.config();
 
@@ -23,7 +24,8 @@ const messageHandler = (analecta: Analecta, builtProcs: CommandProcessor) => asy
     dm.send(analecta.HelpMessage);
     return;
   }
-  await builtProcs(analecta, msg);
+  const discordMessage = new DiscordMessage(msg);
+  await builtProcs(analecta, discordMessage);
 };
 
 (async () => {
