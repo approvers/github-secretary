@@ -1,6 +1,9 @@
 import { subscribeNotification } from './subscribe-notification';
 import { MockMessage } from '../../skin/mock-message';
 import { analectaForTest } from '../../skin/test-analecta';
+import { NotificationId } from 'src/exp/github-notification';
+import { GitHubUser } from 'src/exp/github-user';
+import { DiscordId } from 'src/exp/discord-id';
 
 test('subscribe a member', async (done) => {
   const analecta = await analectaForTest();
@@ -18,10 +21,15 @@ test('subscribe a member', async (done) => {
       },
     },
     {
-      checkNotificationToken: async () => true,
+      getGitHubUser: async () =>
+        ({
+          userName: 'Alice',
+          notificationToken: 'TEST_TOKEN',
+          currentNotificationIds: [] as NotificationId[],
+        } as GitHubUser),
     },
   );
 
-  const message = new MockMessage('/ghs Alice TEST_TOKEN', 'alice_discord');
+  const message = new MockMessage('/ghs Alice TEST_TOKEN', 'alice_discord' as DiscordId);
   expect(proc(analecta, message)).resolves.toEqual(true);
 });
