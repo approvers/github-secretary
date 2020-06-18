@@ -1,13 +1,13 @@
 import fetch from 'node-fetch';
 import { MessageEmbed, User } from 'discord.js';
 
-import { GitHubUser, GitHubUsers } from '../../exp/github-user';
-import { DiscordId } from '../../exp/discord-id';
-import { NotificationId } from '../../exp/notifications';
-import { Analecta } from '../../exp/analecta';
-import { notify, Database as NotifyController } from '../../op/subscribe/notify';
-import { Query } from '../../op/subscribe/notify';
-import { UpdateHandler } from './database';
+import { GitHubUser, GitHubUsers } from '../exp/github-user';
+import { DiscordId } from '../exp/discord-id';
+import { NotificationId } from '../exp/notifications';
+import { Analecta } from '../exp/analecta';
+import { notify, Database as NotifyController } from '../op/subscribe/notify';
+import { Query } from '../op/subscribe/notify';
+import { UpdateHandler } from '../op/interfaces';
 
 export type Database = {
   update: (id: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
