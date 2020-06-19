@@ -1,6 +1,11 @@
+import { fromUint8Array } from 'https://denopkg.com/chiefbiiko/base64/mod.ts';
+
 import { Query } from '../op/interfaces.ts';
 import { GitHubUser } from '../exp/github-user.ts';
 import { NotificationId } from '../exp/github-notification.ts';
+
+const basicAuth = (userName: string, token: string): string =>
+  `Basic ` + fromUint8Array(new TextEncoder().encode(`${userName}:${token}`));
 
 export class GitHubApi implements Query {
   async fetchRepo(
@@ -87,8 +92,7 @@ export class GitHubApi implements Query {
     const res = await fetch(`https://api.github.com/notifications/threads/${notificationId}`, {
       method: 'PATCH',
       headers: {
-        Authorization:
-          `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
+        Authorization: basicAuth(userName, notificationToken),
       },
     });
     if (res.status !== 205) {
@@ -100,7 +104,7 @@ export class GitHubApi implements Query {
   async getGitHubUser(userName: string, token: string): Promise<GitHubUser> {
     const res = await fetch(`https://api.github.com/notifications`, {
       headers: {
-        Authorization: `Basic ` + Buffer.from(`${userName}:${token}`).toString('base64'),
+        Authorization: basicAuth(userName, token),
       },
     });
     if (!res.ok) {

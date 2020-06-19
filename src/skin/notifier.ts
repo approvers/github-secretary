@@ -1,4 +1,5 @@
 import { User, DMChannel } from 'https://deno.land/x/coward@v0.2.1/mod.ts';
+import { fromUint8Array } from 'https://denopkg.com/chiefbiiko/base64/mod.ts';
 
 import { GitHubUser, GitHubUsers } from '../exp/github-user.ts';
 import { DiscordId } from '../exp/discord-id.ts';
@@ -39,7 +40,7 @@ const notificationQuery: Query = {
     const rawRes = await fetch(`https://api.github.com/notifications`, {
       headers: {
         Authorization:
-          `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
+          `Basic ` + fromUint8Array(new TextEncoder().encode(`${userName}:${notificationToken}`)),
       },
     });
     if (!rawRes.ok) {
