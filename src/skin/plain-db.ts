@@ -69,6 +69,7 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
 
   private async overwrite(): Promise<void> {
     await Mutex.doAtomic(`plain-db-${this.fileName}`, async () => {
+      await Deno.truncate(this.fileName, 0);
       await this.file.write(new TextEncoder().encode(serialize(this.users)));
     });
 
