@@ -1,5 +1,5 @@
 import { config } from 'https://deno.land/x/dotenv/mod.ts';
-import { Client, Message, User } from 'https://deno.land/x/coward@v0.2.1/mod.ts';
+import { Client, Message, DMChannel } from 'https://deno.land/x/coward@v0.2.1/mod.ts';
 
 import { TomlLoader } from './src/skin/toml-loader.ts';
 import { PlainDB } from './src/skin/plain-db.ts';
@@ -34,12 +34,12 @@ const analecta = await loader.load();
 const notifier = new SubscriptionNotifier(
   analecta,
   {
-    fetch: async (userId: string): Promise<User> => {
+    fetch: async (userId: string): Promise<DMChannel> => {
       const user = client.users.get(userId);
       if (user == null) {
         throw 'user not found';
       }
-      return user;
+      return client.getDMChannel(user.id);
     },
   },
   db,
