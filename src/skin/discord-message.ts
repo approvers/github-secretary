@@ -29,13 +29,11 @@ export class DiscordMessage implements Message {
       this.client.postTypingIndicator(this.raw.channel.id);
     }, 9000);
 
-    let res;
     try {
-      res = await callee();
+      return await callee();
     } finally {
       clearInterval(triggerTimer);
     }
-    return res;
   }
 
   async reply(message: string): Promise<void> {
