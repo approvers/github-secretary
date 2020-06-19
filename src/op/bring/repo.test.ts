@@ -1,18 +1,20 @@
+import { assert, assertEquals } from 'https://deno.land/std/testing/asserts.ts';
+
 import { MockMessage } from '../../skin/mock-message.ts';
 import { analectaForTest } from '../../skin/test-analecta.ts';
 import { bringRepo } from './repo.ts';
 import { EmbedMessage } from '../../exp/embed-message.ts';
 
-test('get a repository', async (done) => {
-  const analecta = await analectaForTest();
+Deno.test('get a repository', async () => {
+  const analecta = analectaForTest;
 
   const message = new MockMessage('/ghr andy/test-project');
-  message.emitter.on('reply', () => {
-    expect('').toStrictEqual('`bringRepo` must not reply.');
-    done();
+  message.replyEvent.attach(() => {
+    assert(false, '`bringRepo` must not reply.');
   });
-  message.emitter.on('sendEmbed', (embed: EmbedMessage) => {
-    expect(embed).toStrictEqual(
+  message.sendEmbedEvent.attach((embed: EmbedMessage) => {
+    assertEquals(
+      embed,
       new EmbedMessage()
         .author({
           name: 'Andy',
@@ -24,11 +26,10 @@ test('get a repository', async (done) => {
         .title('test-project')
         .footer({ text: analecta.BringRepo }),
     );
-    done();
   });
 
-  expect(
-    bringRepo({
+  assertEquals(
+    await bringRepo({
       fetchRepo: async () => ({
         name: 'test-project',
         html_url: 'https://github.com/andy/test-project',
@@ -39,5 +40,6 @@ test('get a repository', async (done) => {
         },
       }),
     })(analecta, message),
-  ).resolves.toEqual(true);
+    true,
+  );
 });

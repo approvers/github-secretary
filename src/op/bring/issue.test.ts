@@ -1,19 +1,21 @@
+import { assert, assertEquals } from 'https://deno.land/std/testing/asserts.ts';
+
 import { bringIssue } from './issue.ts';
 import { analectaForTest } from '../../skin/test-analecta.ts';
 import { MockMessage } from '../../skin/mock-message.ts';
 import { colorFromState } from '../../exp/state-color.ts';
 import { EmbedMessage } from '../../exp/embed-message.ts';
 
-test('get issues list', async (done) => {
-  const analecta = await analectaForTest();
+Deno.test('get issues list', async () => {
+  const analecta = analectaForTest;
 
   const message = new MockMessage('/ghi andy/test-project');
-  message.emitter.on('reply', () => {
-    expect('').toStrictEqual('`bringIssue` must not reply.');
-    done();
+  message.replyEvent.attach(() => {
+    assert(false, '`bringIssue` must not reply.');
   });
-  message.emitter.on('sendEmbed', (embed: EmbedMessage) => {
-    expect(embed).toStrictEqual(
+  message.sendEmbedEvent.attach((embed: EmbedMessage) => {
+    assertEquals(
+      embed,
       new EmbedMessage()
         .color(colorFromState('open'))
         .author({
@@ -29,11 +31,10 @@ test('get issues list', async (done) => {
           value: '[I have an issue](https://github.com/test-peoject/issues/1)',
         }),
     );
-    done();
   });
 
-  expect(
-    bringIssue({
+  assertEquals(
+    await bringIssue({
       fetchRepo: async () => ({
         name: 'test-project',
         html_url: 'https://github.com/andy/test-project',
@@ -57,19 +58,20 @@ test('get issues list', async (done) => {
         },
       ],
     })(analecta, message),
-  ).resolves.toEqual(true);
+    true,
+  );
 });
 
-test('get an issue', async (done) => {
-  const analecta = await analectaForTest();
+Deno.test('get an issue', async () => {
+  const analecta = analectaForTest;
 
   const message = new MockMessage('/ghi andy/test-project/1');
-  message.emitter.on('reply', () => {
-    expect('').toStrictEqual('`bringIssue` must not reply.');
-    done();
+  message.replyEvent.attach(() => {
+    assertEquals('', '`bringIssue` must not reply.');
   });
-  message.emitter.on('sendEmbed', (embed: EmbedMessage) => {
-    expect(embed).toStrictEqual(
+  message.sendEmbedEvent.attach((embed: EmbedMessage) => {
+    assertEquals(
+      embed,
       new EmbedMessage()
         .color(colorFromState('open'))
         .author({ name: 'Bob', icon_url: 'https://github.com/bob.png' })
@@ -78,11 +80,10 @@ test('get an issue', async (done) => {
         .title('I have an issue')
         .footer({ text: analecta.BringIssue }),
     );
-    done();
   });
 
-  expect(
-    bringIssue({
+  assertEquals(
+    await bringIssue({
       fetchRepo: async () => ({
         name: 'test-project',
         html_url: 'https://github.com/andy/test-project',
@@ -106,5 +107,6 @@ test('get an issue', async (done) => {
         },
       ],
     })(analecta, message),
-  ).resolves.toEqual(true);
+    true,
+  );
 });

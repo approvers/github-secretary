@@ -1,17 +1,20 @@
+import { assertEquals } from 'https://deno.land/std/testing/asserts.ts';
+
 import { notify } from './notify.ts';
 import { analectaForTest } from '../../skin/test-analecta.ts';
 import { GitHubUser } from '../../exp/github-user.ts';
 import { NotificationId, GitHubNotifications } from '../../exp/github-notification.ts';
 import { EmbedMessage } from '../../exp/embed-message.ts';
 
-test('emit a notification', async (done) => {
-  const analecta = await analectaForTest();
+Deno.test('emit a notification', async () => {
+  const analecta = analectaForTest;
 
-  expect(
-    notify(
+  assertEquals(
+    await notify(
       analecta,
       async (message) => {
-        expect(message).toEqual(
+        assertEquals(
+          message,
           new EmbedMessage()
             .field({
               name: '#0123456789',
@@ -20,7 +23,6 @@ test('emit a notification', async (done) => {
             .title(analecta.BringIssue)
             .url(`https://github.com/notifications`),
         );
-        done();
       },
       {
         getUser: async () =>
@@ -30,7 +32,7 @@ test('emit a notification', async (done) => {
             currentNotificationIds: [] as NotificationId[],
           } as GitHubUser),
         update: async (ids) => {
-          expect(ids).toEqual(['0123456789']);
+          assertEquals(ids, ['0123456789']);
         },
       },
       {
@@ -45,5 +47,6 @@ test('emit a notification', async (done) => {
           ] as GitHubNotifications,
       },
     ),
-  ).resolves.toEqual(undefined);
+    undefined,
+  );
 });
