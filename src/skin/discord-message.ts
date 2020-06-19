@@ -1,6 +1,7 @@
 import {
   Message as RawMessage,
   Client,
+  DMChannel,
 } from "https://deno.land/x/coward@v0.2.1/mod.ts";
 
 import { Message } from "../abst/message.ts";
@@ -38,6 +39,10 @@ export class DiscordMessage implements Message {
   }
 
   async reply(message: string): Promise<void> {
+    if (this.raw.channel instanceof DMChannel) {
+      this.raw.channel.send(message);
+      return;
+    }
     await this.raw.channel.send(`<@${this.raw.author.id}> ${message}`);
   }
 
