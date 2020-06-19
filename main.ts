@@ -21,7 +21,7 @@ const messageHandler = (analecta: Analecta, builtProcs: CommandProcessor) => asy
     dm.send(analecta.HelpMessage);
     return;
   }
-  const discordMessage = new DiscordMessage(msg);
+  const discordMessage = new DiscordMessage(msg, client);
   await builtProcs(analecta, discordMessage);
 };
 
