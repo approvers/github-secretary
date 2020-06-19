@@ -4,16 +4,18 @@ on:
   - push
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        deno-version: [1.0.0, 1.0.1, 1.0.2]
+
     steps:
-      - uses: actions/checkout@v1
-      - name: Setup Node.js
-        uses: actions/setup-node@v2-beta
+      - uses: actions/checkout@v2
+      - name: Use Deno v${{ matrix.deno-version }}
+        uses: denolib/setup-deno@master
         with:
-          node-version: "12"
-      - name: Install dependencies
-        run: yarn install --frozen
-      - name: Run lint
-        run: yarn lint
+          deno-version: ${{ matrix.deno-version }}
+      - name: Lint
+        run: deno fmt --check
