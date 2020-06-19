@@ -1,8 +1,11 @@
-import { Message as RawMessage, Client } from 'https://deno.land/x/coward@v0.2.1/mod.ts';
+import {
+  Message as RawMessage,
+  Client,
+} from "https://deno.land/x/coward@v0.2.1/mod.ts";
 
-import { Message } from '../abst/message.ts';
-import { DiscordId } from '../exp/discord-id.ts';
-import { EmbedMessage } from '../exp/embed-message.ts';
+import { Message } from "../abst/message.ts";
+import { DiscordId } from "../exp/discord-id.ts";
+import { EmbedMessage } from "../exp/embed-message.ts";
 
 export class DiscordMessage implements Message {
   constructor(private raw: RawMessage, private client: Client) {}
@@ -16,7 +19,7 @@ export class DiscordMessage implements Message {
   }
 
   async matchCommand(regex: RegExp): Promise<RegExpMatchArray | null> {
-    return regex.exec(this.raw.content.split('\n')[0]);
+    return regex.exec(this.raw.content.split("\n")[0]);
   }
 
   async withTyping(callee: () => Promise<boolean>): Promise<boolean> {

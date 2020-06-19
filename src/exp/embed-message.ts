@@ -44,7 +44,7 @@ export type EmbedField = {
 
 export type EmbedObject = {
   title?: string;
-  type?: 'rich' | 'image' | 'video' | 'gifv' | 'article' | 'link';
+  type?: "rich" | "image" | "video" | "gifv" | "article" | "link";
   description?: string;
   url?: string;
   timestamp?: Date;
@@ -93,7 +93,9 @@ export class EmbedMessage {
   }
 
   field(field: EmbedField): EmbedMessage {
-    return new EmbedMessage({ ...this.obj, fields: [...(this.obj.fields || []), field] });
+    return new EmbedMessage(
+      { ...this.obj, fields: [...(this.obj.fields || []), field] },
+    );
   }
 
   fields(...fields: EmbedField[]): EmbedMessage {

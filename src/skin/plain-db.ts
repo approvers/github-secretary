@@ -1,11 +1,20 @@
-import { readFileStr } from 'https://deno.land/std/fs/read_file_str.ts';
-import { ensureFile } from 'https://deno.land/std/fs/ensure_file.ts';
-import { Mutex } from 'https://deno.land/x/mutex/mod.ts';
+import { readFileStr } from "https://deno.land/std/fs/read_file_str.ts";
+import { ensureFile } from "https://deno.land/std/fs/ensure_file.ts";
+import { Mutex } from "https://deno.land/x/mutex/mod.ts";
 
-import { GitHubUser, GitHubUsers, serialize, deserialize } from '../exp/github-user.ts';
-import { DiscordId } from '../exp/discord-id.ts';
-import { NotificationId } from '../exp/github-notification.ts';
-import { SubscriptionDatabase, UserDatabase, UpdateHandler } from '../op/interfaces.ts';
+import {
+  GitHubUser,
+  GitHubUsers,
+  serialize,
+  deserialize,
+} from "../exp/github-user.ts";
+import { DiscordId } from "../exp/discord-id.ts";
+import { NotificationId } from "../exp/github-notification.ts";
+import {
+  SubscriptionDatabase,
+  UserDatabase,
+  UpdateHandler,
+} from "../op/interfaces.ts";
 
 export class PlainDB implements SubscriptionDatabase, UserDatabase {
   private users: GitHubUsers = new Map();
@@ -30,7 +39,7 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
       create: true,
       truncate: false,
     }).catch(async () => {
-      await Deno.mkdir('.cache');
+      await Deno.mkdir(".cache");
       return await Deno.create(fileName);
     });
     const obj = new PlainDB(fileName, handle);
@@ -57,7 +66,10 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
     return true;
   }
 
-  async update(id: DiscordId, notificationIds: NotificationId[]): Promise<void> {
+  async update(
+    id: DiscordId,
+    notificationIds: NotificationId[],
+  ): Promise<void> {
     const entry = this.users.get(id);
     if (entry == null) {
       return;
@@ -74,6 +86,8 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
       await this.file.write(new TextEncoder().encode(serialize(this.users)));
     });
 
-    await Promise.all(this.handlers.map((handler) => handler.handleUpdate(this.users)));
+    await Promise.all(
+      this.handlers.map((handler) => handler.handleUpdate(this.users)),
+    );
   }
 }

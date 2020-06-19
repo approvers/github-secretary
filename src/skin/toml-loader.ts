@@ -1,8 +1,8 @@
-import { parse } from 'https://raw.githubusercontent.com/fox-land/deno-toml/master/mod.ts';
-import { readFileStr } from 'https://deno.land/std/fs/read_file_str.ts';
+import { parse } from "https://raw.githubusercontent.com/fox-land/deno-toml/master/mod.ts";
+import { readFileStr } from "https://deno.land/std/fs/read_file_str.ts";
 
-import { SayingLoader } from '../abst/saying-loader.ts';
-import { Analecta, validateAnalecta } from '../exp/analecta.ts';
+import { SayingLoader } from "../abst/saying-loader.ts";
+import { Analecta, validateAnalecta } from "../exp/analecta.ts";
 
 export class TomlLoader implements SayingLoader {
   constructor(private filename: string) {}
@@ -13,7 +13,7 @@ export class TomlLoader implements SayingLoader {
     const analecta = parse(str);
     if (!validateAnalecta(analecta)) {
       console.log({ analecta });
-      throw 'invalid toml';
+      throw "invalid toml";
     }
     return analecta;
   }

@@ -1,12 +1,20 @@
-import { Analecta } from '../exp/analecta.ts';
-import { Message } from './message.ts';
+import { Analecta } from "../exp/analecta.ts";
+import { Message } from "./message.ts";
 
-export type CommandProcessor = (analaecta: Analecta, msg: Message) => Promise<boolean>;
-
-const connectBin = (l: CommandProcessor, r: CommandProcessor): CommandProcessor => async (
+export type CommandProcessor = (
   analaecta: Analecta,
   msg: Message,
-): Promise<boolean> => (await l(analaecta, msg)) || (await r(analaecta, msg));
+) => Promise<boolean>;
 
-export const connectProcessors = (procs: CommandProcessor[]): CommandProcessor =>
-  procs.reduce(connectBin, async () => false);
+const connectBin = (
+  l: CommandProcessor,
+  r: CommandProcessor,
+): CommandProcessor =>
+  async (
+    analaecta: Analecta,
+    msg: Message,
+  ): Promise<boolean> => (await l(analaecta, msg)) || (await r(analaecta, msg));
+
+export const connectProcessors = (
+  procs: CommandProcessor[],
+): CommandProcessor => procs.reduce(connectBin, async () => false);

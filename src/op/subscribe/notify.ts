@@ -1,8 +1,11 @@
-import { Analecta } from '../../exp/analecta.ts';
-import { GitHubUser } from '../../exp/github-user.ts';
-import { NotificationId, GitHubNotifications } from '../../exp/github-notification.ts';
-import { fetchErrorHandler } from '../../skin/fetch-error-handler.ts';
-import { EmbedMessage, EmbedField } from '../../exp/embed-message.ts';
+import { Analecta } from "../../exp/analecta.ts";
+import { GitHubUser } from "../../exp/github-user.ts";
+import {
+  NotificationId,
+  GitHubNotifications,
+} from "../../exp/github-notification.ts";
+import { fetchErrorHandler } from "../../skin/fetch-error-handler.ts";
+import { EmbedMessage, EmbedField } from "../../exp/embed-message.ts";
 
 export type Database = {
   getUser(): Promise<GitHubUser>;
@@ -22,7 +25,9 @@ export const notify = async (
   const user = await db.getUser();
   const { currentNotificationIds } = user;
 
-  const res = await query.fetchNotification(user).catch(fetchErrorHandler(send));
+  const res = await query.fetchNotification(user).catch(
+    fetchErrorHandler(send),
+  );
   const newIds = res.map(({ id }) => id);
   const newIdSet = new Set([...newIds]);
   for (const oldE of currentNotificationIds) {

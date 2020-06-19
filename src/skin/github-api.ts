@@ -1,8 +1,8 @@
-import { fromUint8Array } from 'https://denopkg.com/chiefbiiko/base64/mod.ts';
+import { fromUint8Array } from "https://denopkg.com/chiefbiiko/base64/mod.ts";
 
-import { Query } from '../op/interfaces.ts';
-import { GitHubUser } from '../exp/github-user.ts';
-import { NotificationId } from '../exp/github-notification.ts';
+import { Query } from "../op/interfaces.ts";
+import { GitHubUser } from "../exp/github-user.ts";
+import { NotificationId } from "../exp/github-notification.ts";
 
 const basicAuth = (userName: string, token: string): string =>
   `Basic ` + fromUint8Array(new TextEncoder().encode(`${userName}:${token}`));
@@ -19,8 +19,8 @@ export class GitHubApi implements Query {
   }> {
     const repoInfoApiUrl = `https://api.github.com/repos/${owner}/${repoName}`;
     const infoRes = await (await fetch(repoInfoApiUrl)).json();
-    if (infoRes.message === 'Not Found') {
-      throw new Error('not found the repositpory');
+    if (infoRes.message === "Not Found") {
+      throw new Error("not found the repositpory");
     }
     return infoRes;
   }
@@ -31,8 +31,8 @@ export class GitHubApi implements Query {
   ): Promise<{ html_url: string; title: string; number: string }[]> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/issues`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
-      throw new Error('not found the repositpory');
+    if (res.message === "Not Found") {
+      throw new Error("not found the repositpory");
     }
     return res;
   }
@@ -48,10 +48,11 @@ export class GitHubApi implements Query {
     html_url: string;
     user: { avatar_url: string; login: string };
   }> {
-    const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/issues/${dst}`;
+    const apiUrl =
+      `https://api.github.com/repos/${owner}/${repoName}/issues/${dst}`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
-      throw new Error('not found the issue');
+    if (res.message === "Not Found") {
+      throw new Error("not found the issue");
     }
     return res;
   }
@@ -62,8 +63,8 @@ export class GitHubApi implements Query {
   ): Promise<{ html_url: string; title: string; number: string }[]> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
-      throw new Error('not found the repositpory');
+    if (res.message === "Not Found") {
+      throw new Error("not found the repositpory");
     }
     return res;
   }
@@ -79,22 +80,26 @@ export class GitHubApi implements Query {
     html_url: string;
     user: { avatar_url: string; login: string };
   }> {
-    const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls/${dst}`;
+    const apiUrl =
+      `https://api.github.com/repos/${owner}/${repoName}/pulls/${dst}`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
-      throw new Error('not found the pull request');
+    if (res.message === "Not Found") {
+      throw new Error("not found the pull request");
     }
     return res;
   }
 
   async markAsRead(user: GitHubUser, notificationId: string): Promise<boolean> {
     const { userName, notificationToken } = user;
-    const res = await fetch(`https://api.github.com/notifications/threads/${notificationId}`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: basicAuth(userName, notificationToken),
+    const res = await fetch(
+      `https://api.github.com/notifications/threads/${notificationId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: basicAuth(userName, notificationToken),
+        },
       },
-    });
+    );
     if (res.status !== 205) {
       return false;
     }
@@ -108,7 +113,7 @@ export class GitHubApi implements Query {
       },
     });
     if (!res.ok) {
-      throw new Error('invalid token');
+      throw new Error("invalid token");
     }
     return {
       userName,
