@@ -60,14 +60,7 @@ export type EmbedObject = {
 
 export class EmbedMessage {
   constructor(private obj: EmbedObject = {}) {}
-  /*
-  setColor(colorFromState('open'))
-        .setAuthor('Andy', 'https://github.com/andy.png', 'https://github.com/andy')
-        .setURL('https://github.com/andy/test-project')
-        .setTitle('test-project')
-        .setFooter(analecta.EnumIssue)
-        .addFields 
-        */
+
   color(color: number): EmbedMessage {
     return new EmbedMessage({ ...this.obj, color });
   }
