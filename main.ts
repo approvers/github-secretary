@@ -27,8 +27,8 @@ const messageHandler = (analecta: Analecta, builtProcs: CommandProcessor) => asy
 
 const client = new Client(config().DISCORD_TOKEN || 'no token');
 
-const loader = new TomlLoader(process.env.TOML_PATH || './example/laffey.toml');
-const db = await PlainDB.make(process.env.DB_CACHE_PATH || './.cache/users.json');
+const loader = new TomlLoader(config().TOML_PATH || './example/laffey.toml');
+const db = await PlainDB.make(config().DB_CACHE_PATH || './.cache/users.json');
 const analecta = await loader.load();
 
 const notifier = new SubscriptionNotifier(

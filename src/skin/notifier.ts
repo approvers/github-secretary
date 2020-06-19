@@ -1,3 +1,4 @@
+import { config } from 'https://deno.land/x/dotenv/mod.ts';
 import { User, DMChannel } from 'https://deno.land/x/coward@v0.2.1/mod.ts';
 import { fromUint8Array } from 'https://denopkg.com/chiefbiiko/base64/mod.ts';
 
@@ -22,7 +23,7 @@ const safeParseDecimal = (str: string): number => {
   return val;
 };
 
-const NOTIFY_INTERVAL = safeParseDecimal(process.env.NOTIFY_INTERVAL || '10000');
+const NOTIFY_INTERVAL = safeParseDecimal(config().NOTIFY_INTERVAL || '10000');
 
 export type UserDMDic = {
   fetch: (userId: User['id']) => Promise<DMChannel>;
