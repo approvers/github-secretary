@@ -34,13 +34,7 @@ const analecta = await loader.load();
 const notifier = new SubscriptionNotifier(
   analecta,
   {
-    fetch: async (userId: string): Promise<DMChannel> => {
-      const user = client.users.get(userId);
-      if (user == null) {
-        throw 'user not found';
-      }
-      return client.getDMChannel(user.id);
-    },
+    fetch: (userId: string): Promise<DMChannel> => client.getDMChannel(userId),
   },
   db,
 );
