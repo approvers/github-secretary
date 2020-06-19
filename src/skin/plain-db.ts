@@ -1,4 +1,5 @@
-import { readFileStr, ensureFile } from 'https://deno.land/std/fs/mod.ts';
+import { readFileStr } from 'https://deno.land/std/fs/read_file_str.ts';
+import { ensureFile } from 'https://deno.land/std/fs/ensure_file.ts';
 import { Mutex } from 'https://deno.land/x/mutex/mod.ts';
 
 import { GitHubUser, GitHubUsers, serialize, deserialize } from '../exp/github-user.ts';
