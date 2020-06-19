@@ -30,7 +30,7 @@ const messageHandler = (analecta: Analecta, builtProcs: CommandProcessor) =>
     await builtProcs(analecta, discordMessage);
   };
 
-const cfg = {...config(), ...Deno.env.toObject()};
+const cfg = { ...config(), ...Deno.env.toObject() };
 
 const client = new Client(cfg.DISCORD_TOKEN || "no token");
 
