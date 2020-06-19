@@ -52,7 +52,7 @@ client.evt.ready.attach(() => {
   console.log("I got ready.");
 });
 
-client.evt.messageCreate.attach(async ({ message }) => {
+client.evt.messageCreate.attach(async ({message}: {message: Message}) => {
   messageHandler(analecta, builtProcs)(message);
 });
 
