@@ -37,10 +37,6 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
       read: true,
       write: true,
       create: true,
-      truncate: false,
-    }).catch(async () => {
-      await Deno.mkdir(".cache");
-      return await Deno.create(fileName);
     });
     const obj = new PlainDB(fileName, handle);
     try {
