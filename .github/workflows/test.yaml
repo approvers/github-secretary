@@ -17,7 +17,7 @@ jobs:
         uses: denolib/setup-deno@master
         with:
           deno-version: ${{ matrix.deno-version }}
-      - name: Build
-        run: deno run --reload main.ts
+      - name: Cache
+        run: deno cache main.ts
       - name: Test
         run: deno test --allow-none
