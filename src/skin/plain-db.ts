@@ -1,5 +1,5 @@
 import { readFileStr } from "https://deno.land/std/fs/read_file_str.ts";
-import { ensureFile } from "https://deno.land/std/fs/ensure_file.ts";
+import { exists } from "https://deno.land/std/fs/exists.ts";
 import { Mutex } from "https://deno.land/x/mutex/mod.ts";
 
 import {
@@ -20,7 +20,7 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
   private users: GitHubUsers = new Map();
   private handlers: UpdateHandler[] = [];
 
-  private constructor(private fileName: string, private file: Deno.File) {}
+  private constructor(private fileName: string) {}
 
   async fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined> {
     return this.users.get(discordId);
@@ -32,19 +32,18 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
   }
 
   static async make(fileName: string): Promise<PlainDB> {
-    await ensureFile(fileName);
-    const handle = await Deno.open(fileName, {
-      read: true,
-      write: true,
-      create: true,
-    });
-    const obj = new PlainDB(fileName, handle);
-    try {
-      const users = await readFileStr(fileName);
-      obj.users = deserialize(users);
-    } catch (ignore) {
-      obj.users = new Map();
+    const obj = new PlainDB(fileName);
+    if (!(await exists(fileName))) {
+      const file = await Deno.open(fileName, {
+        write: true,
+        createNew: true,
+      });
+      await file.write(new TextEncoder().encode("{}"));
+      file.close();
     }
+
+    const users = await readFileStr(fileName);
+    obj.users = deserialize(users);
     return obj;
   }
 
@@ -78,8 +77,10 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
   private async overwrite(): Promise<void> {
     await Mutex.doAtomic(`plain-db-${this.fileName}`, async () => {
       await Deno.truncate(this.fileName, 0);
-      await this.file.seek(0, Deno.SeekMode.Start);
-      await this.file.write(new TextEncoder().encode(serialize(this.users)));
+      await Deno.writeFile(
+        this.fileName,
+        new TextEncoder().encode(serialize(this.users)),
+      );
     });
 
     await Promise.all(
