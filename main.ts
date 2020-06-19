@@ -30,11 +30,14 @@ const messageHandler = (analecta: Analecta, builtProcs: CommandProcessor) =>
     await builtProcs(analecta, discordMessage);
   };
 
-const client = new Client(config().DISCORD_TOKEN || "no token");
+const cfg = {...config(), ...Deno.env.toObject()};
 
-const loader = new TomlLoader(config().TOML_PATH || "./example/laffey.toml");
-const db = await PlainDB.make(config().DB_CACHE_PATH || "./.cache/users.json");
+const client = new Client(cfg.DISCORD_TOKEN || "no token");
+
+const loader = new TomlLoader(cfg.TOML_PATH || "./example/laffey.toml");
 const analecta = await loader.load();
+
+const db = await PlainDB.make(cfg.DB_CACHE_PATH || "./.cache/users.json");
 
 const notifier = new SubscriptionNotifier(
   analecta,
