@@ -93,7 +93,9 @@ export class SubscriptionNotifier implements UpdateHandler {
           this.sendMessage(userId),
           this.notifyController(sub, userId),
           notificationQuery,
-        ),
+        ).catch((e) => {
+          console.error(e);
+        }),
       NOTIFY_INTERVAL,
     );
     return (): void => {
@@ -104,7 +106,7 @@ export class SubscriptionNotifier implements UpdateHandler {
   private sendMessage(userId: string): (mes: EmbedMessage) => Promise<void> {
     return async (mes: EmbedMessage): Promise<void> => {
       const dm = await this.users.fetch(userId);
-      await dm.send((mes as unknown) as string);
+      dm.send((mes as unknown) as string);
     };
   }
 
