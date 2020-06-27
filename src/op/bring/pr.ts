@@ -62,9 +62,9 @@ export const bringPR = (query: Query) => async (
   }
 
   return msg.withTyping(() =>
-    connectProcessors(genSubCommands(matches, query))(analecta, msg).catch((e) => {
+    connectProcessors(genSubCommands(matches, query))(analecta, msg).catch(() => {
       replyFailure(analecta, msg);
-      throw e;
+      return true;
     }),
   );
 };
