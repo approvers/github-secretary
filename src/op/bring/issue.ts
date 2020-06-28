@@ -61,12 +61,7 @@ export const bringIssue = (query: Query) => async (
     return false;
   }
 
-  return msg.withTyping(() =>
-    connectProcessors(genSubCommands(matches, query))(analecta, msg).catch(() => {
-      replyFailure(analecta, msg);
-      return true;
-    }),
-  );
+  return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
 };
 
 const externalIssueList = (owner: string) => (repo: string) => (
@@ -78,26 +73,30 @@ const externalIssueList = (owner: string) => (repo: string) => (
     owner: { avatar_url, html_url: owner_url, login },
   } = await query.fetchRepo(owner, repo);
 
-  const fields: EmbedFieldData[] = (await query.fetchIssues(owner, repo)).map(
-    ({ html_url, title, number }) => ({
-      name: `#${number}`,
-      value: `[${title}](${html_url})`,
-    }),
-  );
-  if (fields.length <= 0) {
-    msg.reply(analecta.NothingToBring);
-    return true;
-  }
+  try {
+    const fields: EmbedFieldData[] = (await query.fetchIssues(owner, repo)).map(
+      ({ html_url, title, number }) => ({
+        name: `#${number}`,
+        value: `[${title}](${html_url})`,
+      }),
+    );
+    if (fields.length <= 0) {
+      msg.reply(analecta.NothingToBring);
+      return true;
+    }
 
-  msg.sendEmbed(
-    new MessageEmbed()
-      .setColor(colorFromState('open'))
-      .setAuthor(login, avatar_url, owner_url)
-      .setURL(html_url)
-      .setTitle(repoName)
-      .setFooter(analecta.EnumIssue)
-      .addFields(fields),
-  );
+    msg.sendEmbed(
+      new MessageEmbed()
+        .setColor(colorFromState('open'))
+        .setAuthor(login, avatar_url, owner_url)
+        .setURL(html_url)
+        .setTitle(repoName)
+        .setFooter(analecta.EnumIssue)
+        .addFields(fields),
+    );
+  } catch (_e) {
+    await replyFailure(analecta, msg);
+  }
   return true;
 };
 
@@ -110,26 +109,30 @@ const externalIssue = (owner: string) => (repo: string, dst: string) => (
     return false;
   }
 
-  const {
-    state,
-    title,
-    body,
-    html_url,
-    user: { avatar_url, login },
-  } = await query.fetchAnIssue(owner, repo, dst);
+  try {
+    const {
+      state,
+      title,
+      body,
+      html_url,
+      user: { avatar_url, login },
+    } = await query.fetchAnIssue(owner, repo, dst);
 
-  const color = colorFromState(state);
-  const description = body ? omitBody(body) : '';
+    const color = colorFromState(state);
+    const description = body ? omitBody(body) : '';
 
-  msg.sendEmbed(
-    new MessageEmbed()
-      .setColor(color)
-      .setAuthor(login, avatar_url)
-      .setURL(html_url)
-      .setDescription(description)
-      .setTitle(title)
-      .setFooter(analecta.BringIssue),
-  );
+    msg.sendEmbed(
+      new MessageEmbed()
+        .setColor(color)
+        .setAuthor(login, avatar_url)
+        .setURL(html_url)
+        .setDescription(description)
+        .setTitle(title)
+        .setFooter(analecta.BringIssue),
+    );
+  } catch (_e) {
+    await replyFailure(analecta, msg);
+  }
 
   return true;
 };

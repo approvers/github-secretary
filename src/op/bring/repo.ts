@@ -33,32 +33,31 @@ export const bringRepo = (query: Query) => async (
     return false;
   }
 
-  return msg.withTyping(() =>
-    connectProcessors(genSubCommands(matches, query))(analecta, msg).catch(() => {
-      replyFailure(analecta, msg);
-      return true;
-    }),
-  );
+  return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
 };
 
 const externalRepo = (owner: string) => (repo: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message): Promise<boolean> => {
-  const {
-    name,
-    description,
-    html_url,
-    owner: { avatar_url, html_url: owner_url, login },
-  } = await query.fetchRepo(owner, repo);
+  try {
+    const {
+      name,
+      description,
+      html_url,
+      owner: { avatar_url, html_url: owner_url, login },
+    } = await query.fetchRepo(owner, repo);
 
-  msg.sendEmbed(
-    new MessageEmbed()
-      .setAuthor(login, avatar_url, owner_url)
-      .setURL(html_url)
-      .setDescription(description || '')
-      .setTitle(name)
-      .setFooter(analecta.BringRepo),
-  );
+    msg.sendEmbed(
+      new MessageEmbed()
+        .setAuthor(login, avatar_url, owner_url)
+        .setURL(html_url)
+        .setDescription(description || '')
+        .setTitle(name)
+        .setFooter(analecta.BringRepo),
+    );
+  } catch (_e) {
+    await replyFailure(analecta, msg);
+  }
 
   return true;
 };

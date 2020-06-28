@@ -61,12 +61,7 @@ export const bringPR = (query: Query) => async (
     return false;
   }
 
-  return msg.withTyping(() =>
-    connectProcessors(genSubCommands(matches, query))(analecta, msg).catch(() => {
-      replyFailure(analecta, msg);
-      return true;
-    }),
-  );
+  return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
 };
 
 const externalPRList = (owner: string) => (repo: string) => (
@@ -110,31 +105,35 @@ const externalPR = (owner: string) => (repo: string, dst: string) => (
     return false;
   }
 
-  const {
-    state,
-    title,
-    body,
-    html_url,
-    user: { avatar_url, login },
-  }: {
-    state: string;
-    title: string;
-    body?: string;
-    html_url: string;
-    user: { avatar_url: string; login: string };
-  } = await query.fetchAPullRequest(owner, repo, dst);
+  try {
+    const {
+      state,
+      title,
+      body,
+      html_url,
+      user: { avatar_url, login },
+    }: {
+      state: string;
+      title: string;
+      body?: string;
+      html_url: string;
+      user: { avatar_url: string; login: string };
+    } = await query.fetchAPullRequest(owner, repo, dst);
 
-  const color = colorFromState(state);
-  const description = body ? omitBody(body) : '';
-  await msg.sendEmbed(
-    new MessageEmbed()
-      .setColor(color)
-      .setAuthor(login, avatar_url)
-      .setURL(html_url)
-      .setDescription(description)
-      .setTitle(title)
-      .setFooter(analecta.BringPR),
-  );
+    const color = colorFromState(state);
+    const description = body ? omitBody(body) : '';
+    await msg.sendEmbed(
+      new MessageEmbed()
+        .setColor(color)
+        .setAuthor(login, avatar_url)
+        .setURL(html_url)
+        .setDescription(description)
+        .setTitle(title)
+        .setFooter(analecta.BringPR),
+    );
+  } catch (_e) {
+    await replyFailure(analecta, msg);
+  }
 
   return true;
 };
