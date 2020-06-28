@@ -7,9 +7,7 @@ const home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>
-          `${pageTitle} - ${pageSubTitle}`
-        </title>
+        <title>{`${pageTitle} - ${pageSubTitle}`}</title>
       </Head>
       <main>
         <h1>{pageSubTitle}</h1>
