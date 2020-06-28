@@ -57,6 +57,7 @@ const externalRepo = (owner: string) => (repo: string) => (
     );
   } catch (_e) {
     /** @ignore */
+    return false;
   }
 
   return true;

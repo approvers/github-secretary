@@ -96,6 +96,7 @@ const externalPRList = (owner: string) => (repo: string) => (
     );
   } catch (_e) {
     /** @ignore */
+    return false;
   }
 
   return true;
@@ -138,6 +139,7 @@ const externalPR = (owner: string) => (repo: string, dst: string) => (
     );
   } catch (_e) {
     /** @ignore */
+    return false;
   }
 
   return true;
