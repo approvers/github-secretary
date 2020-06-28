@@ -1277,6 +1277,11 @@ es6-promise@^3.0.2:
   resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.3.1.tgz#a08cdde84ccdbf34d027a1451bc91d4bcd28a613"
   integrity sha1-oIzd6EzNvzTQJ6FFG8kdS80ophM=
 
+esbuild@^0.5.14:
+  version "0.5.14"
+  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.5.14.tgz#c7c900f728304136556db036840e638318e81cf1"
+  integrity sha512-0vVlkpR7XOsqzhUA6xgKzZ/vIXCi+sZZI7t/HG4vJ+nUqo77iEyg1KfIKuqk2kBJQ9/Ts7NXuK5/mfL2J0ZVzA==
+
 escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"

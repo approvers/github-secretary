@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: ./docker/bot.Dockerfile
+    container_name: ghs_bot
+    env_file: .env
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      TOML_PATH: /app/example/laffey.toml
+      NOTIFY_INTERVAL: 10000
+    volumes:
+      - ./.cache:/app/.cache
