@@ -57,7 +57,6 @@ export class SubscriptionNotifier implements UpdateHandler {
   async handleUpdate(users: Readonly<GitHubUsers>): Promise<void> {
     this.stop();
 
-    this.notifyTasks = [];
     const it = users.entries();
     for (let next = it.next(); !next.done; next = it.next()) {
       const [userId, sub] = next.value;
@@ -73,7 +72,10 @@ export class SubscriptionNotifier implements UpdateHandler {
           this.sendMessage(userId),
           this.notifyController(sub, userId),
           notificationQuery,
-        ),
+        ).catch((e) => {
+          console.error(e);
+          clearInterval(timer);
+        }),
       NOTIFY_INTERVAL,
     );
     return (): void => {
@@ -100,5 +102,6 @@ export class SubscriptionNotifier implements UpdateHandler {
     for (const stopTask of this.notifyTasks) {
       stopTask();
     }
+    this.notifyTasks = [];
   }
 }
