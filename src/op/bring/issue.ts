@@ -95,7 +95,7 @@ const externalIssueList = (owner: string) => (repo: string) => (
         .addFields(fields),
     );
   } catch (_e) {
-    await replyFailure(analecta, msg);
+    /** @ignore */
   }
   return true;
 };
@@ -131,7 +131,7 @@ const externalIssue = (owner: string) => (repo: string, dst: string) => (
         .setFooter(analecta.BringIssue),
     );
   } catch (_e) {
-    await replyFailure(analecta, msg);
+    /** @ignore */
   }
 
   return true;

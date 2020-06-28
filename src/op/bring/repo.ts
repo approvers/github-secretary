@@ -56,7 +56,7 @@ const externalRepo = (owner: string) => (repo: string) => (
         .setFooter(analecta.BringRepo),
     );
   } catch (_e) {
-    await replyFailure(analecta, msg);
+    /** @ignore */
   }
 
   return true;

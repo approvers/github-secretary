@@ -67,32 +67,37 @@ export const bringPR = (query: Query) => async (
 const externalPRList = (owner: string) => (repo: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
-  const {
-    name: repoName,
-    html_url,
-    owner: { avatar_url, html_url: owner_url, login },
-  } = await query.fetchRepo(owner, repo);
+  try {
+    const {
+      name: repoName,
+      html_url,
+      owner: { avatar_url, html_url: owner_url, login },
+    } = await query.fetchRepo(owner, repo);
 
-  const fields: EmbedFieldData[] = (await query.fetchPullRequests(owner, repo)).map(
-    ({ html_url, title, number }) => ({
-      name: `#${number}`,
-      value: `[${title}](${html_url})`,
-    }),
-  );
-  if (fields.length <= 0) {
-    await msg.reply(analecta.NothingToBring);
-    return true;
+    const fields: EmbedFieldData[] = (await query.fetchPullRequests(owner, repo)).map(
+      ({ html_url, title, number }) => ({
+        name: `#${number}`,
+        value: `[${title}](${html_url})`,
+      }),
+    );
+    if (fields.length <= 0) {
+      await msg.reply(analecta.NothingToBring);
+      return true;
+    }
+
+    await msg.sendEmbed(
+      new MessageEmbed()
+        .setColor(colorFromState('open'))
+        .setAuthor(login, avatar_url, owner_url)
+        .setURL(html_url)
+        .setTitle(repoName)
+        .setFooter(analecta.EnumPR)
+        .addFields(fields),
+    );
+  } catch (_e) {
+    /** @ignore */
   }
 
-  await msg.sendEmbed(
-    new MessageEmbed()
-      .setColor(colorFromState('open'))
-      .setAuthor(login, avatar_url, owner_url)
-      .setURL(html_url)
-      .setTitle(repoName)
-      .setFooter(analecta.EnumPR)
-      .addFields(fields),
-  );
   return true;
 };
 
@@ -132,7 +137,7 @@ const externalPR = (owner: string) => (repo: string, dst: string) => (
         .setFooter(analecta.BringPR),
     );
   } catch (_e) {
-    await replyFailure(analecta, msg);
+    /** @ignore */
   }
 
   return true;
