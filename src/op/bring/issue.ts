@@ -67,13 +67,13 @@ export const bringIssue = (query: Query) => async (
 const externalIssueList = (owner: string) => (repo: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
-  const {
-    name: repoName,
-    html_url,
-    owner: { avatar_url, html_url: owner_url, login },
-  } = await query.fetchRepo(owner, repo);
-
   try {
+    const {
+      name: repoName,
+      html_url,
+      owner: { avatar_url, html_url: owner_url, login },
+    } = await query.fetchRepo(owner, repo);
+
     const fields: EmbedFieldData[] = (await query.fetchIssues(owner, repo)).map(
       ({ html_url, title, number }) => ({
         name: `#${number}`,
