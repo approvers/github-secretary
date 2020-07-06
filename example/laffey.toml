@@ -24,7 +24,7 @@ Flavor = [
   "指揮官、元気？"
 ]
 
-BlackPattern = "[精孕母乳味こっぽんイコッポンｺｯﾎﾟﾝHKTNhktn:○●_|\*]|はら|ハラ"
+BlackPattern = "[精孕母乳味女こっぽんイコッポンｺｯﾎﾟﾝEHKTNehktn:○●_|\*]|はら|ハラ"
 CallPattern = "寝る|寝ます|ねる|ねます|落ち|おち|疲れた|ラフィ|らふぃ"
 
 HelpMessage = """```
