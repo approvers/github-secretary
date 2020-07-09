@@ -13,3 +13,15 @@ services:
       NOTIFY_INTERVAL: 10000
     volumes:
       - ./.cache:/app/.cache
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/web.Dockerfile
+    container_name: ghs_web
+    env_file: .env
+    environment:
+      HOST_NAME: example.com
+      CLIENT_ID: not_found
+      CLIENT_SECRET: not_found
+    ports:
+      - 3000:3000
