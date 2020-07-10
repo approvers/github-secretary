@@ -1,9 +1,9 @@
 import { subscribeNotification } from './subscribe-notification';
 import { MockMessage } from '../../skin/mock-message';
 import { analectaForTest } from '../../skin/test-analecta';
-import { NotificationId } from 'src/exp/github-notification';
-import { GitHubUser } from 'src/exp/github-user';
-import { DiscordId } from 'src/exp/discord-id';
+import { NotificationId } from '../../exp/github-notification';
+import { GitHubUser } from '../../exp/github-user';
+import { DiscordId } from '../../exp/discord-id';
 
 test('subscribe a member', async (done) => {
   const analecta = await analectaForTest();

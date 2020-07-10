@@ -2,8 +2,8 @@ import { MessageEmbed } from 'discord.js';
 
 import { notify } from './notify';
 import { analectaForTest } from '../../skin/test-analecta';
-import { GitHubUser } from 'src/exp/github-user';
-import { NotificationId, GitHubNotifications } from 'src/exp/github-notification';
+import { GitHubUser } from '../../exp/github-user';
+import { NotificationId, GitHubNotifications } from '../../exp/github-notification';
 
 test('emit a notification', async (done) => {
   const analecta = await analectaForTest();
