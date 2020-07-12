@@ -1,15 +1,15 @@
 import dotenv from 'dotenv';
 import { Client, Message } from 'discord.js';
 
-import { TomlLoader } from '../src/skin/toml-loader';
-import { PlainDB } from '../src/skin/plain-db';
+import { TomlLoader } from '../src/bot/skin/toml-loader';
+import { PlainDB } from '../src/bot/skin/plain-db';
 
-import { procs } from '../src/skin/procs';
-import { SubscriptionNotifier } from '../src/skin/notifier';
-import { Analecta } from '../src/exp/analecta';
-import { CommandProcessor } from '../src/abst/connector';
-import { GitHubApi } from '../src/skin/github-api';
-import { DiscordMessage } from '../src/skin/discord-message';
+import { procs } from '../src/bot/skin/procs';
+import { SubscriptionNotifier } from '../src/bot/skin/notifier';
+import { Analecta } from '../src/bot/exp/analecta';
+import { CommandProcessor } from '../src/bot/abst/connector';
+import { GitHubApi } from '../src/bot/skin/github-api';
+import { DiscordMessage } from '../src/bot/skin/discord-message';
 
 dotenv.config();
 
