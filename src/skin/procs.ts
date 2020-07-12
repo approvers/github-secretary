@@ -3,6 +3,7 @@ import { connectProcessors, CommandProcessor } from '../abst/connector';
 
 import { bringIssue } from '../op/bring/issue';
 import { bringPR } from '../op/bring/pr';
+import { bringBranch } from '../op/bring/branch';
 import { bringRepo } from '../op/bring/repo';
 import { error } from '../op/error';
 import { flavor } from '../op/flavor';
@@ -17,6 +18,7 @@ export const procs = (analecta: Analecta, db: UserDatabase, query: Query): Comma
     flavor(new RegExp(analecta.CallPattern), new RegExp(analecta.BlackPattern, 'm')),
     bringIssue(query),
     bringPR(query),
+    bringBranch(query),
     bringRepo(query),
     subscribeNotification(db, query),
     unsubscribeNotification(db),

@@ -10,6 +10,7 @@ devDependencies:
   '@types/node-fetch': 2.5.7
   '@typescript-eslint/eslint-plugin': 3.6.0_1c51ade106368f8db1c65fa08c9a96ed
   '@typescript-eslint/parser': 3.6.0_eslint@7.4.0+typescript@3.9.6
+  esbuild: 0.5.26
   eslint: 7.4.0
   eslint-config-prettier: 6.11.0_eslint@7.4.0
   eslint-plugin-prettier: 3.1.4_eslint@7.4.0+prettier@2.0.5
@@ -254,13 +255,6 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==
-  /@babel/runtime-corejs3/7.10.4:
-    dependencies:
-      core-js-pure: 3.6.5
-      regenerator-runtime: 0.13.5
-    dev: true
-    resolution:
-      integrity: sha512-BFlgP2SoLO9HJX9WBwN67gHWMBhDX/eDz64Jajd6mR/UAUzqrNMm99d4qHnVaKscAElZoFiPv+JpR/Siud5lXw==
   /@babel/template/7.10.4:
     dependencies:
       '@babel/code-frame': 7.10.4
@@ -561,7 +555,7 @@ packages:
       integrity: sha512-OCutwjDZ4aFS6PB1UZ988C4YgwlBHJd6wCeQqaLdmadZ/7e+w79+hbMUFC1QXDNCmdyoRfAFdm0RypzwR+Qpag==
   /@types/graceful-fs/4.1.3:
     dependencies:
-      '@types/node': 13.13.13
+      '@types/node': 13.13.14
     dev: true
     resolution:
       integrity: sha512-AiHRaEB50LQg0pZmm659vNBb9f4SJ0qrAnteuzhSeAUcJKxoYgEnprg/83kppCnc2zvtCKbdZry1a5pVY3lOTQ==
@@ -604,6 +598,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-UfvBE9oRCAJVzfR+3eWm/sdLFe/qroAPEXP3GPJ1SehQiEVgZT6NQZWYbPMiJ3UdcKM06v4j+S1lTcdWCmw+3g==
+  /@types/node/13.13.14:
+    dev: true
+    resolution:
+      integrity: sha512-Az3QsOt1U/K1pbCQ0TXGELTuTkPLOiFIQf3ILzbOyo0FqgV9SxRnxbxM5QlAveERZMHpZY+7u3Jz2tKyl+yg6g==
   /@types/normalize-package-data/2.4.0:
     dev: true
     resolution:
@@ -1230,11 +1228,6 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-Z29us8OZl8LuGsOpJP1hJHSPV40=
-  /core-js-pure/3.6.5:
-    dev: true
-    requiresBuild: true
-    resolution:
-      integrity: sha512-lacdXOimsiD0QyNf9BC/mxivNJ/ybBGJXQFKzRekp1WTHoVUWsUHEn+2T8GJAzzIhyOuXA+gOxCVN3l+5PLPUA==
   /core-util-is/1.0.2:
     dev: true
     resolution:
@@ -1311,14 +1304,6 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=
-  /decamelize/3.2.0:
-    dependencies:
-      xregexp: 4.3.0
-    dev: true
-    engines:
-      node: '>=6'
-    resolution:
-      integrity: sha512-4TgkVUsmmu7oCSyGBm5FvfMoACuoh9EOidm7V5/J2X2djAwwt57qb3F2KMP2ITqODTCSwb+YRV+0Zqrv18k/hw==
   /decode-uri-component/0.2.0:
     dev: true
     engines:
@@ -1477,6 +1462,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-oIzd6EzNvzTQJ6FFG8kdS80ophM=
+  /esbuild/0.5.26:
+    dev: true
+    hasBin: true
+    requiresBuild: true
+    resolution:
+      integrity: sha512-OopLmIbQNOWBWMBoOtHjDEaIiTI2okEpRkbiKccfatnXJtsGazwWhR0dmvY8ynjLx/BOPS9mQ6QFl7J1BQCcaQ==
   /escape-string-regexp/1.0.5:
     dev: true
     engines:
@@ -2394,7 +2385,7 @@ packages:
       jest-validate: 25.5.0
       prompts: 2.3.2
       realpath-native: 2.0.0
-      yargs: 15.4.0
+      yargs: 15.4.1
     dev: true
     engines:
       node: '>= 8.3'
@@ -2678,7 +2669,7 @@ packages:
       realpath-native: 2.0.0
       slash: 3.0.0
       strip-bom: 4.0.0
-      yargs: 15.4.0
+      yargs: 15.4.1
     dev: true
     engines:
       node: '>= 8.3'
@@ -3509,10 +3500,6 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-v1SEYUOXXdbBZK8ZuNgO4TBjamPsiSgcFr0aP+tEKpQZK8vooEUqV6nm6Cv502mX4NF2EfsnVqtNAHG+/6Ur1Q==
-  /regenerator-runtime/0.13.5:
-    dev: true
-    resolution:
-      integrity: sha512-ZS5w8CpKFinUzOwW3c83oPeVXoNsrLsaCoLtJvAClH135j/R77RuymhiSErhm2lKcwSCIpmvIWSbDkIfAqKQlA==
   /regex-not/1.0.2:
     dependencies:
       extend-shallow: 3.0.2
@@ -4472,12 +4459,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
-  /xregexp/4.3.0:
-    dependencies:
-      '@babel/runtime-corejs3': 7.10.4
-    dev: true
-    resolution:
-      integrity: sha512-7jXDIFXh5yJ/orPn4SXjuVrWWoi4Cr8jfV1eHv9CixKSbU+jY4mxfrBwAuDvupPNKpMUY+FeIqsVw/JLT9+B8g==
   /y18n/4.0.0:
     dev: true
     resolution:
@@ -4491,10 +4472,10 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-o50j0JeToy/4K6OZcaQmW6lyXXKhq7csREXcDwk2omFPJEwUNOVtJKvmDr9EI1fAJZUyZcRF7kxGBWmRXudrCQ==
-  /yargs/15.4.0:
+  /yargs/15.4.1:
     dependencies:
       cliui: 6.0.0
-      decamelize: 3.2.0
+      decamelize: 1.2.0
       find-up: 4.1.0
       get-caller-file: 2.0.5
       require-directory: 2.1.1
@@ -4508,7 +4489,7 @@ packages:
     engines:
       node: '>=8'
     resolution:
-      integrity: sha512-D3fRFnZwLWp8jVAAhPZBsmeIHY8tTsb8ItV9KaAaopmC6wde2u6Yw29JBIZHXw14kgkRnYmDgmQU4FVMDlIsWw==
+      integrity: sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==
   /yn/3.1.1:
     dev: true
     engines:
@@ -4523,14 +4504,15 @@ specifiers:
   '@typescript-eslint/parser': ^3.0.2
   discord.js: ^12.0.2
   dotenv: ^8.2.0
+  esbuild: ^0.5.14
   eslint: ^7.1.0
   eslint-config-prettier: ^6.11.0
   eslint-plugin-prettier: ^3.1.3
-  jest: ^25.1.0
+  jest: ^25.5.4
   mutex-promise: ^0.1.0
   node-fetch: ^2.6.0
   prettier: ^2.0.2
   toml: ^3.0.0
-  ts-jest: ^25.2.1
+  ts-jest: ^25.5.1
   ts-node: ^8.8.1
   typescript: ^3.8.3
