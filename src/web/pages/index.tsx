@@ -14,9 +14,13 @@ const home: NextPage = () => {
         <p>こちらのページからワンクリックで Discord 通知を登録できます。</p>
         <a>通知を登録</a>
       </main>
+      <style jsx global>{`
+        body {
+          background-color: #1a1d1a;
+        }
+      `}</style>
       <style jsx>{`
         main {
-          background-color: #1a1d1a;
           margin: 0;
           padding: 0;
           width: 100%;
@@ -42,12 +46,12 @@ const home: NextPage = () => {
           border-radius: 0.5rem;
           border-style: none;
           font-size: 3rem;
-          box-shadow: -0.25rem -0.25rem 1.5rem #7a7d7a, 0.5rem 0.5rem 1.5rem #0a0d0a;
+          box-shadow: -0.25rem -0.25rem 0.5rem #7a7d7a, 0.5rem 0.5rem 0.5rem #0a0d0a;
           user-select: none;
         }
         main > a:active {
-          box-shadow: -0.25rem -0.25rem 1.5rem #7a7d7a, 0.5rem 0.5rem 1.5rem #0a0d0a,
-            inset 0.5rem 0.5rem 1.5rem #0a0d0a, inset -0.25rem -0.25rem 1.5rem #7a7d7a;
+          box-shadow: -0.25rem -0.25rem 0.5rem #7a7d7a, 0.5rem 0.5rem 0.5rem #0a0d0a,
+            inset 0.5rem 0.5rem 0.5rem #0a0d0a, inset -0.25rem -0.25rem 0.5rem #7a7d7a;
         }
       `}</style>
     </>
