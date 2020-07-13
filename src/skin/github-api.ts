@@ -104,7 +104,7 @@ export class GitHubApi implements Query {
   }> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches/${branchName}`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
+    if (res.message === 'Branch not found') {
       throw new Error('not found the branch');
     }
     return res;

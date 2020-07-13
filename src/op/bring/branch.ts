@@ -26,7 +26,7 @@ export type Query = {
   fetchABranch: (
     owner: string,
     repoName: string,
-    brancName: string,
+    branchName: string,
   ) => Promise<{
     name: string;
     commit: {
@@ -36,7 +36,7 @@ export type Query = {
   }>;
 };
 
-const ghPattern = /^\/ghb\s+([^/]+)(\/([^/]+))?(\s+(.+))?$/;
+const ghPattern = /^\/ghb\s+([^/\s]+)(\/([^/\s]+))?(\s+(.+))?$/;
 
 const genSubCommands = (matches: RegExpMatchArray, query: Query): CommandProcessor[] =>
   [
@@ -60,9 +60,12 @@ export const bringBranch = (query: Query) => async (
   return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
 };
 
-const externalBranchList = (owner: string) => (repo: string) => (
+const externalBranchList = (owner?: string) => (repo?: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
+  if (owner == null || repo == null) {
+    return false;
+  }
   try {
     const {
       name: repoName,
@@ -99,9 +102,13 @@ const externalBranchList = (owner: string) => (repo: string) => (
 
 const internalBranchList = externalBranchList('approvers');
 
-const externalBranch = (owner: string) => (repo: string, dst: string) => (
+const externalBranch = (owner?: string) => (repo?: string, branch?: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
+  console.log({ owner, repo, branch });
+  if (owner == null || repo == null || branch == null) {
+    return false;
+  }
   try {
     const {
       name,
@@ -109,7 +116,7 @@ const externalBranch = (owner: string) => (repo: string, dst: string) => (
         author: { avatar_url, login },
       },
       _links: { html },
-    } = await query.fetchABranch(owner, repo, dst);
+    } = await query.fetchABranch(owner, repo, branch);
 
     await msg.sendEmbed(
       new MessageEmbed()
