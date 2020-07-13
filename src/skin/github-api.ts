@@ -88,7 +88,7 @@ export class GitHubApi implements Query {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches`;
     const res = await (await fetch(apiUrl)).json();
     if (res.message === 'Not Found') {
-      throw new Error('not found the pull request');
+      throw new Error('not found the branches');
     }
     return res;
   }
@@ -105,7 +105,7 @@ export class GitHubApi implements Query {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches/${branchName}`;
     const res = await (await fetch(apiUrl)).json();
     if (res.message === 'Not Found') {
-      throw new Error('not found the pull request');
+      throw new Error('not found the branch');
     }
     return res;
   }
