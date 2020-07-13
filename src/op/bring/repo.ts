@@ -36,9 +36,12 @@ export const bringRepo = (query: Query) => async (
   return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
 };
 
-const externalRepo = (owner: string) => (repo: string) => (
+const externalRepo = (owner?: string) => (repo?: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message): Promise<boolean> => {
+  if (owner == null || repo == null) {
+    return false;
+  }
   try {
     const {
       name,

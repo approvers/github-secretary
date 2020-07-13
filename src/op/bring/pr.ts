@@ -64,9 +64,12 @@ export const bringPR = (query: Query) => async (
   return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
 };
 
-const externalPRList = (owner: string) => (repo: string) => (
+const externalPRList = (owner?: string) => (repo?: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
+  if (owner == null || repo == null) {
+    return false;
+  }
   try {
     const {
       name: repoName,
@@ -104,10 +107,10 @@ const externalPRList = (owner: string) => (repo: string) => (
 
 const internalPRList = externalPRList('approvers');
 
-const externalPR = (owner: string) => (repo: string, dst: string) => (
+const externalPR = (owner?: string) => (repo?: string, dst?: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
-  if (!numbersPattern.test(dst)) {
+  if (owner == null || repo == null || dst == null || !numbersPattern.test(dst)) {
     return false;
   }
 

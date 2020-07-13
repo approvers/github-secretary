@@ -64,9 +64,12 @@ export const bringIssue = (query: Query) => async (
   return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
 };
 
-const externalIssueList = (owner: string) => (repo: string) => (
+const externalIssueList = (owner?: string) => (repo?: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
+  if (owner == null || repo == null) {
+    return false;
+  }
   try {
     const {
       name: repoName,
@@ -103,10 +106,10 @@ const externalIssueList = (owner: string) => (repo: string) => (
 
 const internalIssueList = externalIssueList('approvers');
 
-const externalIssue = (owner: string) => (repo: string, dst: string) => (
+const externalIssue = (owner?: string) => (repo?: string, dst?: string) => (
   query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
-  if (!numbersPattern.test(dst)) {
+  if (owner == null || repo == null || dst == null || !numbersPattern.test(dst)) {
     return false;
   }
 
