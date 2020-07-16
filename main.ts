@@ -3,7 +3,7 @@ import {
   Client,
   Message,
   DMChannel,
-} from "https://deno.land/x/coward@v0.2.1/mod.ts";
+} from "https://deno.land/x/coward@v0.3.1/mod.ts";
 
 import { TomlLoader } from "./src/skin/toml-loader.ts";
 import { PlainDB } from "./src/skin/plain-db.ts";

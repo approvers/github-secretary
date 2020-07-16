@@ -2,7 +2,7 @@ import {
   Message as RawMessage,
   Client,
   DMChannel,
-} from "https://deno.land/x/coward@v0.2.1/mod.ts";
+} from "https://deno.land/x/coward@v0.3.1/mod.ts";
 
 import { Message } from "../abst/message.ts";
 import { DiscordId } from "../exp/discord-id.ts";
