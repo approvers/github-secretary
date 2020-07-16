@@ -106,7 +106,7 @@ export class SubscriptionNotifier implements UpdateHandler {
   private sendMessage(userId: string): (mes: EmbedMessage) => Promise<void> {
     return async (mes: EmbedMessage): Promise<void> => {
       const dm = await this.users.fetch(userId);
-      dm.send((mes as unknown) as string);
+      dm.createMessage({embed: mes});
     };
   }
 

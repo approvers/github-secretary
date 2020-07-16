@@ -23,7 +23,7 @@ const messageHandler = (analecta: Analecta, builtProcs: CommandProcessor) =>
     }
     if (msg.content.startsWith("/gh?")) {
       const dm = await client.getDMChannel(msg.author.id);
-      dm.send(analecta.HelpMessage);
+      dm.createMessage(analecta.HelpMessage);
       return;
     }
     const discordMessage = new DiscordMessage(msg, client);

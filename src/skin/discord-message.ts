@@ -3,7 +3,9 @@ import {
   Client,
   DMChannel,
 } from "https://deno.land/x/coward@v0.3.1/mod.ts";
-
+import {
+  TextChannel,
+} from "https://deno.land/x/coward@v0.3.1/src/structures/TextChannel.ts";
 import { Message } from "../abst/message.ts";
 import { DiscordId } from "../exp/discord-id.ts";
 import { EmbedMessage } from "../exp/embed-message.ts";
@@ -38,13 +40,13 @@ export class DiscordMessage implements Message {
 
   async reply(message: string): Promise<void> {
     if (this.raw.channel instanceof DMChannel) {
-      this.raw.channel.send(message);
+      this.raw.channel.createMessage(message);
       return;
     }
-    await this.raw.channel.send(`<@${this.raw.author.id}> ${message}`);
+    await (this.raw.channel as TextChannel).createMessage(`<@${this.raw.author.id}> ${message}`);
   }
 
   async sendEmbed(embed: EmbedMessage): Promise<void> {
-    await this.client.postMessage(this.raw.channel.id, { embed: embed.raw() });
+    await this.client.createMessage(this.raw.channel.id, { embed: embed.raw() });
   }
 }
