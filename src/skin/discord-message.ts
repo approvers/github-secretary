@@ -43,10 +43,15 @@ export class DiscordMessage implements Message {
       this.raw.channel.createMessage(message);
       return;
     }
-    await (this.raw.channel as TextChannel).createMessage(`<@${this.raw.author.id}> ${message}`);
+    await (this.raw.channel as TextChannel).createMessage(
+      `<@${this.raw.author.id}> ${message}`,
+    );
   }
 
   async sendEmbed(embed: EmbedMessage): Promise<void> {
-    await this.client.createMessage(this.raw.channel.id, { embed: embed.raw() });
+    await this.client.createMessage(
+      this.raw.channel.id,
+      { embed: embed.raw() },
+    );
   }
 }
