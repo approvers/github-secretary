@@ -1,11 +1,9 @@
 import {
+  TextChannel,
   Message as RawMessage,
   Client,
   DMChannel,
-} from "https://deno.land/x/coward@v0.3.1/mod.ts";
-import {
-  TextChannel,
-} from "https://deno.land/x/coward@v0.3.1/src/structures/TextChannel.ts";
+} from "../../deps.ts";
 import { Message } from "../abst/message.ts";
 import { DiscordId } from "../exp/discord-id.ts";
 import { EmbedMessage } from "../exp/embed-message.ts";
@@ -43,7 +41,7 @@ export class DiscordMessage implements Message {
       this.raw.channel.createMessage(message);
       return;
     }
-    await (this.raw.channel as TextChannel).createMessage(
+    await this.raw.channel.createMessage(
       `<@${this.raw.author.id}> ${message}`,
     );
   }

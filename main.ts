@@ -1,9 +1,4 @@
-import { config } from "https://deno.land/x/dotenv/mod.ts";
-import {
-  Client,
-  Message,
-  DMChannel,
-} from "https://deno.land/x/coward@v0.3.1/mod.ts";
+import { config, Client, Message, DMChannel } from "./deps.ts";
 
 import { TomlLoader } from "./src/skin/toml-loader.ts";
 import { PlainDB } from "./src/skin/plain-db.ts";
