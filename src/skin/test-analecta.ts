@@ -7,10 +7,12 @@ export const analectaForTest: Readonly<Analecta> = {
   MarkAsRead: "既読にしておいた……",
   BringIssue: "指揮官に、メール……",
   BringPR: "コードレビュー終わったら、一緒にワイン飲もう……",
+  BringBranch: "指揮官も、気になる……？",
   BringRepo: "頼まれた書類、持ってこれたよ……",
   NothingToBring: "任務は無いみたい……",
   EnumIssue: "まだ任務がありそう……",
   EnumPR: "うん……そこそこ……？",
+  EnumBranch: "こんなの生えてたよ……",
   InvalidToken: "トークンがおかしいみたい……",
 
   Failure: [

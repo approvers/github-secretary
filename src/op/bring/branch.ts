@@ -2,9 +2,8 @@ import { Analecta } from "../../exp/analecta.ts";
 import { colorFromState } from "../../exp/state-color.ts";
 import { replyFailure } from "../../abst/reply-failure.ts";
 import { CommandProcessor, connectProcessors } from "../../abst/connector.ts";
-import { omitBody } from "../../exp/omit.ts";
 import { Message } from "../../abst/message.ts";
-import { EmbedMessage, EmbedField } from "../../exp/embed-message.ts";
+import { EmbedField, EmbedMessage } from "../../exp/embed-message.ts";
 
 export type Query = {
   fetchRepo: (
@@ -15,46 +14,43 @@ export type Query = {
     html_url: string;
     owner: { avatar_url: string; html_url: string; login: string };
   }>;
-  fetchPullRequests: (
+  fetchBranches: (
     owner: string,
     repoName: string,
   ) => Promise<
     {
-      html_url: string;
-      title: string;
-      number: string;
+      name: string;
     }[]
   >;
-  fetchAPullRequest: (
+  fetchABranch: (
     owner: string,
     repoName: string,
-    dst: string,
+    branchName: string,
   ) => Promise<{
-    state: string;
-    title: string;
-    body?: string;
-    html_url: string;
-    user: { avatar_url: string; login: string };
+    name: string;
+    commit: {
+      author: { avatar_url: string; login: string };
+    };
+    _links: { html: string };
   }>;
 };
 
-const ghPattern = /^\/ghp\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
-const numbersPattern = /^[1-9][0-9]*$/;
+const ghPattern = /^\/ghb\s+([^/\s]+)(\/([^/\s]+))?(\s+(.+))?$/;
 
 const genSubCommands = (
   matches: RegExpMatchArray,
   query: Query,
 ): CommandProcessor[] =>
   [
-    externalPR(matches[1])(matches[3], matches[5]),
-    internalPR(matches[1], matches[3]),
-    externalPRList(matches[1])(matches[3]),
-    internalPRList(matches[1]),
+    externalBranch(matches[1])(matches[3], matches[5]),
+    internalBranch(matches[1], matches[5]),
+    externalBranchList(matches[1])(matches[3]),
+    internalBranchList(matches[1]),
   ]
     .map((e) => e(query))
     .concat(replyFailure);
 
-export const bringPR = (query: Query) =>
+export const bringBranch = (query: Query) =>
   async (
     analecta: Analecta,
     msg: Message,
@@ -69,7 +65,7 @@ export const bringPR = (query: Query) =>
     );
   };
 
-const externalPRList = (owner?: string) =>
+const externalBranchList = (owner?: string) =>
   (repo?: string) =>
     (
       query: Query,
@@ -85,11 +81,13 @@ const externalPRList = (owner?: string) =>
             owner: { avatar_url, html_url: owner_url, login },
           } = await query.fetchRepo(owner, repo);
 
-          const fields: EmbedField[] =
-            (await query.fetchPullRequests(owner, repo)).map(
-              ({ html_url, title, number }) => ({
-                name: `#${number}`,
-                value: `[${title}](${html_url})`,
+          const fields: EmbedField[] = (await query.fetchBranches(owner, repo))
+            .map(
+              ({ name }, i) => ({
+                name: (i + 1).toString().padStart(2, "0"),
+                value:
+                  `[${name}](https://github.com/${login}/${repoName}/tree/${name})`
+                    .toLowerCase(),
               }),
             );
           if (fields.length <= 0) {
@@ -103,64 +101,54 @@ const externalPRList = (owner?: string) =>
               .author({ name: login, icon_url: avatar_url, url: owner_url })
               .url(html_url)
               .title(repoName)
-              .footer({ text: analecta.EnumPR })
+              .footer({ text: analecta.EnumBranch })
               .fields(...fields),
           );
         } catch (_e) {
-          /** @ignore */
           return false;
         }
 
         return true;
       };
 
-const internalPRList = externalPRList("approvers");
+const internalBranchList = externalBranchList("approvers");
 
-const externalPR = (owner?: string) =>
-  (repo?: string, dst?: string) =>
+const externalBranch = (owner?: string) =>
+  (repo?: string, branch?: string) =>
     (
       query: Query,
     ): CommandProcessor =>
       async (analecta: Analecta, msg: Message) => {
-        if (
-          owner == null || repo == null || dst == null ||
-          !numbersPattern.test(dst)
-        ) {
+        console.log({ owner, repo, branch });
+        if (owner == null || repo == null || branch == null) {
           return false;
         }
-
         try {
           const {
-            state,
-            title,
-            body,
-            html_url,
-            user: { avatar_url, login },
-          }: {
-            state: string;
-            title: string;
-            body?: string;
-            html_url: string;
-            user: { avatar_url: string; login: string };
-          } = await query.fetchAPullRequest(owner, repo, dst);
+            name,
+            commit: {
+              author: { avatar_url, login },
+            },
+            _links: { html },
+          } = await query.fetchABranch(owner, repo, branch);
 
-          const color = colorFromState(state);
-          const description = body ? omitBody(body) : "";
           await msg.sendEmbed(
             new EmbedMessage()
-              .color(color)
-              .author({ name: login, icon_url: avatar_url })
-              .url(html_url)
-              .description(description)
-              .title(title)
-              .footer({ text: analecta.BringPR }),
+              .color(colorFromState("open"))
+              .author({
+                name: login,
+                icon_url: avatar_url,
+                url: `https://github.com/${login}`.toLowerCase(),
+              })
+              .url(html)
+              .title(name)
+              .footer({ text: analecta.BringBranch }),
           );
         } catch (_e) {
-          /** @ignore */
           return false;
         }
 
         return true;
       };
 
-const internalPR = externalPR("approvers");
+const internalBranch = externalBranch("approvers");

@@ -89,6 +89,36 @@ export class GitHubApi implements Query {
     return res;
   }
 
+  async fetchBranches(
+    owner: string,
+    repoName: string,
+  ): Promise<{ name: string }[]> {
+    const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches`;
+    const res = await (await fetch(apiUrl)).json();
+    if (res.message === "Not Found") {
+      throw new Error("not found the branches");
+    }
+    return res;
+  }
+
+  async fetchABranch(
+    owner: string,
+    repoName: string,
+    branchName: string,
+  ): Promise<{
+    name: string;
+    commit: { author: { avatar_url: string; login: string } };
+    _links: { html: string };
+  }> {
+    const apiUrl =
+      `https://api.github.com/repos/${owner}/${repoName}/branches/${branchName}`;
+    const res = await (await fetch(apiUrl)).json();
+    if (res.message === "Branch not found") {
+      throw new Error("not found the branch");
+    }
+    return res;
+  }
+
   async markAsRead(user: GitHubUser, notificationId: string): Promise<boolean> {
     const { userName, notificationToken } = user;
     const res = await fetch(

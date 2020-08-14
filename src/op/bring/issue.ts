@@ -65,82 +65,94 @@ export const bringIssue = (query: Query) =>
     }
 
     return msg.withTyping(() =>
-      connectProcessors(genSubCommands(matches, query))(analecta, msg).catch(
-        (e: unknown) => {
-          replyFailure(analecta, msg);
-          throw e;
-        },
-      )
+      connectProcessors(genSubCommands(matches, query))(analecta, msg)
     );
   };
 
-const externalIssueList = (owner: string) =>
-  (repo: string) =>
+const externalIssueList = (owner?: string) =>
+  (repo?: string) =>
     (
       query: Query,
     ): CommandProcessor =>
       async (analecta: Analecta, msg: Message) => {
-        const {
-          name: repoName,
-          html_url,
-          owner: { avatar_url, html_url: owner_url, login },
-        } = await query.fetchRepo(owner, repo);
-
-        const fields: EmbedField[] = (await query.fetchIssues(owner, repo)).map(
-          ({ html_url, title, number }) => ({
-            name: `#${number}`,
-            value: `[${title}](${html_url})`,
-          }),
-        );
-        if (fields.length <= 0) {
-          msg.reply(analecta.NothingToBring);
-          return true;
+        if (owner == null || repo == null) {
+          return false;
         }
+        try {
+          const {
+            name: repoName,
+            html_url,
+            owner: { avatar_url, html_url: owner_url, login },
+          } = await query.fetchRepo(owner, repo);
 
-        msg.sendEmbed(
-          new EmbedMessage()
-            .color(colorFromState("open"))
-            .author({ name: login, icon_url: avatar_url, url: owner_url })
-            .url(html_url)
-            .title(repoName)
-            .footer({ text: analecta.EnumIssue })
-            .fields(...fields),
-        );
+          const fields: EmbedField[] = (await query.fetchIssues(owner, repo))
+            .map(
+              ({ html_url, title, number }) => ({
+                name: `#${number}`,
+                value: `[${title}](${html_url})`,
+              }),
+            );
+          if (fields.length <= 0) {
+            msg.reply(analecta.NothingToBring);
+            return true;
+          }
+
+          msg.sendEmbed(
+            new EmbedMessage()
+              .color(colorFromState("open"))
+              .author({ name: login, icon_url: avatar_url, url: owner_url })
+              .url(html_url)
+              .title(repoName)
+              .footer({ text: analecta.EnumIssue })
+              .fields(...fields),
+          );
+        } catch (_e) {
+          /** @ignore */
+          return false;
+        }
         return true;
       };
 
 const internalIssueList = externalIssueList("approvers");
 
-const externalIssue = (owner: string) =>
-  (repo: string, dst: string) =>
+const externalIssue = (owner?: string) =>
+  (repo?: string, dst?: string) =>
     (
       query: Query,
     ): CommandProcessor =>
       async (analecta: Analecta, msg: Message) => {
-        if (!numbersPattern.test(dst)) {
+        if (
+          owner == null || repo == null || dst == null ||
+          !numbersPattern.test(dst)
+        ) {
           return false;
         }
 
-        const {
-          state,
-          title,
-          body,
-          html_url,
-          user: { avatar_url, login },
-        } = await query.fetchAnIssue(owner, repo, dst);
+        try {
+          const {
+            state,
+            title,
+            body,
+            html_url,
+            user: { avatar_url, login },
+          } = await query.fetchAnIssue(owner, repo, dst);
 
-        const color = colorFromState(state);
-        const description = body ? omitBody(body) : "";
+          const color = colorFromState(state);
+          const description = body ? omitBody(body) : "";
 
-        msg.sendEmbed(
-          new EmbedMessage()
-            .color(color)
-            .author({ name: login, icon_url: avatar_url })
-            .url(html_url)
-            .description(description)
-            .title(title)
-            .footer({ text: analecta.BringIssue }),
-        );
+          msg.sendEmbed(
+            new EmbedMessage()
+              .color(color)
+              .author({ name: login, icon_url: avatar_url })
+              .url(html_url)
+              .description(description)
+              .title(title)
+              .footer({ text: analecta.BringIssue }),
+          );
+        } catch (_e) {
+          /** @ignore */
+          return false;
+        }
 
         return true;
       };

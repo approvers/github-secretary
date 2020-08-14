@@ -24,6 +24,7 @@ export const procs = (
     ),
     bringIssue(query),
     bringPR(query),
+    bringBranch(query),
     bringRepo(query),
     subscribeNotification(db, query),
     unsubscribeNotification(db),
