@@ -14,6 +14,6 @@ jobs:
         with:
           node-version: "12"
       - name: Install dependencies
-        run: yarn install --frozen
+        run: npm install --no-save
       - name: Run lint
-        run: yarn lint
+        run: npm run lint
