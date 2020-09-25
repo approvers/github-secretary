@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build an image with a tag
-        run: docker build -t app .
+        run: docker build -t app -f docker/bot.Dockerfile .
 
       - name: Log into the registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
