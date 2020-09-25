@@ -1,12 +1,12 @@
-FROM node:12.18.1-alpine as BUILD
+FROM node:12.18.4-alpine as BUILD
 
 COPY . .
 
-RUN yarn install --frozen-lockfile && yarn build:bot
+RUN npm install --no-save && npm run build
 
 # ---
 
-FROM node:12.18.1-alpine
+FROM node:12.18.4-alpine
 
 RUN addgroup -g 1993 -S bot \
   && adduser -u 1993 -S bot -G bot
