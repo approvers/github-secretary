@@ -3,8 +3,7 @@
     "node": true
   },
   "extends": [
-    "eslint:recommended",
-    "plugin:prettier/recommended"
+    "eslint:recommended"
   ],
   "parserOptions": {
     "sourceType": "module",
@@ -21,8 +20,7 @@
       ],
       "extends": [
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "prettier/@typescript-eslint"
+        "plugin:@typescript-eslint/eslint-recommended"
       ],
       "parser": "@typescript-eslint/parser",
       "parserOptions": {
