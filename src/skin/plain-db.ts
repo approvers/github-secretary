@@ -1,4 +1,5 @@
 import { promises } from "fs";
+import path from "path";
 import MutexPromise from "mutex-promise";
 
 import {
@@ -14,8 +15,6 @@ import {
   UserDatabase,
   UpdateHandler,
 } from "../op/interfaces";
-
-const { open, mkdir } = promises;
 
 export class PlainDB implements SubscriptionDatabase, UserDatabase {
   private users: GitHubUsers = new Map();
@@ -36,10 +35,7 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
   }
 
   static async make(fileName: string): Promise<PlainDB> {
-    const handle = await open(fileName, "r+").catch(async () => {
-      await mkdir(".cache");
-      return await open(fileName, "w+");
-    });
+    const handle = await readyFile(fileName);
     const obj = new PlainDB(fileName, handle);
     try {
       const buf = await handle.readFile();
@@ -87,5 +83,17 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
     await Promise.all(
       this.handlers.map((handler) => handler.handleUpdate(this.users))
     );
+  }
+}
+
+const { open, mkdir } = promises;
+
+async function readyFile(fileName: string) {
+  try {
+    return await open(fileName, "r+");
+  } catch (_ignore) {
+    const dir = path.dirname(fileName);
+    await mkdir(dir, { recursive: true });
+    return await open(fileName, "w+");
   }
 }
