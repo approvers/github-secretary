@@ -1,7 +1,7 @@
-import { Message as RawMessage, MessageEmbed } from 'discord.js';
+import { Message as RawMessage, MessageEmbed } from "discord.js";
 
-import { Message } from '../abst/message';
-import { DiscordId } from '../exp/discord-id';
+import { Message } from "../abst/message";
+import { DiscordId } from "../exp/discord-id";
 
 export class DiscordMessage implements Message {
   constructor(private raw: RawMessage) {}
@@ -15,7 +15,7 @@ export class DiscordMessage implements Message {
   }
 
   async matchCommand(regex: RegExp): Promise<RegExpMatchArray | null> {
-    return regex.exec(this.raw.content.split('\n')[0]);
+    return regex.exec(this.raw.content.split("\n")[0]);
   }
 
   async withTyping(callee: () => Promise<boolean>): Promise<boolean> {

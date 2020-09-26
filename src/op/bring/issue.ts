@@ -1,16 +1,16 @@
-import { MessageEmbed, EmbedFieldData } from 'discord.js';
+import { MessageEmbed, EmbedFieldData } from "discord.js";
 
-import { Analecta } from '../../exp/analecta';
-import { colorFromState } from '../../exp/state-color';
-import { replyFailure } from '../../abst/reply-failure';
-import { CommandProcessor, connectProcessors } from '../../abst/connector';
-import { omitBody } from '../../exp/omit';
-import { Message } from '../../abst/message';
+import { Analecta } from "../../exp/analecta";
+import { colorFromState } from "../../exp/state-color";
+import { replyFailure } from "../../abst/reply-failure";
+import { CommandProcessor, connectProcessors } from "../../abst/connector";
+import { omitBody } from "../../exp/omit";
+import { Message } from "../../abst/message";
 
 export type Query = {
   fetchRepo: (
     owner: string,
-    repoName: string,
+    repoName: string
   ) => Promise<{
     name: string;
     html_url: string;
@@ -18,7 +18,7 @@ export type Query = {
   }>;
   fetchIssues: (
     owner: string,
-    repoName: string,
+    repoName: string
   ) => Promise<
     {
       html_url: string;
@@ -29,7 +29,7 @@ export type Query = {
   fetchAnIssue: (
     owner: string,
     repoName: string,
-    dst: string,
+    dst: string
   ) => Promise<{
     state: string;
     title: string;
@@ -42,7 +42,10 @@ export type Query = {
 const ghPattern = /^\/ghi\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
 const numbersPattern = /^[1-9][0-9]*$/;
 
-const genSubCommands = (matches: RegExpMatchArray, query: Query): CommandProcessor[] =>
+const genSubCommands = (
+  matches: RegExpMatchArray,
+  query: Query
+): CommandProcessor[] =>
   [
     externalIssue(matches[1])(matches[3], matches[5]),
     internalIssue(matches[1], matches[3]),
@@ -54,18 +57,20 @@ const genSubCommands = (matches: RegExpMatchArray, query: Query): CommandProcess
 
 export const bringIssue = (query: Query) => async (
   analecta: Analecta,
-  msg: Message,
+  msg: Message
 ): Promise<boolean> => {
   const matches = await msg.matchCommand(ghPattern);
   if (matches == null) {
     return false;
   }
 
-  return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
+  return msg.withTyping(() =>
+    connectProcessors(genSubCommands(matches, query))(analecta, msg)
+  );
 };
 
 const externalIssueList = (owner?: string) => (repo?: string) => (
-  query: Query,
+  query: Query
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   if (owner == null || repo == null) {
     return false;
@@ -81,7 +86,7 @@ const externalIssueList = (owner?: string) => (repo?: string) => (
       ({ html_url, title, number }) => ({
         name: `#${number}`,
         value: `[${title}](${html_url})`,
-      }),
+      })
     );
     if (fields.length <= 0) {
       msg.reply(analecta.NothingToBring);
@@ -90,12 +95,12 @@ const externalIssueList = (owner?: string) => (repo?: string) => (
 
     msg.sendEmbed(
       new MessageEmbed()
-        .setColor(colorFromState('open'))
+        .setColor(colorFromState("open"))
         .setAuthor(login, avatar_url, owner_url)
         .setURL(html_url)
         .setTitle(repoName)
         .setFooter(analecta.EnumIssue)
-        .addFields(fields),
+        .addFields(fields)
     );
   } catch (_e) {
     /** @ignore */
@@ -104,12 +109,17 @@ const externalIssueList = (owner?: string) => (repo?: string) => (
   return true;
 };
 
-const internalIssueList = externalIssueList('approvers');
+const internalIssueList = externalIssueList("approvers");
 
 const externalIssue = (owner?: string) => (repo?: string, dst?: string) => (
-  query: Query,
+  query: Query
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
-  if (owner == null || repo == null || dst == null || !numbersPattern.test(dst)) {
+  if (
+    owner == null ||
+    repo == null ||
+    dst == null ||
+    !numbersPattern.test(dst)
+  ) {
     return false;
   }
 
@@ -123,7 +133,7 @@ const externalIssue = (owner?: string) => (repo?: string, dst?: string) => (
     } = await query.fetchAnIssue(owner, repo, dst);
 
     const color = colorFromState(state);
-    const description = body ? omitBody(body) : '';
+    const description = body ? omitBody(body) : "";
 
     msg.sendEmbed(
       new MessageEmbed()
@@ -132,7 +142,7 @@ const externalIssue = (owner?: string) => (repo?: string, dst?: string) => (
         .setURL(html_url)
         .setDescription(description)
         .setTitle(title)
-        .setFooter(analecta.BringIssue),
+        .setFooter(analecta.BringIssue)
     );
   } catch (_e) {
     /** @ignore */
@@ -142,4 +152,4 @@ const externalIssue = (owner?: string) => (repo?: string, dst?: string) => (
   return true;
 };
 
-const internalIssue = externalIssue('approvers');
+const internalIssue = externalIssue("approvers");

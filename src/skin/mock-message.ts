@@ -1,13 +1,16 @@
-import { MessageEmbed } from 'discord.js';
-import { EventEmitter } from 'events';
+import { MessageEmbed } from "discord.js";
+import { EventEmitter } from "events";
 
-import { Message } from '../abst/message';
-import { DiscordId } from '../exp/discord-id';
+import { Message } from "../abst/message";
+import { DiscordId } from "../exp/discord-id";
 
 export class MockMessage implements Message {
   emitter = new EventEmitter();
 
-  constructor(private content: string, private id: DiscordId = '' as DiscordId) {}
+  constructor(
+    private content: string,
+    private id: DiscordId = "" as DiscordId
+  ) {}
 
   getAuthorId(): DiscordId {
     return this.id;
@@ -18,7 +21,7 @@ export class MockMessage implements Message {
   }
 
   async matchCommand(regex: RegExp): Promise<RegExpMatchArray | null> {
-    return regex.exec(this.content.split('\n')[0]);
+    return regex.exec(this.content.split("\n")[0]);
   }
 
   async withTyping(callee: () => Promise<boolean>): Promise<boolean> {
@@ -26,10 +29,10 @@ export class MockMessage implements Message {
   }
 
   async reply(message: string): Promise<void> {
-    this.emitter.emit('reply', message);
+    this.emitter.emit("reply", message);
   }
 
   async sendEmbed(embed: MessageEmbed): Promise<void> {
-    this.emitter.emit('sendEmbed', embed);
+    this.emitter.emit("sendEmbed", embed);
   }
 }

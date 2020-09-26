@@ -1,13 +1,13 @@
-import fetch from 'node-fetch';
+import fetch from "node-fetch";
 
-import { Query } from '../op/interfaces';
-import { GitHubUser } from '../exp/github-user';
-import { NotificationId } from '../exp/github-notification';
+import { Query } from "../op/interfaces";
+import { GitHubUser } from "../exp/github-user";
+import { NotificationId } from "../exp/github-notification";
 
 export class GitHubApi implements Query {
   async fetchRepo(
     owner: string,
-    repoName: string,
+    repoName: string
   ): Promise<{
     name: string;
     description?: string;
@@ -16,20 +16,20 @@ export class GitHubApi implements Query {
   }> {
     const repoInfoApiUrl = `https://api.github.com/repos/${owner}/${repoName}`;
     const infoRes = await (await fetch(repoInfoApiUrl)).json();
-    if (infoRes.message === 'Not Found') {
-      throw new Error('not found the repositpory');
+    if (infoRes.message === "Not Found") {
+      throw new Error("not found the repositpory");
     }
     return infoRes;
   }
 
   async fetchIssues(
     owner: string,
-    repoName: string,
+    repoName: string
   ): Promise<{ html_url: string; title: string; number: string }[]> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/issues`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
-      throw new Error('not found the repositpory');
+    if (res.message === "Not Found") {
+      throw new Error("not found the repositpory");
     }
     return res;
   }
@@ -37,7 +37,7 @@ export class GitHubApi implements Query {
   async fetchAnIssue(
     owner: string,
     repoName: string,
-    dst: string,
+    dst: string
   ): Promise<{
     state: string;
     title: string;
@@ -47,20 +47,20 @@ export class GitHubApi implements Query {
   }> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/issues/${dst}`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
-      throw new Error('not found the issue');
+    if (res.message === "Not Found") {
+      throw new Error("not found the issue");
     }
     return res;
   }
 
   async fetchPullRequests(
     owner: string,
-    repoName: string,
+    repoName: string
   ): Promise<{ html_url: string; title: string; number: string }[]> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
-      throw new Error('not found the repositpory');
+    if (res.message === "Not Found") {
+      throw new Error("not found the repositpory");
     }
     return res;
   }
@@ -68,7 +68,7 @@ export class GitHubApi implements Query {
   async fetchAPullRequest(
     owner: string,
     repoName: string,
-    dst: string,
+    dst: string
   ): Promise<{
     state: string;
     title: string;
@@ -78,17 +78,20 @@ export class GitHubApi implements Query {
   }> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls/${dst}`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
-      throw new Error('not found the pull request');
+    if (res.message === "Not Found") {
+      throw new Error("not found the pull request");
     }
     return res;
   }
 
-  async fetchBranches(owner: string, repoName: string): Promise<{ name: string }[]> {
+  async fetchBranches(
+    owner: string,
+    repoName: string
+  ): Promise<{ name: string }[]> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Not Found') {
-      throw new Error('not found the branches');
+    if (res.message === "Not Found") {
+      throw new Error("not found the branches");
     }
     return res;
   }
@@ -96,7 +99,7 @@ export class GitHubApi implements Query {
   async fetchABranch(
     owner: string,
     repoName: string,
-    branchName: string,
+    branchName: string
   ): Promise<{
     name: string;
     commit: { author: { avatar_url: string; login: string } };
@@ -104,21 +107,25 @@ export class GitHubApi implements Query {
   }> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches/${branchName}`;
     const res = await (await fetch(apiUrl)).json();
-    if (res.message === 'Branch not found') {
-      throw new Error('not found the branch');
+    if (res.message === "Branch not found") {
+      throw new Error("not found the branch");
     }
     return res;
   }
 
   async markAsRead(user: GitHubUser, notificationId: string): Promise<boolean> {
     const { userName, notificationToken } = user;
-    const res = await fetch(`https://api.github.com/notifications/threads/${notificationId}`, {
-      method: 'PATCH',
-      headers: {
-        Authorization:
-          `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
-      },
-    });
+    const res = await fetch(
+      `https://api.github.com/notifications/threads/${notificationId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization:
+            `Basic ` +
+            Buffer.from(`${userName}:${notificationToken}`).toString("base64"),
+        },
+      }
+    );
     if (res.status !== 205) {
       return false;
     }
@@ -128,11 +135,12 @@ export class GitHubApi implements Query {
   async getGitHubUser(userName: string, token: string): Promise<GitHubUser> {
     const res = await fetch(`https://api.github.com/notifications`, {
       headers: {
-        Authorization: `Basic ` + Buffer.from(`${userName}:${token}`).toString('base64'),
+        Authorization:
+          `Basic ` + Buffer.from(`${userName}:${token}`).toString("base64"),
       },
     });
     if (!res.ok) {
-      throw new Error('invalid token');
+      throw new Error("invalid token");
     }
     return {
       userName,

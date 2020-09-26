@@ -1,5 +1,5 @@
-import { NotificationId } from './github-notification';
-import { DiscordId } from './discord-id';
+import { NotificationId } from "./github-notification";
+import { DiscordId } from "./discord-id";
 
 declare const nominalGitHubUser: unique symbol;
 export type GitHubUser = {

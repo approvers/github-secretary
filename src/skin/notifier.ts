@@ -1,13 +1,16 @@
-import fetch from 'node-fetch';
-import { MessageEmbed, User } from 'discord.js';
+import fetch from "node-fetch";
+import { MessageEmbed, User } from "discord.js";
 
-import { GitHubUser, GitHubUsers } from '../exp/github-user';
-import { DiscordId } from '../exp/discord-id';
-import { NotificationId, GitHubNotifications } from '../exp/github-notification';
-import { Analecta } from '../exp/analecta';
-import { notify, Database as NotifyController } from '../op/subscribe/notify';
-import { Query } from '../op/subscribe/notify';
-import { UpdateHandler } from '../op/interfaces';
+import { GitHubUser, GitHubUsers } from "../exp/github-user";
+import { DiscordId } from "../exp/discord-id";
+import {
+  NotificationId,
+  GitHubNotifications,
+} from "../exp/github-notification";
+import { Analecta } from "../exp/analecta";
+import { notify, Database as NotifyController } from "../op/subscribe/notify";
+import { Query } from "../op/subscribe/notify";
+import { UpdateHandler } from "../op/interfaces";
 
 export type Database = {
   update: (id: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
@@ -21,14 +24,19 @@ const safeParseDecimal = (str: string): number => {
   return val;
 };
 
-const NOTIFY_INTERVAL = safeParseDecimal(process.env.NOTIFY_INTERVAL || '10000');
+const NOTIFY_INTERVAL = safeParseDecimal(
+  process.env.NOTIFY_INTERVAL || "10000"
+);
 
 export type UserDic = {
   fetch: (userId: string) => Promise<User>;
 };
 
 export type Updater = {
-  update: (discordId: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
+  update: (
+    discordId: DiscordId,
+    notificationIds: NotificationId[]
+  ) => Promise<void>;
 };
 
 const notificationQuery: Query = {
@@ -39,11 +47,12 @@ const notificationQuery: Query = {
     const rawRes = await fetch(`https://api.github.com/notifications`, {
       headers: {
         Authorization:
-          `Basic ` + Buffer.from(`${userName}:${notificationToken}`).toString('base64'),
+          `Basic ` +
+          Buffer.from(`${userName}:${notificationToken}`).toString("base64"),
       },
     });
     if (!rawRes.ok) {
-      throw 'fail to fetch notifications';
+      throw "fail to fetch notifications";
     }
     return [...(await rawRes.json())];
   },
@@ -52,7 +61,11 @@ const notificationQuery: Query = {
 export class SubscriptionNotifier implements UpdateHandler {
   private notifyTasks: (() => void)[] = [];
 
-  constructor(private analecta: Analecta, private users: UserDic, private updater: Updater) {}
+  constructor(
+    private analecta: Analecta,
+    private users: UserDic,
+    private updater: Updater
+  ) {}
 
   async handleUpdate(users: Readonly<GitHubUsers>): Promise<void> {
     this.stop();
@@ -64,19 +77,22 @@ export class SubscriptionNotifier implements UpdateHandler {
     }
   }
 
-  private makeNotifyTask = (userId: DiscordId, sub: GitHubUser): (() => void) => {
+  private makeNotifyTask = (
+    userId: DiscordId,
+    sub: GitHubUser
+  ): (() => void) => {
     const timer = setInterval(
       () =>
         notify(
           this.analecta,
           this.sendMessage(userId),
           this.notifyController(sub, userId),
-          notificationQuery,
+          notificationQuery
         ).catch((e) => {
           console.error(e);
           clearInterval(timer);
         }),
-      NOTIFY_INTERVAL,
+      NOTIFY_INTERVAL
     );
     return (): void => {
       clearInterval(timer);
@@ -91,10 +107,14 @@ export class SubscriptionNotifier implements UpdateHandler {
     };
   }
 
-  private notifyController(sub: GitHubUser, userId: DiscordId): NotifyController {
+  private notifyController(
+    sub: GitHubUser,
+    userId: DiscordId
+  ): NotifyController {
     return {
       getUser: async (): Promise<GitHubUser> => sub,
-      update: (newIds: NotificationId[]): Promise<void> => this.updater.update(userId, newIds),
+      update: (newIds: NotificationId[]): Promise<void> =>
+        this.updater.update(userId, newIds),
     };
   }
 

@@ -1,9 +1,12 @@
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed } from "discord.js";
 
-import { Analecta } from '../../exp/analecta';
-import { GitHubUser } from '../../exp/github-user';
-import { NotificationId, GitHubNotifications } from '../../exp/github-notification';
-import { fetchErrorHandler } from '../../skin/fetch-error-handler';
+import { Analecta } from "../../exp/analecta";
+import { GitHubUser } from "../../exp/github-user";
+import {
+  NotificationId,
+  GitHubNotifications,
+} from "../../exp/github-notification";
+import { fetchErrorHandler } from "../../skin/fetch-error-handler";
 
 export type Database = {
   getUser(): Promise<GitHubUser>;
@@ -18,12 +21,14 @@ export const notify = async (
   analecta: Analecta,
   send: (message: MessageEmbed) => Promise<void>,
   db: Database,
-  query: Query,
+  query: Query
 ): Promise<void> => {
   const user = await db.getUser();
   const { currentNotificationIds } = user;
 
-  const res = await query.fetchNotification(user).catch(fetchErrorHandler(send));
+  const res = await query
+    .fetchNotification(user)
+    .catch(fetchErrorHandler(send));
   const newIds = res.map(({ id }) => id);
   const newIdSet = new Set([...newIds]);
   for (const oldE of currentNotificationIds) {
@@ -44,6 +49,6 @@ export const notify = async (
     new MessageEmbed()
       .addFields(subjects)
       .setTitle(analecta.BringIssue)
-      .setURL(`https://github.com/notifications`),
+      .setURL(`https://github.com/notifications`)
   );
 };

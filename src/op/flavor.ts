@@ -1,12 +1,18 @@
-import { Analecta } from '../exp/analecta';
-import { CommandProcessor } from '../abst/connector';
-import { Message } from '../abst/message';
+import { Analecta } from "../exp/analecta";
+import { CommandProcessor } from "../abst/connector";
+import { Message } from "../abst/message";
 
-export const flavor = (callPattern: RegExp, blackPattern: RegExp): CommandProcessor => async (
+export const flavor = (
+  callPattern: RegExp,
+  blackPattern: RegExp
+): CommandProcessor => async (
   analecta: Analecta,
-  msg: Message,
+  msg: Message
 ): Promise<boolean> => {
-  if (!(await msg.matchPlainText(callPattern)) || (await msg.matchPlainText(blackPattern))) {
+  if (
+    !(await msg.matchPlainText(callPattern)) ||
+    (await msg.matchPlainText(blackPattern))
+  ) {
     return false;
   }
 

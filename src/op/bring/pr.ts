@@ -1,16 +1,16 @@
-import { MessageEmbed, EmbedFieldData } from 'discord.js';
+import { MessageEmbed, EmbedFieldData } from "discord.js";
 
-import { Analecta } from '../../exp/analecta';
-import { colorFromState } from '../../exp/state-color';
-import { replyFailure } from '../../abst/reply-failure';
-import { CommandProcessor, connectProcessors } from '../../abst/connector';
-import { omitBody } from '../../exp/omit';
-import { Message } from '../../abst/message';
+import { Analecta } from "../../exp/analecta";
+import { colorFromState } from "../../exp/state-color";
+import { replyFailure } from "../../abst/reply-failure";
+import { CommandProcessor, connectProcessors } from "../../abst/connector";
+import { omitBody } from "../../exp/omit";
+import { Message } from "../../abst/message";
 
 export type Query = {
   fetchRepo: (
     owner: string,
-    repoName: string,
+    repoName: string
   ) => Promise<{
     name: string;
     html_url: string;
@@ -18,7 +18,7 @@ export type Query = {
   }>;
   fetchPullRequests: (
     owner: string,
-    repoName: string,
+    repoName: string
   ) => Promise<
     {
       html_url: string;
@@ -29,7 +29,7 @@ export type Query = {
   fetchAPullRequest: (
     owner: string,
     repoName: string,
-    dst: string,
+    dst: string
   ) => Promise<{
     state: string;
     title: string;
@@ -42,7 +42,10 @@ export type Query = {
 const ghPattern = /^\/ghp\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
 const numbersPattern = /^[1-9][0-9]*$/;
 
-const genSubCommands = (matches: RegExpMatchArray, query: Query): CommandProcessor[] =>
+const genSubCommands = (
+  matches: RegExpMatchArray,
+  query: Query
+): CommandProcessor[] =>
   [
     externalPR(matches[1])(matches[3], matches[5]),
     internalPR(matches[1], matches[3]),
@@ -54,18 +57,20 @@ const genSubCommands = (matches: RegExpMatchArray, query: Query): CommandProcess
 
 export const bringPR = (query: Query) => async (
   analecta: Analecta,
-  msg: Message,
+  msg: Message
 ): Promise<boolean> => {
   const matches = await msg.matchCommand(ghPattern);
   if (matches == null) {
     return false;
   }
 
-  return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
+  return msg.withTyping(() =>
+    connectProcessors(genSubCommands(matches, query))(analecta, msg)
+  );
 };
 
 const externalPRList = (owner?: string) => (repo?: string) => (
-  query: Query,
+  query: Query
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   if (owner == null || repo == null) {
     return false;
@@ -77,12 +82,12 @@ const externalPRList = (owner?: string) => (repo?: string) => (
       owner: { avatar_url, html_url: owner_url, login },
     } = await query.fetchRepo(owner, repo);
 
-    const fields: EmbedFieldData[] = (await query.fetchPullRequests(owner, repo)).map(
-      ({ html_url, title, number }) => ({
-        name: `#${number}`,
-        value: `[${title}](${html_url})`,
-      }),
-    );
+    const fields: EmbedFieldData[] = (
+      await query.fetchPullRequests(owner, repo)
+    ).map(({ html_url, title, number }) => ({
+      name: `#${number}`,
+      value: `[${title}](${html_url})`,
+    }));
     if (fields.length <= 0) {
       await msg.reply(analecta.NothingToBring);
       return true;
@@ -90,12 +95,12 @@ const externalPRList = (owner?: string) => (repo?: string) => (
 
     await msg.sendEmbed(
       new MessageEmbed()
-        .setColor(colorFromState('open'))
+        .setColor(colorFromState("open"))
         .setAuthor(login, avatar_url, owner_url)
         .setURL(html_url)
         .setTitle(repoName)
         .setFooter(analecta.EnumPR)
-        .addFields(fields),
+        .addFields(fields)
     );
   } catch (_e) {
     /** @ignore */
@@ -105,12 +110,17 @@ const externalPRList = (owner?: string) => (repo?: string) => (
   return true;
 };
 
-const internalPRList = externalPRList('approvers');
+const internalPRList = externalPRList("approvers");
 
 const externalPR = (owner?: string) => (repo?: string, dst?: string) => (
-  query: Query,
+  query: Query
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
-  if (owner == null || repo == null || dst == null || !numbersPattern.test(dst)) {
+  if (
+    owner == null ||
+    repo == null ||
+    dst == null ||
+    !numbersPattern.test(dst)
+  ) {
     return false;
   }
 
@@ -130,7 +140,7 @@ const externalPR = (owner?: string) => (repo?: string, dst?: string) => (
     } = await query.fetchAPullRequest(owner, repo, dst);
 
     const color = colorFromState(state);
-    const description = body ? omitBody(body) : '';
+    const description = body ? omitBody(body) : "";
     await msg.sendEmbed(
       new MessageEmbed()
         .setColor(color)
@@ -138,7 +148,7 @@ const externalPR = (owner?: string) => (repo?: string, dst?: string) => (
         .setURL(html_url)
         .setDescription(description)
         .setTitle(title)
-        .setFooter(analecta.BringPR),
+        .setFooter(analecta.BringPR)
     );
   } catch (_e) {
     /** @ignore */
@@ -148,4 +158,4 @@ const externalPR = (owner?: string) => (repo?: string, dst?: string) => (
   return true;
 };
 
-const internalPR = externalPR('approvers');
+const internalPR = externalPR("approvers");

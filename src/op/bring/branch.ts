@@ -1,15 +1,15 @@
-import { MessageEmbed, EmbedFieldData } from 'discord.js';
+import { MessageEmbed, EmbedFieldData } from "discord.js";
 
-import { Analecta } from '../../exp/analecta';
-import { colorFromState } from '../../exp/state-color';
-import { replyFailure } from '../../abst/reply-failure';
-import { CommandProcessor, connectProcessors } from '../../abst/connector';
-import { Message } from '../../abst/message';
+import { Analecta } from "../../exp/analecta";
+import { colorFromState } from "../../exp/state-color";
+import { replyFailure } from "../../abst/reply-failure";
+import { CommandProcessor, connectProcessors } from "../../abst/connector";
+import { Message } from "../../abst/message";
 
 export type Query = {
   fetchRepo: (
     owner: string,
-    repoName: string,
+    repoName: string
   ) => Promise<{
     name: string;
     html_url: string;
@@ -17,7 +17,7 @@ export type Query = {
   }>;
   fetchBranches: (
     owner: string,
-    repoName: string,
+    repoName: string
   ) => Promise<
     {
       name: string;
@@ -26,7 +26,7 @@ export type Query = {
   fetchABranch: (
     owner: string,
     repoName: string,
-    branchName: string,
+    branchName: string
   ) => Promise<{
     name: string;
     commit: {
@@ -38,7 +38,10 @@ export type Query = {
 
 const ghPattern = /^\/ghb\s+([^/\s]+)(\/([^/\s]+))?(\s+(.+))?$/;
 
-const genSubCommands = (matches: RegExpMatchArray, query: Query): CommandProcessor[] =>
+const genSubCommands = (
+  matches: RegExpMatchArray,
+  query: Query
+): CommandProcessor[] =>
   [
     externalBranch(matches[1])(matches[3], matches[5]),
     internalBranch(matches[1], matches[5]),
@@ -50,18 +53,20 @@ const genSubCommands = (matches: RegExpMatchArray, query: Query): CommandProcess
 
 export const bringBranch = (query: Query) => async (
   analecta: Analecta,
-  msg: Message,
+  msg: Message
 ): Promise<boolean> => {
   const matches = await msg.matchCommand(ghPattern);
   if (matches == null) {
     return false;
   }
 
-  return msg.withTyping(() => connectProcessors(genSubCommands(matches, query))(analecta, msg));
+  return msg.withTyping(() =>
+    connectProcessors(genSubCommands(matches, query))(analecta, msg)
+  );
 };
 
 const externalBranchList = (owner?: string) => (repo?: string) => (
-  query: Query,
+  query: Query
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   if (owner == null || repo == null) {
     return false;
@@ -73,12 +78,12 @@ const externalBranchList = (owner?: string) => (repo?: string) => (
       owner: { avatar_url, html_url: owner_url, login },
     } = await query.fetchRepo(owner, repo);
 
-    const fields: EmbedFieldData[] = (await query.fetchBranches(owner, repo)).map(
-      ({ name }, i) => ({
-        name: (i + 1).toString().padStart(2, '0'),
-        value: `[${name}](https://github.com/${login}/${repoName}/tree/${name})`.toLowerCase(),
-      }),
-    );
+    const fields: EmbedFieldData[] = (
+      await query.fetchBranches(owner, repo)
+    ).map(({ name }, i) => ({
+      name: (i + 1).toString().padStart(2, "0"),
+      value: `[${name}](https://github.com/${login}/${repoName}/tree/${name})`.toLowerCase(),
+    }));
     if (fields.length <= 0) {
       await msg.reply(analecta.NothingToBring);
       return true;
@@ -86,12 +91,12 @@ const externalBranchList = (owner?: string) => (repo?: string) => (
 
     await msg.sendEmbed(
       new MessageEmbed()
-        .setColor(colorFromState('open'))
+        .setColor(colorFromState("open"))
         .setAuthor(login, avatar_url, owner_url)
         .setURL(html_url)
         .setTitle(repoName)
         .setFooter(analecta.EnumBranch)
-        .addFields(fields),
+        .addFields(fields)
     );
   } catch (_e) {
     return false;
@@ -100,10 +105,10 @@ const externalBranchList = (owner?: string) => (repo?: string) => (
   return true;
 };
 
-const internalBranchList = externalBranchList('approvers');
+const internalBranchList = externalBranchList("approvers");
 
 const externalBranch = (owner?: string) => (repo?: string, branch?: string) => (
-  query: Query,
+  query: Query
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   console.log({ owner, repo, branch });
   if (owner == null || repo == null || branch == null) {
@@ -120,11 +125,15 @@ const externalBranch = (owner?: string) => (repo?: string, branch?: string) => (
 
     await msg.sendEmbed(
       new MessageEmbed()
-        .setColor(colorFromState('open'))
-        .setAuthor(login, avatar_url, `https://github.com/${login}`.toLowerCase())
+        .setColor(colorFromState("open"))
+        .setAuthor(
+          login,
+          avatar_url,
+          `https://github.com/${login}`.toLowerCase()
+        )
         .setURL(html)
         .setTitle(name)
-        .setFooter(analecta.BringBranch),
+        .setFooter(analecta.BringBranch)
     );
   } catch (_e) {
     return false;
@@ -133,4 +142,4 @@ const externalBranch = (owner?: string) => (repo?: string, branch?: string) => (
   return true;
 };
 
-const internalBranch = externalBranch('approvers');
+const internalBranch = externalBranch("approvers");

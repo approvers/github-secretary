@@ -1,32 +1,36 @@
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed } from "discord.js";
 
-import { bringBranch } from './branch';
-import { MockMessage } from '../../skin/mock-message';
-import { analectaForTest } from '../../skin/test-analecta';
-import { colorFromState } from '../../exp/state-color';
+import { bringBranch } from "./branch";
+import { MockMessage } from "../../skin/mock-message";
+import { analectaForTest } from "../../skin/test-analecta";
+import { colorFromState } from "../../exp/state-color";
 
-test('get branches list', async (done) => {
+test("get branches list", async (done) => {
   const analecta = await analectaForTest();
 
-  const message = new MockMessage('/ghb andy/test-project');
-  message.emitter.on('reply', () => {
-    expect('').toStrictEqual('`bringBranch` must not reply.');
+  const message = new MockMessage("/ghb andy/test-project");
+  message.emitter.on("reply", () => {
+    expect("").toStrictEqual("`bringBranch` must not reply.");
     done();
   });
-  message.emitter.on('sendEmbed', (embed: MessageEmbed) => {
+  message.emitter.on("sendEmbed", (embed: MessageEmbed) => {
     expect(embed).toStrictEqual(
       new MessageEmbed()
-        .setColor(colorFromState('open'))
-        .setAuthor('Andy', 'https://github.com/andy.png', 'https://github.com/andy')
-        .setURL('https://github.com/andy/test-project')
-        .setTitle('test-project')
+        .setColor(colorFromState("open"))
+        .setAuthor(
+          "Andy",
+          "https://github.com/andy.png",
+          "https://github.com/andy"
+        )
+        .setURL("https://github.com/andy/test-project")
+        .setTitle("test-project")
         .setFooter(analecta.EnumBranch)
         .addFields([
           {
-            name: '01',
-            value: '[hotfix](https://github.com/andy/test-project/tree/hotfix)',
+            name: "01",
+            value: "[hotfix](https://github.com/andy/test-project/tree/hotfix)",
           },
-        ]),
+        ])
     );
     done();
   });
@@ -34,44 +38,50 @@ test('get branches list', async (done) => {
   expect(
     bringBranch({
       fetchRepo: async () => ({
-        name: 'test-project',
-        html_url: 'https://github.com/andy/test-project',
+        name: "test-project",
+        html_url: "https://github.com/andy/test-project",
         owner: {
-          avatar_url: 'https://github.com/andy.png',
-          html_url: 'https://github.com/andy',
-          login: 'Andy',
+          avatar_url: "https://github.com/andy.png",
+          html_url: "https://github.com/andy",
+          login: "Andy",
         },
       }),
       fetchABranch: async () => ({
-        name: 'hotfix',
-        _links: { html: 'https://github.com/andy/test-project/tree/hotfix' },
-        commit: { author: { avatar_url: 'https://github.com/bob.png', login: 'Bob' } },
+        name: "hotfix",
+        _links: { html: "https://github.com/andy/test-project/tree/hotfix" },
+        commit: {
+          author: { avatar_url: "https://github.com/bob.png", login: "Bob" },
+        },
       }),
       fetchBranches: async () => [
         {
-          name: 'hotfix',
+          name: "hotfix",
         },
       ],
-    })(analecta, message),
+    })(analecta, message)
   ).resolves.toEqual(true);
 });
 
-test('get a branch', async (done) => {
+test("get a branch", async (done) => {
   const analecta = await analectaForTest();
 
-  const message = new MockMessage('/ghb andy/test-project hotfix');
-  message.emitter.on('reply', () => {
-    expect('').toStrictEqual('`bringBranch` must not reply.');
+  const message = new MockMessage("/ghb andy/test-project hotfix");
+  message.emitter.on("reply", () => {
+    expect("").toStrictEqual("`bringBranch` must not reply.");
     done();
   });
-  message.emitter.on('sendEmbed', (embed: MessageEmbed) => {
+  message.emitter.on("sendEmbed", (embed: MessageEmbed) => {
     expect(embed).toStrictEqual(
       new MessageEmbed()
-        .setColor(colorFromState('open'))
-        .setAuthor('Bob', 'https://github.com/bob.png', 'https://github.com/bob')
-        .setURL('https://github.com/andy/test-project/tree/hotfix')
-        .setTitle('hotfix')
-        .setFooter(analecta.BringBranch),
+        .setColor(colorFromState("open"))
+        .setAuthor(
+          "Bob",
+          "https://github.com/bob.png",
+          "https://github.com/bob"
+        )
+        .setURL("https://github.com/andy/test-project/tree/hotfix")
+        .setTitle("hotfix")
+        .setFooter(analecta.BringBranch)
     );
     done();
   });
@@ -79,24 +89,26 @@ test('get a branch', async (done) => {
   expect(
     bringBranch({
       fetchRepo: async () => ({
-        name: 'test-project',
-        html_url: 'https://github.com/andy/test-project',
+        name: "test-project",
+        html_url: "https://github.com/andy/test-project",
         owner: {
-          avatar_url: 'https://github.com/andy.png',
-          html_url: 'https://github.com/andy',
-          login: 'Andy',
+          avatar_url: "https://github.com/andy.png",
+          html_url: "https://github.com/andy",
+          login: "Andy",
         },
       }),
       fetchABranch: async () => ({
-        name: 'hotfix',
-        _links: { html: 'https://github.com/andy/test-project/tree/hotfix' },
-        commit: { author: { avatar_url: 'https://github.com/bob.png', login: 'Bob' } },
+        name: "hotfix",
+        _links: { html: "https://github.com/andy/test-project/tree/hotfix" },
+        commit: {
+          author: { avatar_url: "https://github.com/bob.png", login: "Bob" },
+        },
       }),
       fetchBranches: async () => [
         {
-          name: 'hotfix',
+          name: "hotfix",
         },
       ],
-    })(analecta, message),
+    })(analecta, message)
   ).resolves.toEqual(true);
 });

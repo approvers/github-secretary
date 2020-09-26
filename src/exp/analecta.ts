@@ -1,21 +1,21 @@
 const AnalectaKeyArray = [
-  'Subscribe',
-  'Unsubscribe',
-  'NotSubscribed',
-  'MarkAsRead',
-  'BringIssue',
-  'BringPR',
-  'BringBranch',
-  'BringRepo',
-  'NothingToBring',
-  'EnumIssue',
-  'EnumPR',
-  'EnumBranch',
-  'InvalidToken',
-  'CallPattern',
-  'BlackPattern',
-  'HelpMessage',
-  'ErrorMessage',
+  "Subscribe",
+  "Unsubscribe",
+  "NotSubscribed",
+  "MarkAsRead",
+  "BringIssue",
+  "BringPR",
+  "BringBranch",
+  "BringRepo",
+  "NothingToBring",
+  "EnumIssue",
+  "EnumPR",
+  "EnumBranch",
+  "InvalidToken",
+  "CallPattern",
+  "BlackPattern",
+  "HelpMessage",
+  "ErrorMessage",
 ] as const;
 
 export type AnalectaKey = typeof AnalectaKeyArray[number];
@@ -26,7 +26,7 @@ export type Analecta = Record<AnalectaKey, string> & {
 };
 
 export const validateAnalecta = (obj: unknown): obj is Analecta => {
-  if (typeof obj !== 'object' || obj == null) {
+  if (typeof obj !== "object" || obj == null) {
     return false;
   }
 

@@ -1,10 +1,19 @@
-import { promises } from 'fs';
-import MutexPromise from 'mutex-promise';
+import { promises } from "fs";
+import MutexPromise from "mutex-promise";
 
-import { GitHubUser, GitHubUsers, serialize, deserialize } from '../exp/github-user';
-import { DiscordId } from '../exp/discord-id';
-import { NotificationId } from '../exp/github-notification';
-import { SubscriptionDatabase, UserDatabase, UpdateHandler } from '../op/interfaces';
+import {
+  GitHubUser,
+  GitHubUsers,
+  serialize,
+  deserialize,
+} from "../exp/github-user";
+import { DiscordId } from "../exp/discord-id";
+import { NotificationId } from "../exp/github-notification";
+import {
+  SubscriptionDatabase,
+  UserDatabase,
+  UpdateHandler,
+} from "../op/interfaces";
 
 const { open, mkdir } = promises;
 
@@ -27,9 +36,9 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
   }
 
   static async make(fileName: string): Promise<PlainDB> {
-    const handle = await open(fileName, 'r+').catch(async () => {
-      await mkdir('.cache');
-      return await open(fileName, 'w+');
+    const handle = await open(fileName, "r+").catch(async () => {
+      await mkdir(".cache");
+      return await open(fileName, "w+");
     });
     const obj = new PlainDB(fileName, handle);
     try {
@@ -56,7 +65,10 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
     return true;
   }
 
-  async update(id: DiscordId, notificationIds: NotificationId[]): Promise<void> {
+  async update(
+    id: DiscordId,
+    notificationIds: NotificationId[]
+  ): Promise<void> {
     const entry = this.users.get(id);
     if (entry == null) {
       return;
@@ -72,6 +84,8 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
       .then(() => this.handle.truncate(0))
       .then(() => this.handle.write(serialize(this.users), 0));
 
-    await Promise.all(this.handlers.map((handler) => handler.handleUpdate(this.users)));
+    await Promise.all(
+      this.handlers.map((handler) => handler.handleUpdate(this.users))
+    );
   }
 }

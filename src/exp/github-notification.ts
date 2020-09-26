@@ -12,5 +12,7 @@ export type GitHubNotification = {
 
 export type GitHubNotifications = GitHubNotification[];
 
-export const includes = (notifications: NotificationId[], target: string): boolean =>
-  (notifications as string[]).includes(target);
+export const includes = (
+  notifications: NotificationId[],
+  target: string
+): boolean => (notifications as string[]).includes(target);

@@ -1,27 +1,33 @@
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed } from "discord.js";
 
-import { CommandProcessor } from '../../abst/connector';
-import { Analecta } from '../../exp/analecta';
-import { GitHubUser } from '../../exp/github-user';
-import { DiscordId } from '../../exp/discord-id';
-import { replyFailure } from '../../abst/reply-failure';
-import { fetchErrorHandler } from '../../skin/fetch-error-handler';
-import { Message } from '../../abst/message';
-import { includes, NotificationId } from '../../exp/github-notification';
+import { CommandProcessor } from "../../abst/connector";
+import { Analecta } from "../../exp/analecta";
+import { GitHubUser } from "../../exp/github-user";
+import { DiscordId } from "../../exp/discord-id";
+import { replyFailure } from "../../abst/reply-failure";
+import { fetchErrorHandler } from "../../skin/fetch-error-handler";
+import { Message } from "../../abst/message";
+import { includes, NotificationId } from "../../exp/github-notification";
 
 export type UserDatabase = {
   fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined>;
 };
 
 export type Query = {
-  markAsRead(user: GitHubUser, notificationId: NotificationId): Promise<boolean>;
+  markAsRead(
+    user: GitHubUser,
+    notificationId: NotificationId
+  ): Promise<boolean>;
 };
 
 const markPattern = /^\/ghm ([0-9]+)$/;
 
-export const markAsRead = (db: UserDatabase, query: Query): CommandProcessor => async (
+export const markAsRead = (
+  db: UserDatabase,
+  query: Query
+): CommandProcessor => async (
   analecta: Analecta,
-  msg: Message,
+  msg: Message
 ): Promise<boolean> => {
   const matches = await msg.matchCommand(markPattern);
   if (matches == null) {
@@ -48,13 +54,15 @@ export const markAsRead = (db: UserDatabase, query: Query): CommandProcessor => 
       }
 
       await msg.sendEmbed(
-        new MessageEmbed().setTitle(analecta.MarkAsRead).setURL(`https://github.com/notifications`),
+        new MessageEmbed()
+          .setTitle(analecta.MarkAsRead)
+          .setURL(`https://github.com/notifications`)
       );
       return true;
     })
     .catch(
       fetchErrorHandler(async (embed) => {
         await msg.sendEmbed(embed);
-      }),
+      })
     );
 };
