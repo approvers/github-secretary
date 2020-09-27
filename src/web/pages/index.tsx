@@ -43,6 +43,11 @@ const home: NextPage = () => {
           color: #f7f7f7;
           padding: 2rem;
         }
+        footer {
+          position: fixed;
+          bottom: 1em;
+          text-align: center;
+        }
       `}</style>
     </>
   );
