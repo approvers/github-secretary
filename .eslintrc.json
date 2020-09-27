@@ -5,13 +5,19 @@
     "es6": true
   },
   "plugins": [
-    "react"
+    "react",
+    "@typescript-eslint"
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
+    "project": "tsconfig.json",
     "sourceType": "module",
     "ecmaVersion": 2020,
     "ecmaFeatures": {
@@ -24,33 +30,14 @@
     }
   },
   "rules": {
-    "react/react-in-jsx-scope": "off"
-  },
-  "overrides": [
-    {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
-      "plugins": [
-        "@typescript-eslint"
-      ],
-      "extends": [
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/eslint-recommended"
-      ],
-      "parser": "@typescript-eslint/parser",
-      "parserOptions": {
-        "project": "tsconfig.json"
-      },
-      "rules": {
-        "@typescript-eslint/no-explicit-any": "error",
-        "react/prop-types": "off",
-        "complexity": [
-          "error",
-          9
-        ]
-      }
-    }
-  ]
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "@typescript-eslint/no-explicit-any": "error",
+    "react/prop-types": "off",
+    "complexity": [
+      "error",
+      9
+    ]
+  }
 }
