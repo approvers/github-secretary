@@ -1,12 +1,14 @@
-import { NextPage } from 'next';
-import Head from 'next/head';
-import { FC } from 'react';
+import { NextPage } from "next";
+import Head from "next/head";
+import { FC } from "react";
 
-import { Button } from '../components/button';
+import { Button } from "../components/button";
 
-interface MainProps { pageSubTitle: string }
+interface MainProps {
+  pageSubTitle: string;
+}
 
-const MainContent: FC<MainProps> = ({pageSubTitle}: MainProps) =>
+const MainContent: FC<MainProps> = ({ pageSubTitle }: MainProps) => (
   <>
     <h1>{pageSubTitle}</h1>
     <p>こちらのページからワンクリックで Discord 通知を登録できます。</p>
@@ -14,12 +16,13 @@ const MainContent: FC<MainProps> = ({pageSubTitle}: MainProps) =>
     <footer>
       GitHub Secretary--Copyright (c) 2020 MikuroXina, all rights reserved.
     </footer>
-  </>;
+  </>
+);
 
-const Main: FC<MainProps> = (props: MainProps) =>
+const Main: FC<MainProps> = (props: MainProps) => (
   <>
     <main>
-      <MainContent {...props}/>
+      <MainContent {...props} />
     </main>
     <style jsx>{`
       main {
@@ -46,17 +49,18 @@ const Main: FC<MainProps> = (props: MainProps) =>
         text-align: center;
       }
     `}</style>
-  </>;
+  </>
+);
 
 const home: NextPage = () => {
-  const pageTitle = 'GitHub Secretary';
-  const pageSubTitle = 'Discord 通知登録窓口';
+  const pageTitle = "GitHub Secretary";
+  const pageSubTitle = "Discord 通知登録窓口";
   return (
     <>
       <Head>
         <title>{`${pageTitle} - ${pageSubTitle}`}</title>
       </Head>
-      <Main pageSubTitle={pageSubTitle}/>
+      <Main pageSubTitle={pageSubTitle} />
       <style jsx global>{`
         body {
           background-color: #1a1d1a;

@@ -1,4 +1,4 @@
-import { GetServerSideProps, NextPage } from 'next';
+import { GetServerSideProps, NextPage } from "next";
 
 const callback: NextPage = () => <h1>Hello from callback!</h1>;
 
