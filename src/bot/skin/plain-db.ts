@@ -17,7 +17,7 @@ import {
 } from "../op/interfaces";
 
 export class PlainDB implements SubscriptionDatabase, UserDatabase {
-  private users: GitHubUsers = new Map();
+  private users: GitHubUsers = new Map<DiscordId, GitHubUser>();
   private mutex: MutexPromise;
   private handlers: UpdateHandler[] = [];
 
@@ -25,13 +25,12 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
     this.mutex = new MutexPromise(`plain-db-${fileName}`);
   }
 
-  async fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined> {
-    return this.users.get(discordId);
+  fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined> {
+    return Promise.resolve(this.users.get(discordId));
   }
 
   onUpdate(handler: UpdateHandler): void {
     this.handlers.push(handler);
-    this.overwrite();
   }
 
   static async make(fileName: string): Promise<PlainDB> {
@@ -39,10 +38,9 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
     const obj = new PlainDB(fileName, handle);
     try {
       const buf = await handle.readFile();
-      const users = JSON.parse(buf.toString());
-      obj.users = deserialize(users);
+      obj.users = deserialize(buf.toString());
     } catch (ignore) {
-      obj.users = new Map();
+      obj.users = new Map<DiscordId, GitHubUser>();
     }
     return obj;
   }

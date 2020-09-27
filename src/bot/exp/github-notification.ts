@@ -3,12 +3,12 @@ export type NotificationId = string & {
   [nominalNotificationId]: never;
 };
 
-export type GitHubNotification = {
+export interface GitHubNotification {
   id: NotificationId;
   subject: {
     title: string;
   };
-};
+}
 
 export type GitHubNotifications = GitHubNotification[];
 

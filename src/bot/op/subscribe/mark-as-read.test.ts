@@ -10,21 +10,21 @@ test("mark a notification as read", async (done) => {
 
   const proc = markAsRead(
     {
-      fetchUser: async (id: DiscordId) => {
+      fetchUser: (id: DiscordId) => {
         expect(id).toStrictEqual("alice_discord");
 
-        return ({
+        return Promise.resolve({
           userName: "Alice",
           notificationToken: "TEST_TOKEN",
           currentNotificationIds: ["0123456789" as NotificationId],
-        } as unknown) as GitHubUser;
+        } as unknown as GitHubUser);
       },
     },
     {
-      markAsRead: async (_user: GitHubUser, id: NotificationId) => {
+      markAsRead: (_user: GitHubUser, id: NotificationId) => {
         expect(id).toStrictEqual("0123456789");
         done();
-        return true;
+        return Promise.resolve(true);
       },
     }
   );
@@ -33,5 +33,5 @@ test("mark a notification as read", async (done) => {
     "/ghm 0123456789",
     "alice_discord" as DiscordId
   );
-  expect(proc(analecta, message)).resolves.toEqual(true);
+  await expect(proc(analecta, message)).resolves.toEqual(true);
 });

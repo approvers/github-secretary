@@ -28,9 +28,9 @@ test("get a repository", async (done) => {
     done();
   });
 
-  expect(
+  await expect(
     bringRepo({
-      fetchRepo: async () => ({
+      fetchRepo: () => Promise.resolve({
         name: "test-project",
         html_url: "https://github.com/andy/test-project",
         owner: {

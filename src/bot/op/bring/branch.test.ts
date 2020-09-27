@@ -35,9 +35,9 @@ test("get branches list", async (done) => {
     done();
   });
 
-  expect(
+  await expect(
     bringBranch({
-      fetchRepo: async () => ({
+      fetchRepo: () => Promise.resolve({
         name: "test-project",
         html_url: "https://github.com/andy/test-project",
         owner: {
@@ -46,18 +46,18 @@ test("get branches list", async (done) => {
           login: "Andy",
         },
       }),
-      fetchABranch: async () => ({
+      fetchABranch: () => Promise.resolve({
         name: "hotfix",
         _links: { html: "https://github.com/andy/test-project/tree/hotfix" },
         commit: {
           author: { avatar_url: "https://github.com/bob.png", login: "Bob" },
         },
       }),
-      fetchBranches: async () => [
+      fetchBranches: () => Promise.resolve([
         {
           name: "hotfix",
         },
-      ],
+      ]),
     })(analecta, message)
   ).resolves.toEqual(true);
 });
@@ -86,9 +86,9 @@ test("get a branch", async (done) => {
     done();
   });
 
-  expect(
+  await expect(
     bringBranch({
-      fetchRepo: async () => ({
+      fetchRepo: () => Promise.resolve({
         name: "test-project",
         html_url: "https://github.com/andy/test-project",
         owner: {
@@ -97,18 +97,18 @@ test("get a branch", async (done) => {
           login: "Andy",
         },
       }),
-      fetchABranch: async () => ({
+      fetchABranch: () => Promise.resolve({
         name: "hotfix",
         _links: { html: "https://github.com/andy/test-project/tree/hotfix" },
         commit: {
           author: { avatar_url: "https://github.com/bob.png", login: "Bob" },
         },
       }),
-      fetchBranches: async () => [
+      fetchBranches: () => Promise.resolve([
         {
           name: "hotfix",
         },
-      ],
+      ]),
     })(analecta, message)
   ).resolves.toEqual(true);
 });

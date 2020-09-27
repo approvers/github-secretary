@@ -11,10 +11,10 @@ import {
 test("emit a notification", async (done) => {
   const analecta = await analectaForTest();
 
-  expect(
+  await expect(
     notify(
       analecta,
-      async (message) => {
+      (message) => {
         expect(message).toEqual(
           new MessageEmbed()
             .addFields([
@@ -27,28 +27,30 @@ test("emit a notification", async (done) => {
             .setURL(`https://github.com/notifications`)
         );
         done();
+        return Promise.resolve();
       },
       {
-        getUser: async () =>
-          ({
+        getUser: () =>
+          Promise.resolve({
             userName: "Alice",
             notificationToken: "TEST_TOKEN",
             currentNotificationIds: [] as NotificationId[],
           } as GitHubUser),
-        update: async (ids) => {
+        update: (ids) => {
           expect(ids).toEqual(["0123456789"]);
+          return Promise.resolve();
         },
       },
       {
-        fetchNotification: async () =>
-          [
+        fetchNotification: () =>
+          Promise.resolve([
             {
               id: "0123456789",
               subject: {
                 title: "An Issue",
               },
             },
-          ] as GitHubNotifications,
+          ] as GitHubNotifications),
       }
     )
   ).resolves.toEqual(undefined);

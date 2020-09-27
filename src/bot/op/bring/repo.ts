@@ -5,16 +5,22 @@ import { CommandProcessor, connectProcessors } from "../../abst/connector";
 import { replyFailure } from "../../abst/reply-failure";
 import { Message } from "../../abst/message";
 
+export interface Repository {
+  name: string;
+  description?: string;
+  html_url: string;
+  owner: {
+    avatar_url: string;
+    html_url: string;
+    login: string;
+  };
+}
+
 export type Query = {
   fetchRepo: (
     owner: string,
     repoName: string
-  ) => Promise<{
-    name: string;
-    description?: string;
-    html_url: string;
-    owner: { avatar_url: string; html_url: string; login: string };
-  }>;
+  ) => Promise<Repository>;
 };
 
 const ghPattern = /^\/ghr\s+([^/]+)(\/(.+))?$/;
@@ -58,7 +64,7 @@ const externalRepo = (owner?: string) => (repo?: string) => (
       owner: { avatar_url, html_url: owner_url, login },
     } = await query.fetchRepo(owner, repo);
 
-    msg.sendEmbed(
+    await msg.sendEmbed(
       new MessageEmbed()
         .setAuthor(login, avatar_url, owner_url)
         .setURL(html_url)

@@ -10,23 +10,21 @@ export class DiscordMessage implements Message {
     return this.raw.author.id as DiscordId;
   }
 
-  async matchPlainText(regex: RegExp): Promise<RegExpMatchArray | null> {
-    return regex.exec(this.raw.content);
+  matchPlainText(regex: RegExp): Promise<RegExpMatchArray | null> {
+    return Promise.resolve(regex.exec(this.raw.content));
   }
 
-  async matchCommand(regex: RegExp): Promise<RegExpMatchArray | null> {
-    return regex.exec(this.raw.content.split("\n")[0]);
+  matchCommand(regex: RegExp): Promise<RegExpMatchArray | null> {
+    return Promise.resolve(regex.exec(this.raw.content.split("\n")[0]));
   }
 
   async withTyping(callee: () => Promise<boolean>): Promise<boolean> {
-    let res;
     try {
-      this.raw.channel.startTyping();
-      res = await callee();
+      void this.raw.channel.startTyping();
+      return await callee();
     } finally {
       this.raw.channel.stopTyping(true);
     }
-    return res;
   }
 
   async reply(message: string): Promise<void> {

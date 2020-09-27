@@ -6,37 +6,39 @@ import { replyFailure } from "../../abst/reply-failure";
 import { CommandProcessor, connectProcessors } from "../../abst/connector";
 import { omitBody } from "../../exp/omit";
 import { Message } from "../../abst/message";
+import { Repository } from "./repo";
+
+export interface Issue {
+  state: string;
+  title: string;
+  body?: string;
+  html_url: string;
+  user: {
+    avatar_url: string;
+    login: string;
+  };
+}
+
+export interface PartialIssue {
+  html_url: string;
+  title: string;
+  number: string;
+}
 
 export type Query = {
   fetchRepo: (
     owner: string,
     repoName: string
-  ) => Promise<{
-    name: string;
-    html_url: string;
-    owner: { avatar_url: string; html_url: string; login: string };
-  }>;
+  ) => Promise<Repository>;
   fetchIssues: (
     owner: string,
     repoName: string
-  ) => Promise<
-    {
-      html_url: string;
-      title: string;
-      number: string;
-    }[]
-  >;
+  ) => Promise<PartialIssue[]>;
   fetchAnIssue: (
     owner: string,
     repoName: string,
     dst: string
-  ) => Promise<{
-    state: string;
-    title: string;
-    body?: string;
-    html_url: string;
-    user: { avatar_url: string; login: string };
-  }>;
+  ) => Promise<Issue>;
 };
 
 const ghPattern = /^\/ghi\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
@@ -89,11 +91,11 @@ const externalIssueList = (owner?: string) => (repo?: string) => (
       })
     );
     if (fields.length <= 0) {
-      msg.reply(analecta.NothingToBring);
+      await msg.reply(analecta.NothingToBring);
       return true;
     }
 
-    msg.sendEmbed(
+    await msg.sendEmbed(
       new MessageEmbed()
         .setColor(colorFromState("open"))
         .setAuthor(login, avatar_url, owner_url)
@@ -135,7 +137,7 @@ const externalIssue = (owner?: string) => (repo?: string, dst?: string) => (
     const color = colorFromState(state);
     const description = body ? omitBody(body) : "";
 
-    msg.sendEmbed(
+    await msg.sendEmbed(
       new MessageEmbed()
         .setColor(color)
         .setAuthor(login, avatar_url)

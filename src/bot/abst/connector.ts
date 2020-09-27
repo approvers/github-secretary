@@ -16,4 +16,4 @@ const connectBin = (
 
 export const connectProcessors = (
   procs: CommandProcessor[]
-): CommandProcessor => procs.reduce(connectBin, async () => false);
+): CommandProcessor => procs.reduce(connectBin, () => Promise.resolve(false));

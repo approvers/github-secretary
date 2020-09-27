@@ -10,6 +10,6 @@ export const error: CommandProcessor = async (
     return false;
   }
 
-  msg.reply(analecta.ErrorMessage);
+  await msg.reply(analecta.ErrorMessage);
   return true;
 };

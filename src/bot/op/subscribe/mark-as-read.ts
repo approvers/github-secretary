@@ -61,8 +61,6 @@ export const markAsRead = (
       return true;
     })
     .catch(
-      fetchErrorHandler(async (embed) => {
-        await msg.sendEmbed(embed);
-      })
+      fetchErrorHandler((embed) => void msg.sendEmbed(embed))
     );
 };

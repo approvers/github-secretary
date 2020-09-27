@@ -6,6 +6,6 @@ export const replyFailure = async (
   msg: Message
 ): Promise<boolean> => {
   const mes = [...analecta.Failure].sort(() => Math.random() - 0.5)[0];
-  msg.reply(mes);
+  await msg.reply(mes);
   return true;
 };

@@ -22,10 +22,10 @@ export const serialize = (users: GitHubUsers): string => {
 };
 
 export const deserialize = (serial: string): GitHubUsers => {
-  const parsed = JSON.parse(serial);
-  const map = new Map();
+  const parsed = JSON.parse(serial) as { [key: string]: GitHubUser };
+  const map = new Map<DiscordId, GitHubUser>();
   for (const [k, v] of Object.entries(parsed)) {
-    map.set(k, v);
+    map.set(k as DiscordId, v);
   }
   return map;
 };

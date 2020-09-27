@@ -36,9 +36,9 @@ test("get issues list", async (done) => {
     done();
   });
 
-  expect(
+  await expect(
     bringIssue({
-      fetchRepo: async () => ({
+      fetchRepo: () => Promise.resolve({
         name: "test-project",
         html_url: "https://github.com/andy/test-project",
         owner: {
@@ -47,19 +47,19 @@ test("get issues list", async (done) => {
           login: "Andy",
         },
       }),
-      fetchAnIssue: async () => ({
+      fetchAnIssue: () => Promise.resolve({
         state: "open",
         title: "I have an issue",
         html_url: "https://github.com/test-peoject/issues/1",
         user: { avatar_url: "https://github.com/bob.png", login: "Bob" },
       }),
-      fetchIssues: async () => [
+      fetchIssues: () => Promise.resolve([
         {
           html_url: "https://github.com/test-peoject/issues/1",
           title: "I have an issue",
           number: "1",
         },
-      ],
+      ]),
     })(analecta, message)
   ).resolves.toEqual(true);
 });
@@ -85,9 +85,9 @@ test("get an issue", async (done) => {
     done();
   });
 
-  expect(
+  await expect(
     bringIssue({
-      fetchRepo: async () => ({
+      fetchRepo: () => Promise.resolve({
         name: "test-project",
         html_url: "https://github.com/andy/test-project",
         owner: {
@@ -96,19 +96,19 @@ test("get an issue", async (done) => {
           login: "Andy",
         },
       }),
-      fetchAnIssue: async () => ({
+      fetchAnIssue: () => Promise.resolve({
         state: "open",
         title: "I have an issue",
         html_url: "https://github.com/test-peoject/issues/1",
         user: { avatar_url: "https://github.com/bob.png", login: "Bob" },
       }),
-      fetchIssues: async () => [
+      fetchIssues: () => Promise.resolve([
         {
           html_url: "https://github.com/test-peoject/issues/1",
           title: "I have an issue",
           number: "1",
         },
-      ],
+      ]),
     })(analecta, message)
   ).resolves.toEqual(true);
 });

@@ -28,9 +28,7 @@ export const subscribeNotification = (
   }
 
   const user = await query.getGitHubUser(matches[1], matches[2]).catch(
-    fetchErrorHandler(async (mes) => {
-      await msg.sendEmbed(mes);
-    })
+    fetchErrorHandler((mes) => void msg.sendEmbed(mes))
   );
 
   await db.register(msg.getAuthorId(), user);

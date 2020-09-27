@@ -28,7 +28,7 @@ export const notify = async (
 
   const res = await query
     .fetchNotification(user)
-    .catch(fetchErrorHandler(send));
+    .catch(fetchErrorHandler((message) => void send(message)));
   const newIds = res.map(({ id }) => id);
   const newIdSet = new Set([...newIds]);
   for (const oldE of currentNotificationIds) {

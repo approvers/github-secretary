@@ -3,114 +3,97 @@ import fetch from "node-fetch";
 import { Query } from "../op/interfaces";
 import { GitHubUser } from "../exp/github-user";
 import { NotificationId } from "../exp/github-notification";
+import type { Repository } from "../op/bring/repo";
+import { Issue, PartialIssue } from "../op/bring/issue";
+import { PartialPullRequest, PullRequest } from "../op/bring/pr";
+import { Branch, PartialBranch } from "../op/bring/branch";
 
 export class GitHubApi implements Query {
   async fetchRepo(
     owner: string,
     repoName: string
-  ): Promise<{
-    name: string;
-    description?: string;
-    html_url: string;
-    owner: { avatar_url: string; html_url: string; login: string };
-  }> {
+  ): Promise<Repository> {
     const repoInfoApiUrl = `https://api.github.com/repos/${owner}/${repoName}`;
-    const infoRes = await (await fetch(repoInfoApiUrl)).json();
-    if (infoRes.message === "Not Found") {
+    const infoRes: unknown = await (await fetch(repoInfoApiUrl)).json();
+    if (checkNotFound(infoRes)) {
       throw new Error("not found the repositpory");
     }
-    return infoRes;
+    return infoRes as Repository;
   }
 
   async fetchIssues(
     owner: string,
     repoName: string
-  ): Promise<{ html_url: string; title: string; number: string }[]> {
+  ): Promise<PartialIssue[]> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/issues`;
-    const res = await (await fetch(apiUrl)).json();
-    if (res.message === "Not Found") {
+    const res: unknown = await (await fetch(apiUrl)).json();
+    if (checkNotFound(res)) {
       throw new Error("not found the repositpory");
     }
-    return res;
+    return res as PartialIssue[];
   }
 
   async fetchAnIssue(
     owner: string,
     repoName: string,
     dst: string
-  ): Promise<{
-    state: string;
-    title: string;
-    body?: string;
-    html_url: string;
-    user: { avatar_url: string; login: string };
-  }> {
+  ): Promise<Issue> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/issues/${dst}`;
-    const res = await (await fetch(apiUrl)).json();
-    if (res.message === "Not Found") {
+    const res: unknown = await (await fetch(apiUrl)).json();
+    if (checkNotFound(res)) {
       throw new Error("not found the issue");
     }
-    return res;
+    return res as Issue;
   }
 
   async fetchPullRequests(
     owner: string,
     repoName: string
-  ): Promise<{ html_url: string; title: string; number: string }[]> {
+  ): Promise<PartialPullRequest[]> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls`;
-    const res = await (await fetch(apiUrl)).json();
-    if (res.message === "Not Found") {
+    const res: unknown = await (await fetch(apiUrl)).json();
+    if (checkNotFound(res)) {
       throw new Error("not found the repositpory");
     }
-    return res;
+    return res as PartialPullRequest[];
   }
 
   async fetchAPullRequest(
     owner: string,
     repoName: string,
     dst: string
-  ): Promise<{
-    state: string;
-    title: string;
-    body?: string | undefined;
-    html_url: string;
-    user: { avatar_url: string; login: string };
-  }> {
+  ): Promise<PullRequest> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls/${dst}`;
-    const res = await (await fetch(apiUrl)).json();
-    if (res.message === "Not Found") {
+    const res: unknown = await (await fetch(apiUrl)).json();
+    if (checkNotFound(res)) {
       throw new Error("not found the pull request");
     }
-    return res;
+    return res as PullRequest;
   }
 
   async fetchBranches(
     owner: string,
     repoName: string
-  ): Promise<{ name: string }[]> {
+  ): Promise<PartialBranch[]> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches`;
-    const res = await (await fetch(apiUrl)).json();
-    if (res.message === "Not Found") {
+    const res: unknown = await (await fetch(apiUrl)).json();
+    if (checkNotFound(res)) {
       throw new Error("not found the branches");
     }
-    return res;
+    return res as PartialBranch[];
   }
 
   async fetchABranch(
     owner: string,
     repoName: string,
     branchName: string
-  ): Promise<{
-    name: string;
-    commit: { author: { avatar_url: string; login: string } };
-    _links: { html: string };
-  }> {
+  ): Promise<Branch> {
     const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches/${branchName}`;
-    const res = await (await fetch(apiUrl)).json();
-    if (res.message === "Branch not found") {
+    const res: unknown = await (await fetch(apiUrl)).json();
+    if (checkNotFound(res)) {
       throw new Error("not found the branch");
     }
-    return res;
+    return res as Branch;
   }
 
   async markAsRead(user: GitHubUser, notificationId: string): Promise<boolean> {
@@ -148,4 +131,8 @@ export class GitHubApi implements Query {
       currentNotificationIds: [] as NotificationId[],
     } as GitHubUser;
   }
+}
+
+function checkNotFound(infoRes: unknown) {
+  return typeof infoRes === 'object' && infoRes != null && 'message' in infoRes && (infoRes as {message: unknown}).message === "Not Found";
 }

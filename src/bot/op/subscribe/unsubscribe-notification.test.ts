@@ -7,13 +7,13 @@ test("subscribe a member", async (done) => {
   const analecta = await analectaForTest();
 
   const proc = unsubscribeNotification({
-    unregister: async (id) => {
+    unregister: (id) => {
       expect(id).toStrictEqual("alice_discord");
       done();
-      return true;
+      return Promise.resolve(true);
     },
   });
 
   const message = new MockMessage("/ghu", "alice_discord" as DiscordId);
-  expect(proc(analecta, message)).resolves.toEqual(true);
+  await expect(proc(analecta, message)).resolves.toEqual(true);
 });

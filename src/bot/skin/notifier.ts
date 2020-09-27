@@ -54,7 +54,7 @@ const notificationQuery: Query = {
     if (!rawRes.ok) {
       throw "fail to fetch notifications";
     }
-    return [...(await rawRes.json())];
+    return [...(await rawRes.json() as unknown[])] as GitHubNotifications;
   },
 };
 
@@ -67,14 +67,15 @@ export class SubscriptionNotifier implements UpdateHandler {
     private updater: Updater
   ) {}
 
-  async handleUpdate(users: Readonly<GitHubUsers>): Promise<void> {
+  handleUpdate(users: Readonly<GitHubUsers>): Promise<void> {
     this.stop();
 
     const it = users.entries();
     for (let next = it.next(); !next.done; next = it.next()) {
       const [userId, sub] = next.value;
-      this.notifyTasks.push(this.makeNotifyTask(userId as DiscordId, sub));
+      this.notifyTasks.push(this.makeNotifyTask(userId, sub));
     }
+    return Promise.resolve();
   }
 
   private makeNotifyTask = (
@@ -83,7 +84,7 @@ export class SubscriptionNotifier implements UpdateHandler {
   ): (() => void) => {
     const timer = setInterval(
       () =>
-        notify(
+        void notify(
           this.analecta,
           this.sendMessage(userId),
           this.notifyController(sub, userId),
@@ -112,7 +113,7 @@ export class SubscriptionNotifier implements UpdateHandler {
     userId: DiscordId
   ): NotifyController {
     return {
-      getUser: async (): Promise<GitHubUser> => sub,
+      getUser: () => Promise.resolve(sub),
       update: (newIds: NotificationId[]): Promise<void> =>
         this.updater.update(userId, newIds),
     };

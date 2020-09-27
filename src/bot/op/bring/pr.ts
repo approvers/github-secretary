@@ -6,37 +6,39 @@ import { replyFailure } from "../../abst/reply-failure";
 import { CommandProcessor, connectProcessors } from "../../abst/connector";
 import { omitBody } from "../../exp/omit";
 import { Message } from "../../abst/message";
+import { Repository } from "./repo";
+
+export interface PartialPullRequest {
+  html_url: string;
+  title: string;
+  number: string;
+}
+
+export interface PullRequest {
+  state: string;
+  title: string;
+  body?: string;
+  html_url: string;
+  user: {
+    avatar_url: string;
+    login: string;
+  };
+}
 
 export type Query = {
   fetchRepo: (
     owner: string,
     repoName: string
-  ) => Promise<{
-    name: string;
-    html_url: string;
-    owner: { avatar_url: string; html_url: string; login: string };
-  }>;
+  ) => Promise<Repository>;
   fetchPullRequests: (
     owner: string,
     repoName: string
-  ) => Promise<
-    {
-      html_url: string;
-      title: string;
-      number: string;
-    }[]
-  >;
+  ) => Promise<PartialPullRequest[]>;
   fetchAPullRequest: (
     owner: string,
     repoName: string,
     dst: string
-  ) => Promise<{
-    state: string;
-    title: string;
-    body?: string;
-    html_url: string;
-    user: { avatar_url: string; login: string };
-  }>;
+  ) => Promise<PullRequest>;
 };
 
 const ghPattern = /^\/ghp\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;

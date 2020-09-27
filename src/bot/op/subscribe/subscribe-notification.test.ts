@@ -10,7 +10,7 @@ test("subscribe a member", async (done) => {
 
   const proc = subscribeNotification(
     {
-      register: async (id, user) => {
+      register: (id, user) => {
         expect(id).toStrictEqual("alice_discord");
         expect(user).toEqual({
           userName: "Alice",
@@ -18,11 +18,12 @@ test("subscribe a member", async (done) => {
           currentNotificationIds: [],
         });
         done();
+        return Promise.resolve();
       },
     },
     {
-      getGitHubUser: async () =>
-        ({
+      getGitHubUser: () =>
+        Promise.resolve({
           userName: "Alice",
           notificationToken: "TEST_TOKEN",
           currentNotificationIds: [] as NotificationId[],
@@ -34,5 +35,5 @@ test("subscribe a member", async (done) => {
     "/ghs Alice TEST_TOKEN",
     "alice_discord" as DiscordId
   );
-  expect(proc(analecta, message)).resolves.toEqual(true);
+  await expect(proc(analecta, message)).resolves.toEqual(true);
 });

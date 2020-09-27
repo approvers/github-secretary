@@ -16,23 +16,25 @@ export class MockMessage implements Message {
     return this.id;
   }
 
-  async matchPlainText(regex: RegExp): Promise<RegExpMatchArray | null> {
-    return regex.exec(this.content);
+  matchPlainText(regex: RegExp): Promise<RegExpMatchArray | null> {
+    return Promise.resolve(regex.exec(this.content));
   }
 
-  async matchCommand(regex: RegExp): Promise<RegExpMatchArray | null> {
-    return regex.exec(this.content.split("\n")[0]);
+  matchCommand(regex: RegExp): Promise<RegExpMatchArray | null> {
+    return Promise.resolve(regex.exec(this.content.split("\n")[0]));
   }
 
   async withTyping(callee: () => Promise<boolean>): Promise<boolean> {
     return callee();
   }
 
-  async reply(message: string): Promise<void> {
+  reply(message: string): Promise<void> {
     this.emitter.emit("reply", message);
+    return Promise.resolve();
   }
 
-  async sendEmbed(embed: MessageEmbed): Promise<void> {
+  sendEmbed(embed: MessageEmbed): Promise<void> {
     this.emitter.emit("sendEmbed", embed);
+    return Promise.resolve();
   }
 }

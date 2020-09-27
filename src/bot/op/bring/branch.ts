@@ -5,35 +5,39 @@ import { colorFromState } from "../../exp/state-color";
 import { replyFailure } from "../../abst/reply-failure";
 import { CommandProcessor, connectProcessors } from "../../abst/connector";
 import { Message } from "../../abst/message";
+import { Repository } from "./repo";
+
+export interface PartialBranch {
+  name: string;
+}
+
+export interface Branch {
+  name: string;
+  commit: {
+    author: {
+      avatar_url: string;
+      login: string;
+    };
+  };
+  _links: {
+    html: string;
+  };
+}
 
 export type Query = {
   fetchRepo: (
     owner: string,
     repoName: string
-  ) => Promise<{
-    name: string;
-    html_url: string;
-    owner: { avatar_url: string; html_url: string; login: string };
-  }>;
+  ) => Promise<Repository>;
   fetchBranches: (
     owner: string,
     repoName: string
-  ) => Promise<
-    {
-      name: string;
-    }[]
-  >;
+  ) => Promise<PartialBranch[]>;
   fetchABranch: (
     owner: string,
     repoName: string,
     branchName: string
-  ) => Promise<{
-    name: string;
-    commit: {
-      author: { avatar_url: string; login: string };
-    };
-    _links: { html: string };
-  }>;
+  ) => Promise<Branch>;
 };
 
 const ghPattern = /^\/ghb\s+([^/\s]+)(\/([^/\s]+))?(\s+(.+))?$/;
@@ -110,7 +114,6 @@ const internalBranchList = externalBranchList("approvers");
 const externalBranch = (owner?: string) => (repo?: string, branch?: string) => (
   query: Query
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
-  console.log({ owner, repo, branch });
   if (owner == null || repo == null || branch == null) {
     return false;
   }
