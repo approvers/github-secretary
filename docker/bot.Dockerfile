@@ -2,7 +2,7 @@ FROM node:12.18.4-alpine as BUILD
 
 COPY . .
 
-RUN npm install --no-save && npm run build
+RUN npm install --no-save && npm run build:bot
 
 # ---
 
@@ -20,4 +20,4 @@ RUN chown bot:bot /app \
   && mkdir -p /app/.cache
 VOLUME [ "/app/.cache" ]
 
-ENTRYPOINT [ "node", "./bot.js" ]
+ENTRYPOINT [ "npm", "run", "start:bot" ]
