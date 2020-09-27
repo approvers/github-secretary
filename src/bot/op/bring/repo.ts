@@ -28,7 +28,7 @@ const genSubCommands = (
   { groups }: RegExpMatchArray,
   query: Query,
 ): CommandProcessor[] =>
-  [internalRepo(groups?.frist), externalRepo(groups?.frist)(groups?.second)]
+  [internalRepo(groups?.first), externalRepo(groups?.first)(groups?.second)]
     .map((processor) => processor(query))
     .concat(replyFailure);
 
