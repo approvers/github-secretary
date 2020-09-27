@@ -9,7 +9,8 @@ services:
     env_file: .env
     environment:
       DISCORD_TOKEN: ${DISCORD_TOKEN}
-      TOML_PATH: /app/example/laffey.toml
+      TOML_PATH: /app/analecta/laffey.toml
+      DB_CACHE_PATH: /app/.cache/users.json
       NOTIFY_INTERVAL: 10000
     volumes:
       - ./.cache:/app/.cache

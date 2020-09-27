@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "dev:bot": "ts-node ./exe/bot.ts",
-    "build:bot": "esbuild --outfile=dist/bundle.js --minify --sourcemap --bundle exe/bot.ts --platform=node --external:discord.js --external:node-fetch",
+    "build:bot": "esbuild --outfile=dist/bundle.js --sourcemap --bundle exe/bot.ts --platform=node --target=es2019 --external:discord.js --external:node-fetch",
     "start:bot": "node dist/bundle.js",
     "dev:web": "next ./src/web",
     "build:web": "next build ./src/web",
