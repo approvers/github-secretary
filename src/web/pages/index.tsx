@@ -1,5 +1,6 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
+import { Button } from '../components/button';
 
 const home: NextPage = () => {
   const pageTitle = 'GitHub Secretary';
@@ -12,7 +13,7 @@ const home: NextPage = () => {
       <main>
         <h1>{pageSubTitle}</h1>
         <p>こちらのページからワンクリックで Discord 通知を登録できます。</p>
-        <a>通知を登録</a>
+        <Button>通知を登録</Button>
         <footer>
           GitHub Secretary -- Copyright (c) 2020 MikuroXina, all rights reserved.
         </footer>
@@ -41,20 +42,6 @@ const home: NextPage = () => {
         main > p {
           color: #f7f7f7;
           padding: 2rem;
-        }
-        main > a {
-          background: linear-gradient(145deg, #1a1d1a, #0a0d0a);
-          padding: 0 1rem;
-          margin-bottom: 1rem;
-          border-radius: 0.5rem;
-          border-style: none;
-          font-size: 3rem;
-          box-shadow: -0.25rem -0.25rem 0.5rem #7a7d7a, 0.5rem 0.5rem 0.5rem #0a0d0a;
-          user-select: none;
-        }
-        main > a:active {
-          box-shadow: -0.25rem -0.25rem 0.5rem #7a7d7a, 0.5rem 0.5rem 0.5rem #0a0d0a,
-            inset 0.5rem 0.5rem 0.5rem #0a0d0a, inset -0.25rem -0.25rem 0.5rem #7a7d7a;
         }
       `}</style>
     </>
