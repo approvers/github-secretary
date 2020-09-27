@@ -12,7 +12,7 @@
     "start:bot": "node dist/bundle.js",
     "dev:web": "next ./src/web",
     "build:web": "next build ./src/web",
-    "start:web": "next start ./serc/web",
+    "start:web": "next start ./src/web",
     "test": "jest --passWithNoTests",
     "lint": "eslint --ext .ts,.tsx --ignore-path .gitignore ./src/",
     "lint:fix": "npm run lint --fix"
