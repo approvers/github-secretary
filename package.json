@@ -7,11 +7,12 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "build": "esbuild --outfile=dist/bundle.js --minify --sourcemap --bundle exe/bot.ts --platform=node --external:discord.js --external:node-fetch",
-    "start:bot": "node dist/bundle.js",
-    "start:web": "ts-node ./api/server.ts",
     "dev:bot": "ts-node ./exe/bot.ts",
+    "build:bot": "esbuild --outfile=dist/bundle.js --minify --sourcemap --bundle exe/bot.ts --platform=node --external:discord.js --external:node-fetch",
+    "start:bot": "node dist/bundle.js",
     "dev:web": "next ./src/web",
+    "build:web": "next build ./src/web",
+    "start:web": "next start ./serc/web",
     "test": "jest --passWithNoTests",
     "lint": "eslint --ext .ts --ignore-path .gitignore ./src/",
     "lint:fix": "npm run lint --fix"
