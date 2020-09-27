@@ -17,6 +17,7 @@ const home: NextPage = () => {
       <style jsx global>{`
         body {
           background-color: #1a1d1a;
+          color: #fdfdfd;
         }
       `}</style>
       <style jsx>{`
@@ -42,7 +43,6 @@ const home: NextPage = () => {
           background: linear-gradient(145deg, #1a1d1a, #0a0d0a);
           padding: 0 1rem;
           margin-bottom: 1rem;
-          color: #fdfdfd;
           border-radius: 0.5rem;
           border-style: none;
           font-size: 3rem;
