@@ -13,6 +13,9 @@ const home: NextPage = () => {
         <h1>{pageSubTitle}</h1>
         <p>こちらのページからワンクリックで Discord 通知を登録できます。</p>
         <a>通知を登録</a>
+        <footer>
+          GitHub Secretary -- Copyright (c) 2020 MikuroXina, all rights reserved.
+        </footer>
       </main>
       <style jsx global>{`
         body {
