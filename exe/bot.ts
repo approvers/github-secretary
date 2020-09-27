@@ -31,7 +31,7 @@ const messageHandler = (
 
 (async () => {
   const loader = new TomlLoader(
-    process.env.TOML_PATH || "./example/laffey.toml"
+    process.env.TOML_PATH || "./analecta/laffey.toml"
   );
   const db = await PlainDB.make(
     process.env.DB_CACHE_PATH || "./.cache/users.json"

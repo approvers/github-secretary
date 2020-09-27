@@ -8,7 +8,7 @@
 | 環境変数 | 説明 | デフォルト値 |
 | -- | -- | -- |
 | DISCORD_TOKEN | Discord の Bot のトークン | なし |
-| TOML_PATH | セリフを登録した TOML ファイルのパス | `./example/laffey.toml` |
+| TOML_PATH | セリフを登録した TOML ファイルのパス | `./analecta/laffey.toml` |
 | NOTIFY_INTERVAL | 最新の通知データを取得するミリ秒間隔 | `10000` |
 
 
