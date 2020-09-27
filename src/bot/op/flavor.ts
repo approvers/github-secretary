@@ -1,13 +1,14 @@
 import { Analecta } from "../exp/analecta";
 import { CommandProcessor } from "../abst/connector";
 import { Message } from "../abst/message";
+import { choice } from "../exp/choice";
 
 export const flavor = (
   callPattern: RegExp,
-  blackPattern: RegExp
+  blackPattern: RegExp,
 ): CommandProcessor => async (
   analecta: Analecta,
-  msg: Message
+  msg: Message,
 ): Promise<boolean> => {
   if (
     !(await msg.matchPlainText(callPattern)) ||
@@ -16,7 +17,7 @@ export const flavor = (
     return false;
   }
 
-  const mes = [...analecta.Flavor].sort(() => Math.random() - 0.5)[0];
+  const mes = choice(analecta.Flavor);
   await msg.reply(mes);
   return true;
 };
