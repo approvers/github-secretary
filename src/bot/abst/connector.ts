@@ -3,17 +3,17 @@ import { Message } from "./message";
 
 export type CommandProcessor = (
   analaecta: Analecta,
-  msg: Message
+  msg: Message,
 ) => Promise<boolean>;
 
 const connectBin = (
-  l: CommandProcessor,
-  r: CommandProcessor
+  left: CommandProcessor,
+  right: CommandProcessor,
 ): CommandProcessor => async (
   analaecta: Analecta,
-  msg: Message
-): Promise<boolean> => (await l(analaecta, msg)) || (await r(analaecta, msg));
+  msg: Message,
+): Promise<boolean> => (await left(analaecta, msg)) || right(analaecta, msg);
 
 export const connectProcessors = (
-  procs: CommandProcessor[]
+  procs: CommandProcessor[],
 ): CommandProcessor => procs.reduce(connectBin, () => Promise.resolve(false));

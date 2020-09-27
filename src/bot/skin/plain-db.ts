@@ -1,24 +1,25 @@
-import { promises } from "fs";
-import path from "path";
-import MutexPromise from "mutex-promise";
-
 import {
   GitHubUser,
   GitHubUsers,
-  serialize,
   deserialize,
+  serialize,
 } from "../exp/github-user";
-import { DiscordId } from "../exp/discord-id";
-import { NotificationId } from "../exp/github-notification";
 import {
   SubscriptionDatabase,
-  UserDatabase,
   UpdateHandler,
+  UserDatabase,
 } from "../op/interfaces";
+import { DiscordId } from "../exp/discord-id";
+import MutexPromise from "mutex-promise";
+import { NotificationId } from "../exp/github-notification";
+import path from "path";
+import { promises } from "fs";
 
 export class PlainDB implements SubscriptionDatabase, UserDatabase {
   private users: GitHubUsers = new Map<DiscordId, GitHubUser>();
+
   private mutex: MutexPromise;
+
   private handlers: UpdateHandler[] = [];
 
   private constructor(fileName: string, private handle: promises.FileHandle) {
@@ -51,7 +52,7 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
   }
 
   async unregister(id: DiscordId): Promise<boolean> {
-    if (this.users.get(id) == null) {
+    if (!this.users.get(id)) {
       return false;
     }
     this.users.delete(id);
@@ -61,10 +62,10 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
 
   async update(
     id: DiscordId,
-    notificationIds: NotificationId[]
+    notificationIds: NotificationId[],
   ): Promise<void> {
     const entry = this.users.get(id);
-    if (entry == null) {
+    if (!entry) {
       return;
     }
     entry.currentNotificationIds = notificationIds;
@@ -79,19 +80,19 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
       .then(() => this.handle.write(serialize(this.users), 0));
 
     await Promise.all(
-      this.handlers.map((handler) => handler.handleUpdate(this.users))
+      this.handlers.map((handler) => handler.handleUpdate(this.users)),
     );
   }
 }
 
 const { open, mkdir } = promises;
 
-async function readyFile(fileName: string) {
+const readyFile = async (fileName: string): Promise<promises.FileHandle> => {
   try {
-    return await open(fileName, "r+");
+    return open(fileName, "r+");
   } catch (_ignore) {
     const dir = path.dirname(fileName);
     await mkdir(dir, { recursive: true });
-    return await open(fileName, "w+");
+    return open(fileName, "w+");
   }
-}
+};

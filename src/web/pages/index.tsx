@@ -1,8 +1,7 @@
-import { NextPage } from "next";
-import Head from "next/head";
-import { FC } from "react";
-
 import { Button } from "../components/button";
+import { FC } from "react";
+import Head from "next/head";
+import { NextPage } from "next";
 
 interface MainProps {
   pageSubTitle: string;
@@ -53,8 +52,8 @@ const Main: FC<MainProps> = (props: MainProps) => (
 );
 
 const home: NextPage = () => {
-  const pageTitle = "GitHub Secretary";
-  const pageSubTitle = "Discord 通知登録窓口";
+  const pageTitle = "GitHub Secretary",
+    pageSubTitle = "Discord 通知登録窓口";
   return (
     <>
       <Head>

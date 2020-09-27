@@ -1,11 +1,10 @@
-import { MessageEmbed } from "discord.js";
-
+import {
+  GitHubNotifications,
+  NotificationId,
+} from "../../exp/github-notification";
 import { Analecta } from "../../exp/analecta";
 import { GitHubUser } from "../../exp/github-user";
-import {
-  NotificationId,
-  GitHubNotifications,
-} from "../../exp/github-notification";
+import { MessageEmbed } from "discord.js";
 import { fetchErrorHandler } from "../../skin/fetch-error-handler";
 
 export type Database = {
@@ -17,18 +16,16 @@ export type Query = {
   fetchNotification(user: GitHubUser): Promise<GitHubNotifications>;
 };
 
-export const notify = async (
+export const notify = (db: Database, query: Query) => async (
   analecta: Analecta,
   send: (message: MessageEmbed) => Promise<void>,
-  db: Database,
-  query: Query
 ): Promise<void> => {
   const user = await db.getUser();
   const { currentNotificationIds } = user;
 
   const res = await query
     .fetchNotification(user)
-    .catch(fetchErrorHandler((message) => void send(message)));
+    .catch(fetchErrorHandler((message) => send(message)));
   const newIds = res.map(({ id }) => id);
   const newIdSet = new Set([...newIds]);
   for (const oldE of currentNotificationIds) {
@@ -36,7 +33,7 @@ export const notify = async (
   }
   await db.update(newIds);
 
-  if (newIdSet.size <= 0) {
+  if (newIdSet.size === 0) {
     return;
   }
 
@@ -49,6 +46,6 @@ export const notify = async (
     new MessageEmbed()
       .addFields(subjects)
       .setTitle(analecta.BringIssue)
-      .setURL(`https://github.com/notifications`)
+      .setURL("https://github.com/notifications"),
   );
 };

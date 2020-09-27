@@ -1,14 +1,14 @@
-import { MessageEmbed, EmbedFieldData } from "discord.js";
-
-import { Analecta } from "../../exp/analecta";
-import { colorFromState } from "../../exp/state-color";
-import { replyFailure } from "../../abst/reply-failure";
 import { CommandProcessor, connectProcessors } from "../../abst/connector";
-import { omitBody } from "../../exp/omit";
+import { EmbedFieldData, MessageEmbed } from "discord.js";
+import { Analecta } from "../../exp/analecta";
 import { Message } from "../../abst/message";
 import { Repository } from "./repo";
+import { colorFromState } from "../../exp/state-color";
+import { omitBody } from "../../exp/omit";
+import { replyFailure } from "../../abst/reply-failure";
 
 export interface PartialPullRequest {
+  // eslint-disable-next-line camelcase
   html_url: string;
   title: string;
   number: string;
@@ -18,79 +18,77 @@ export interface PullRequest {
   state: string;
   title: string;
   body?: string;
+  // eslint-disable-next-line camelcase
   html_url: string;
   user: {
+    // eslint-disable-next-line camelcase
     avatar_url: string;
     login: string;
   };
 }
 
 export type Query = {
-  fetchRepo: (
-    owner: string,
-    repoName: string
-  ) => Promise<Repository>;
+  fetchRepo: (owner: string, repoName: string) => Promise<Repository>;
   fetchPullRequests: (
     owner: string,
-    repoName: string
+    repoName: string,
   ) => Promise<PartialPullRequest[]>;
   fetchAPullRequest: (
     owner: string,
     repoName: string,
-    dst: string
+    dst: string,
   ) => Promise<PullRequest>;
 };
 
-const ghPattern = /^\/ghp\s+([^/]+)(\/([^/]+)(\/([^/]+))?)?$/;
-const numbersPattern = /^[1-9][0-9]*$/;
+// eslint-disable-next-line max-len
+const ghPattern = /^\/ghp\s+(?<first>[^/]+)(?:\/(?<second>[^/]+)(?:\/(?<third>[^/]+))?)?$/u;
+
+const numbersPattern = /^[1-9][0-9]*$/u;
 
 const genSubCommands = (
-  matches: RegExpMatchArray,
-  query: Query
+  { groups }: RegExpMatchArray,
+  query: Query,
 ): CommandProcessor[] =>
   [
-    externalPR(matches[1])(matches[3], matches[5]),
-    internalPR(matches[1], matches[3]),
-    externalPRList(matches[1])(matches[3]),
-    internalPRList(matches[1]),
+    externalPR(groups?.first)(groups?.second, groups?.third),
+    internalPR(groups?.first, groups?.second),
+    externalPRList(groups?.first)(groups?.second),
+    internalPRList(groups?.first),
   ]
-    .map((e) => e(query))
+    .map((processor) => processor(query))
     .concat(replyFailure);
 
 export const bringPR = (query: Query) => async (
   analecta: Analecta,
-  msg: Message
+  msg: Message,
 ): Promise<boolean> => {
   const matches = await msg.matchCommand(ghPattern);
-  if (matches == null) {
+  if (matches === null) {
     return false;
   }
 
   return msg.withTyping(() =>
-    connectProcessors(genSubCommands(matches, query))(analecta, msg)
+    connectProcessors(genSubCommands(matches, query))(analecta, msg),
   );
 };
 
 const externalPRList = (owner?: string) => (repo?: string) => (
-  query: Query
+  query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
-  if (owner == null || repo == null) {
+  if (!owner || !repo) {
     return false;
   }
   try {
     const {
       name: repoName,
-      html_url,
-      owner: { avatar_url, html_url: owner_url, login },
+      html_url: linkUrl,
+      owner: { avatar_url: iconUrl, html_url: ownerUrl, login },
     } = await query.fetchRepo(owner, repo);
 
     const fields: EmbedFieldData[] = (
       await query.fetchPullRequests(owner, repo)
-    ).map(({ html_url, title, number }) => ({
-      name: `#${number}`,
-      value: `[${title}](${html_url})`,
-    }));
-    if (fields.length <= 0) {
+    ).map(linkField);
+    if (fields.length === 0) {
       await msg.reply(analecta.NothingToBring);
       return true;
     }
@@ -98,14 +96,13 @@ const externalPRList = (owner?: string) => (repo?: string) => (
     await msg.sendEmbed(
       new MessageEmbed()
         .setColor(colorFromState("open"))
-        .setAuthor(login, avatar_url, owner_url)
-        .setURL(html_url)
+        .setAuthor(login, iconUrl, ownerUrl)
+        .setURL(linkUrl)
         .setTitle(repoName)
         .setFooter(analecta.EnumPR)
-        .addFields(fields)
+        .addFields(fields),
     );
   } catch (_e) {
-    /** @ignore */
     return false;
   }
 
@@ -115,14 +112,9 @@ const externalPRList = (owner?: string) => (repo?: string) => (
 const internalPRList = externalPRList("approvers");
 
 const externalPR = (owner?: string) => (repo?: string, dst?: string) => (
-  query: Query
+  query: Query,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
-  if (
-    owner == null ||
-    repo == null ||
-    dst == null ||
-    !numbersPattern.test(dst)
-  ) {
+  if (!owner || !repo || !dst || !numbersPattern.test(dst)) {
     return false;
   }
 
@@ -131,14 +123,8 @@ const externalPR = (owner?: string) => (repo?: string, dst?: string) => (
       state,
       title,
       body,
-      html_url,
-      user: { avatar_url, login },
-    }: {
-      state: string;
-      title: string;
-      body?: string;
-      html_url: string;
-      user: { avatar_url: string; login: string };
+      html_url: linkUrl,
+      user: { avatar_url: iconUrl, login },
     } = await query.fetchAPullRequest(owner, repo, dst);
 
     const color = colorFromState(state);
@@ -146,14 +132,13 @@ const externalPR = (owner?: string) => (repo?: string, dst?: string) => (
     await msg.sendEmbed(
       new MessageEmbed()
         .setColor(color)
-        .setAuthor(login, avatar_url)
-        .setURL(html_url)
+        .setAuthor(login, iconUrl)
+        .setURL(linkUrl)
         .setDescription(description)
         .setTitle(title)
-        .setFooter(analecta.BringPR)
+        .setFooter(analecta.BringPR),
     );
   } catch (_e) {
-    /** @ignore */
     return false;
   }
 
@@ -161,3 +146,12 @@ const externalPR = (owner?: string) => (repo?: string, dst?: string) => (
 };
 
 const internalPR = externalPR("approvers");
+
+const linkField = ({
+  html_url: htmlUrl,
+  title,
+  number,
+}: PartialPullRequest): { name: string; value: string } => ({
+  name: `#${number}`,
+  value: `[${title}](${htmlUrl})`,
+});

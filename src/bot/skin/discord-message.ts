@@ -1,7 +1,6 @@
-import { Message as RawMessage, MessageEmbed } from "discord.js";
-
-import { Message } from "../abst/message";
-import { DiscordId } from "../exp/discord-id";
+import { MessageEmbed, Message as RawMessage } from "discord.js";
+import type { DiscordId } from "../exp/discord-id";
+import type { Message } from "../abst/message";
 
 export class DiscordMessage implements Message {
   constructor(private raw: RawMessage) {}
@@ -20,7 +19,7 @@ export class DiscordMessage implements Message {
 
   async withTyping(callee: () => Promise<boolean>): Promise<boolean> {
     try {
-      void this.raw.channel.startTyping();
+      this.raw.channel.startTyping();
       return await callee();
     } finally {
       this.raw.channel.stopTyping(true);

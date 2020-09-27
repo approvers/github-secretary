@@ -1,5 +1,5 @@
-import { NotificationId } from "./github-notification";
 import { DiscordId } from "./discord-id";
+import { NotificationId } from "./github-notification";
 
 declare const nominalGitHubUser: unique symbol;
 export type GitHubUser = {
@@ -15,8 +15,8 @@ export const serialize = (users: GitHubUsers): string => {
   const obj: { [key: string]: GitHubUser } = {};
   const it = users.entries();
   for (let next = it.next(); !next.done; next = it.next()) {
-    const [k, v] = next.value;
-    obj[k as string] = v;
+    const [key, value] = next.value;
+    obj[key as string] = value;
   }
   return JSON.stringify(obj);
 };
@@ -24,8 +24,8 @@ export const serialize = (users: GitHubUsers): string => {
 export const deserialize = (serial: string): GitHubUsers => {
   const parsed = JSON.parse(serial) as { [key: string]: GitHubUser };
   const map = new Map<DiscordId, GitHubUser>();
-  for (const [k, v] of Object.entries(parsed)) {
-    map.set(k as DiscordId, v);
+  for (const [key, value] of Object.entries(parsed)) {
+    map.set(key as DiscordId, value);
   }
   return map;
 };

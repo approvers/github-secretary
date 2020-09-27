@@ -1,2 +1,8 @@
-export const omitBody = (body: string): string =>
-  body.length >= 80 ? body.slice(0, 80) + "..." : body;
+const bodyWidth = 80;
+
+export const omitBody = (body: string): string => {
+  if (body.length < bodyWidth) {
+    return body;
+  }
+  return `${body.slice(0, bodyWidth)}...`;
+};

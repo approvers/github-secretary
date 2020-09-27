@@ -1,10 +1,9 @@
-import toml from "toml";
+import { Analecta, validateAnalecta } from "../exp/analecta";
+import { SayingLoader } from "../abst/saying-loader";
 import { promises } from "fs";
+import toml from "toml";
 
 const { readFile } = promises;
-
-import { SayingLoader } from "../abst/saying-loader";
-import { Analecta, validateAnalecta } from "../exp/analecta";
 
 export class TomlLoader implements SayingLoader {
   constructor(private filename: string) {}
@@ -12,12 +11,14 @@ export class TomlLoader implements SayingLoader {
   async load(): Promise<Analecta> {
     const buf = await readFile(this.filename);
     const jsonStr = buf.toString();
-    if (typeof jsonStr !== "string") throw "file read failure";
+    if (typeof jsonStr !== "string") {
+      throw new Error("file read failure");
+    }
 
     const analecta: unknown = toml.parse(jsonStr);
     if (!validateAnalecta(analecta)) {
       console.log({ analecta });
-      throw "invalid toml";
+      throw new Error("invalid toml");
     }
     return analecta;
   }

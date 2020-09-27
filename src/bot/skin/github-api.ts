@@ -1,19 +1,17 @@
+import type { Branch, PartialBranch } from "../op/bring/branch";
+import type { Issue, PartialIssue } from "../op/bring/issue";
+import type { PartialPullRequest, PullRequest } from "../op/bring/pr";
+import type { GitHubUser } from "../exp/github-user";
+import type { NotificationId } from "../exp/github-notification";
+import type { Query } from "../op/interfaces";
+import type { Repository } from "../op/bring/repo";
 import fetch from "node-fetch";
 
-import { Query } from "../op/interfaces";
-import { GitHubUser } from "../exp/github-user";
-import { NotificationId } from "../exp/github-notification";
-import type { Repository } from "../op/bring/repo";
-import { Issue, PartialIssue } from "../op/bring/issue";
-import { PartialPullRequest, PullRequest } from "../op/bring/pr";
-import { Branch, PartialBranch } from "../op/bring/branch";
+const apiRoot = "https://api.github.com";
 
 export class GitHubApi implements Query {
-  async fetchRepo(
-    owner: string,
-    repoName: string
-  ): Promise<Repository> {
-    const repoInfoApiUrl = `https://api.github.com/repos/${owner}/${repoName}`;
+  async fetchRepo(owner: string, repoName: string): Promise<Repository> {
+    const repoInfoApiUrl = `${apiRoot}/repos/${owner}/${repoName}`;
     const infoRes: unknown = await (await fetch(repoInfoApiUrl)).json();
     if (checkNotFound(infoRes)) {
       throw new Error("not found the repositpory");
@@ -21,11 +19,8 @@ export class GitHubApi implements Query {
     return infoRes as Repository;
   }
 
-  async fetchIssues(
-    owner: string,
-    repoName: string
-  ): Promise<PartialIssue[]> {
-    const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/issues`;
+  async fetchIssues(owner: string, repoName: string): Promise<PartialIssue[]> {
+    const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/issues`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
       throw new Error("not found the repositpory");
@@ -36,9 +31,9 @@ export class GitHubApi implements Query {
   async fetchAnIssue(
     owner: string,
     repoName: string,
-    dst: string
+    dst: string,
   ): Promise<Issue> {
-    const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/issues/${dst}`;
+    const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/issues/${dst}`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
       throw new Error("not found the issue");
@@ -48,9 +43,9 @@ export class GitHubApi implements Query {
 
   async fetchPullRequests(
     owner: string,
-    repoName: string
+    repoName: string,
   ): Promise<PartialPullRequest[]> {
-    const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls`;
+    const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/pulls`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
       throw new Error("not found the repositpory");
@@ -61,9 +56,9 @@ export class GitHubApi implements Query {
   async fetchAPullRequest(
     owner: string,
     repoName: string,
-    dst: string
+    dst: string,
   ): Promise<PullRequest> {
-    const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/pulls/${dst}`;
+    const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/pulls/${dst}`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
       throw new Error("not found the pull request");
@@ -73,9 +68,9 @@ export class GitHubApi implements Query {
 
   async fetchBranches(
     owner: string,
-    repoName: string
+    repoName: string,
   ): Promise<PartialBranch[]> {
-    const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches`;
+    const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/branches`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
       throw new Error("not found the branches");
@@ -85,10 +80,10 @@ export class GitHubApi implements Query {
 
   async fetchABranch(
     owner: string,
-    repoName: string,
-    branchName: string
+    repo: string,
+    branchName: string,
   ): Promise<Branch> {
-    const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/branches/${branchName}`;
+    const apiUrl = `${apiRoot}/repos/${owner}/${repo}/branches/${branchName}`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
       throw new Error("not found the branch");
@@ -99,27 +94,29 @@ export class GitHubApi implements Query {
   async markAsRead(user: GitHubUser, notificationId: string): Promise<boolean> {
     const { userName, notificationToken } = user;
     const res = await fetch(
-      `https://api.github.com/notifications/threads/${notificationId}`,
+      `${apiRoot}/notifications/threads/${notificationId}`,
       {
         method: "PATCH",
         headers: {
-          Authorization:
-            `Basic ` +
-            Buffer.from(`${userName}:${notificationToken}`).toString("base64"),
+          Authorization: `Basic ${Buffer.from(
+            `${userName}:${notificationToken}`,
+          ).toString("base64")}`,
         },
-      }
+      },
     );
-    if (res.status !== 205) {
+    const resetContentCode = 205;
+    if (res.status !== resetContentCode) {
       return false;
     }
     return true;
   }
 
   async getGitHubUser(userName: string, token: string): Promise<GitHubUser> {
-    const res = await fetch(`https://api.github.com/notifications`, {
+    const res = await fetch(`${apiRoot}/notifications`, {
       headers: {
-        Authorization:
-          `Basic ` + Buffer.from(`${userName}:${token}`).toString("base64"),
+        Authorization: `Basic ${Buffer.from(`${userName}:${token}`).toString(
+          "base64",
+        )}`,
       },
     });
     if (!res.ok) {
@@ -133,6 +130,8 @@ export class GitHubApi implements Query {
   }
 }
 
-function checkNotFound(infoRes: unknown) {
-  return typeof infoRes === 'object' && infoRes != null && 'message' in infoRes && (infoRes as {message: unknown}).message === "Not Found";
-}
+const checkNotFound = (infoRes: unknown) =>
+  typeof infoRes === "object" &&
+  infoRes !== null &&
+  "message" in infoRes &&
+  (infoRes as { message: unknown }).message === "Not Found";

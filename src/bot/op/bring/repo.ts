@@ -1,79 +1,77 @@
-import { MessageEmbed } from "discord.js";
-
-import { Analecta } from "../../exp/analecta";
 import { CommandProcessor, connectProcessors } from "../../abst/connector";
-import { replyFailure } from "../../abst/reply-failure";
+import { Analecta } from "../../exp/analecta";
 import { Message } from "../../abst/message";
+import { MessageEmbed } from "discord.js";
+import { replyFailure } from "../../abst/reply-failure";
 
 export interface Repository {
   name: string;
   description?: string;
+  // eslint-disable-next-line camelcase
   html_url: string;
   owner: {
+    // eslint-disable-next-line camelcase
     avatar_url: string;
+    // eslint-disable-next-line camelcase
     html_url: string;
     login: string;
   };
 }
 
 export type Query = {
-  fetchRepo: (
-    owner: string,
-    repoName: string
-  ) => Promise<Repository>;
+  fetchRepo: (owner: string, repoName: string) => Promise<Repository>;
 };
 
-const ghPattern = /^\/ghr\s+([^/]+)(\/(.+))?$/;
+const ghPattern = /^\/ghr\s+(?<first>[^/]+)(?:\/(?<second>.+))?$/u;
 
 const genSubCommands = (
-  matches: RegExpMatchArray,
-  query: Query
+  { groups }: RegExpMatchArray,
+  query: Query,
 ): CommandProcessor[] =>
-  [internalRepo(matches[1]), externalRepo(matches[1])(matches[3])]
-    .map((e) => e(query))
+  [internalRepo(groups?.frist), externalRepo(groups?.frist)(groups?.second)]
+    .map((processor) => processor(query))
     .concat(replyFailure);
 
 export const bringRepo = (query: Query) => async (
   analecta: Analecta,
-  msg: Message
+  msg: Message,
 ): Promise<boolean> => {
   const matches = await msg.matchCommand(ghPattern);
-  if (matches == null) {
+  if (matches === null) {
     return false;
   }
 
   return msg.withTyping(() =>
-    connectProcessors(genSubCommands(matches, query))(analecta, msg)
+    connectProcessors(genSubCommands(matches, query))(analecta, msg),
   );
 };
 
 const externalRepo = (owner?: string) => (repo?: string) => (
-  query: Query
+  query: Query,
 ): CommandProcessor => async (
   analecta: Analecta,
-  msg: Message
+  msg: Message,
 ): Promise<boolean> => {
-  if (owner == null || repo == null) {
+  if (!owner || !repo) {
     return false;
   }
   try {
     const {
       name,
       description,
-      html_url,
-      owner: { avatar_url, html_url: owner_url, login },
+      html_url: linkUrl,
+      owner: { avatar_url: iconUrl, html_url: ownerUrl, login },
     } = await query.fetchRepo(owner, repo);
 
     await msg.sendEmbed(
       new MessageEmbed()
-        .setAuthor(login, avatar_url, owner_url)
-        .setURL(html_url)
+        .setAuthor(login, iconUrl, ownerUrl)
+        .setURL(linkUrl)
         .setDescription(description || "")
         .setTitle(name)
-        .setFooter(analecta.BringRepo)
+        .setFooter(analecta.BringRepo),
     );
   } catch (_e) {
-    /** @ignore */
     return false;
   }
 

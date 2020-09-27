@@ -1,34 +1,32 @@
+import { CommandProcessor, connectProcessors } from "../abst/connector";
+import { Query, UserDatabase } from "../op/interfaces";
 import { Analecta } from "../exp/analecta";
-import { connectProcessors, CommandProcessor } from "../abst/connector";
-
+import { bringBranch } from "../op/bring/branch";
 import { bringIssue } from "../op/bring/issue";
 import { bringPR } from "../op/bring/pr";
-import { bringBranch } from "../op/bring/branch";
 import { bringRepo } from "../op/bring/repo";
 import { error } from "../op/error";
 import { flavor } from "../op/flavor";
-import { subscribeNotification } from "../op/subscribe/subscribe-notification";
-import { unsubscribeNotification } from "../op/subscribe/unsubscribe-notification";
 import { markAsRead } from "../op/subscribe/mark-as-read";
-
-import { UserDatabase, Query } from "../op/interfaces";
+import { subscribeNotification } from "../op/subscribe/subscribe-notification";
+import { unsubNotification } from "../op/subscribe/unsubscribe-notification";
 
 export const procs = (
   analecta: Analecta,
   db: UserDatabase,
-  query: Query
+  query: Query,
 ): CommandProcessor =>
   connectProcessors([
     flavor(
-      new RegExp(analecta.CallPattern),
-      new RegExp(analecta.BlackPattern, "m")
+      new RegExp(analecta.CallPattern, "u"),
+      new RegExp(analecta.BlackPattern, "mu"),
     ),
     bringIssue(query),
     bringPR(query),
     bringBranch(query),
     bringRepo(query),
     subscribeNotification(db, query),
-    unsubscribeNotification(db),
+    unsubNotification(db),
     markAsRead(db, query),
     error,
   ]);

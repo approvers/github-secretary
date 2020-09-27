@@ -1,12 +1,16 @@
 export type StateColor = number;
 
+const green = 0x11aa11;
+const red = 0xaa1111;
+const black = 0x000000;
+
 export const colorFromState = (state: string): StateColor => {
   switch (state) {
     case "open":
-      return 0x11aa11;
+      return green;
     case "closed":
-      return 0xaa1111;
+      return red;
     default:
-      return 0x000000;
+      return black;
   }
 };

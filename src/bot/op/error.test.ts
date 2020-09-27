@@ -1,6 +1,6 @@
-import { error } from "./error";
-import { analectaForTest } from "../skin/test-analecta";
 import { MockMessage } from "../skin/mock-message";
+import { analectaForTest } from "../skin/test-analecta";
+import { error } from "./error";
 
 test("show error message", async (done) => {
   const analecta = await analectaForTest();

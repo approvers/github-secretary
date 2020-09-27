@@ -26,7 +26,7 @@ export type Analecta = Record<AnalectaKey, string> & {
 };
 
 export const validateAnalecta = (obj: unknown): obj is Analecta => {
-  if (typeof obj !== "object" || obj == null) {
+  if (typeof obj !== "object" || obj === null) {
     return false;
   }
 
