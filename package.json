@@ -14,7 +14,7 @@
     "build:web": "next build ./src/web",
     "start:web": "next start ./src/web",
     "test": "jest --passWithNoTests",
-    "lint": "eslint --ext .ts,.tsx --ignore-path .gitignore ./src/",
+    "lint": "eslint --ext .ts,.tsx --ignore-path .gitignore --ignore-path .eslintignore ./src/",
     "lint:fix": "npm run lint --fix"
   },
   "dependencies": {
