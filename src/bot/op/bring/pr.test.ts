@@ -22,6 +22,7 @@ const query = {
     Promise.resolve({
       state: "open",
       title: "I have an issue",
+      number: 1,
       // eslint-disable-next-line camelcase
       html_url: "https://github.com/test-peoject/issues/1",
       user: {
@@ -36,7 +37,7 @@ const query = {
         // eslint-disable-next-line camelcase
         html_url: "https://github.com/test-peoject/issues/1",
         title: "I have an issue",
-        number: "1",
+        number: 1,
       },
     ]),
 };
