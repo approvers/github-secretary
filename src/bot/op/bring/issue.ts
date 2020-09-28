@@ -7,9 +7,12 @@ import { colorFromState } from "../../exp/state-color";
 import { omitBody } from "../../exp/omit";
 import { replyFailure } from "../../abst/reply-failure";
 
+export type PartialIssue = Pick<Issue, "html_url" | "title" | "number">;
+
 export interface Issue {
   state: string;
   title: string;
+  number: number;
   body?: string;
   // eslint-disable-next-line camelcase
   html_url: string;
@@ -18,13 +21,6 @@ export interface Issue {
     avatar_url: string;
     login: string;
   };
-}
-
-export interface PartialIssue {
-  // eslint-disable-next-line camelcase
-  html_url: string;
-  title: string;
-  number: string;
 }
 
 export type Query = {

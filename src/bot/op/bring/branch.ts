@@ -6,9 +6,7 @@ import { Repository } from "./repo";
 import { colorFromState } from "../../exp/state-color";
 import { replyFailure } from "../../abst/reply-failure";
 
-export interface PartialBranch {
-  name: string;
-}
+export type PartialBranch = Pick<Branch, "name">;
 
 export interface Branch {
   name: string;

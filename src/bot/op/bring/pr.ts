@@ -7,16 +7,15 @@ import { colorFromState } from "../../exp/state-color";
 import { omitBody } from "../../exp/omit";
 import { replyFailure } from "../../abst/reply-failure";
 
-export interface PartialPullRequest {
-  // eslint-disable-next-line camelcase
-  html_url: string;
-  title: string;
-  number: string;
-}
+export type PartialPullRequest = Pick<
+  PullRequest,
+  "html_url" | "title" | "number"
+>;
 
 export interface PullRequest {
   state: string;
   title: string;
+  number: number;
   body?: string;
   // eslint-disable-next-line camelcase
   html_url: string;
