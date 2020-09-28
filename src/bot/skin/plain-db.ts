@@ -91,7 +91,10 @@ const readyFile = async (fileName: string): Promise<promises.FileHandle> => {
   try {
     return await open(fileName, "r+");
   } catch (err) {
-    console.error(err);
+    if (err.code !== "ENOENT") {
+      // Unexpected error
+      throw err;
+    }
     console.log("Database file doesn't exist, so start to make a new one.");
     const dir = path.dirname(fileName);
     await mkdir(dir, { recursive: true });
