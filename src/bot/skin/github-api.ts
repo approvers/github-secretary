@@ -97,11 +97,7 @@ export class GitHubApi implements Query {
       `${apiRoot}/notifications/threads/${notificationId}`,
       {
         method: "PATCH",
-        headers: {
-          Authorization: `Basic ${Buffer.from(
-            `${userName}:${notificationToken}`,
-          ).toString("base64")}`,
-        },
+        headers: makeHeaders(userName, notificationToken),
       },
     );
     const resetContentCode = 205;
@@ -113,11 +109,7 @@ export class GitHubApi implements Query {
 
   async getGitHubUser(userName: string, token: string): Promise<GitHubUser> {
     const res = await fetch(`${apiRoot}/notifications`, {
-      headers: {
-        Authorization: `Basic ${Buffer.from(`${userName}:${token}`).toString(
-          "base64",
-        )}`,
-      },
+      headers: makeHeaders(userName, token),
     });
     if (!res.ok) {
       throw new Error("invalid token");
@@ -135,3 +127,9 @@ const checkNotFound = (infoRes: unknown) =>
   infoRes !== null &&
   "message" in infoRes &&
   (infoRes as { message: unknown }).message === "Not Found";
+
+const makeHeaders = (userName: string, token: string) => ({
+  Authorization: `Basic ${Buffer.from(`${userName}:${token}`).toString(
+    "base64",
+  )}`,
+});
