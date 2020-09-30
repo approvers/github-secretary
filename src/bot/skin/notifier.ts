@@ -1,17 +1,17 @@
-import {
+import type {
   GitHubNotifications,
   NotificationId,
 } from "../exp/github-notification";
-import { GitHubUser, GitHubUsers } from "../exp/github-user";
-import { MessageEmbed, User } from "discord.js";
+import type { MessageEmbed, User } from "discord.js";
 import {
   Database as NotifyController,
   Query,
   notify,
 } from "../op/subscribe/notify";
-import { Analecta } from "../exp/analecta";
-import { DiscordId } from "../exp/discord-id";
-import { UpdateHandler } from "../op/interfaces";
+import type { Analecta } from "../exp/analecta";
+import type { DiscordId } from "../exp/discord-id";
+import type { GitHubUser } from "../exp/github-user";
+import type { UpdateHandler } from "../op/interfaces";
 import fetch from "node-fetch";
 
 export type Database = {
@@ -61,7 +61,7 @@ const notificationQuery: Query = {
 };
 
 export class SubscriptionNotifier implements UpdateHandler {
-  private notifyTasks: (() => void)[] = [];
+  private notifyTasks: { [key: string]: () => void } = {};
 
   constructor(
     private analecta: Analecta,
@@ -69,15 +69,14 @@ export class SubscriptionNotifier implements UpdateHandler {
     private updater: Updater,
   ) {}
 
-  handleUpdate(users: Readonly<GitHubUsers>): Promise<void> {
+  handleUpdate(discordId: DiscordId, user: Readonly<GitHubUser>): void {
     this.stop();
 
-    const it = users.entries();
-    for (let next = it.next(); !next.done; next = it.next()) {
-      const [userId, sub] = next.value;
-      this.notifyTasks.push(this.makeNotifyTask(userId, sub));
-    }
-    return Promise.resolve();
+    this.notifyTasks[discordId] = this.makeNotifyTask(discordId, user);
+  }
+
+  handleDelete(discordId: DiscordId): void {
+    Reflect.deleteProperty(this.notifyTasks, discordId);
   }
 
   private makeNotifyTask(userId: DiscordId, sub: GitHubUser): () => void {
@@ -118,9 +117,8 @@ export class SubscriptionNotifier implements UpdateHandler {
   }
 
   private stop(): void {
-    for (const stopTask of this.notifyTasks) {
+    for (const stopTask of Object.values(this.notifyTasks)) {
       stopTask();
     }
-    this.notifyTasks = [];
   }
 }
