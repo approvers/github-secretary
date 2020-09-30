@@ -13,7 +13,7 @@ RUN addgroup -g 1993 -S bot \
 
 COPY --from=BUILD node_modules/ /app/node_modules/
 COPY --from=BUILD dist/bundle.js /app/bot.js
-COPY example/ /app/example/
+COPY analecta/ /app/analecta/
 WORKDIR /app
 
 RUN chown bot:bot /app \
