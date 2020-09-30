@@ -10,7 +10,7 @@ export class TomlLoader implements SayingLoader {
 
   async load(): Promise<Analecta> {
     const buf = await readFile(this.filename);
-    const jsonStr = buf.toString();
+    const tomlStr = buf.toString();
     if (typeof jsonStr !== "string") {
       throw new Error("file read failure");
     }
