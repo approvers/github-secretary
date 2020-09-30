@@ -1,0 +1,19 @@
+import { Analecta } from "../exp/analecta";
+import { Message } from "./message";
+
+export type CommandProcessor = (
+  analaecta: Analecta,
+  msg: Message,
+) => Promise<boolean>;
+
+const connectBin = (
+  left: CommandProcessor,
+  right: CommandProcessor,
+): CommandProcessor => async (
+  analaecta: Analecta,
+  msg: Message,
+): Promise<boolean> => (await left(analaecta, msg)) || right(analaecta, msg);
+
+export const connectProcessors = (
+  procs: CommandProcessor[],
+): CommandProcessor => procs.reduce(connectBin, () => Promise.resolve(false));

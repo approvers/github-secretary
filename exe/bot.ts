@@ -1,21 +1,19 @@
-import dotenv from "dotenv";
 import { Client, Message } from "discord.js";
-
-import { TomlLoader } from "../src/skin/toml-loader";
-import { PlainDB } from "../src/skin/plain-db";
-
-import { procs } from "../src/skin/procs";
-import { SubscriptionNotifier } from "../src/skin/notifier";
-import { Analecta } from "../src/exp/analecta";
-import { CommandProcessor } from "../src/abst/connector";
-import { GitHubApi } from "../src/skin/github-api";
-import { DiscordMessage } from "../src/skin/discord-message";
+import { Analecta } from "../src/bot/exp/analecta";
+import { CommandProcessor } from "../src/bot/abst/connector";
+import { DiscordMessage } from "../src/bot/skin/discord-message";
+import { GitHubApi } from "../src/bot/skin/github-api";
+import { PlainDB } from "../src/bot/skin/plain-db";
+import { SubscriptionNotifier } from "../src/bot/skin/notifier";
+import { TomlLoader } from "../src/bot/skin/toml-loader";
+import dotenv from "dotenv";
+import { procs } from "../src/bot/skin/procs";
 
 dotenv.config();
 
 const messageHandler = (
   analecta: Analecta,
-  builtProcs: CommandProcessor
+  builtProcs: CommandProcessor,
 ) => async (msg: Message) => {
   if (msg.author.bot) {
     return;
@@ -31,10 +29,10 @@ const messageHandler = (
 
 (async () => {
   const loader = new TomlLoader(
-    process.env.TOML_PATH || "./analecta/laffey.toml"
+    process.env.TOML_PATH || "./analecta/laffey.toml",
   );
   const db = await PlainDB.make(
-    process.env.DB_CACHE_PATH || "./.cache/users.json"
+    process.env.DB_CACHE_PATH || "./.cache/users.json",
   );
   const analecta = await loader.load();
 
@@ -52,4 +50,4 @@ const messageHandler = (
   client.on("message", messageHandler(analecta, builtProcs));
 
   client.login(process.env.DISCORD_TOKEN);
-})().catch((e) => console.error(e));
+})().catch((err) => console.error(err));
