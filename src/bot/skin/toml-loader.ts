@@ -11,11 +11,11 @@ export class TomlLoader implements SayingLoader {
   async load(): Promise<Analecta> {
     const buf = await readFile(this.filename);
     const tomlStr = buf.toString();
-    if (typeof jsonStr !== "string") {
+    if (typeof tomlStr !== "string") {
       throw new Error("file read failure");
     }
 
-    const analecta: unknown = toml.parse(jsonStr);
+    const analecta: unknown = toml.parse(tomlStr);
     if (!validateAnalecta(analecta)) {
       console.log({ analecta });
       throw new Error("invalid toml");
