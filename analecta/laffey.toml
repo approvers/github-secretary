@@ -25,7 +25,7 @@ Flavor = [
   "指揮官、一緒にねんねする？"
 ]
 
-BlackPattern = "[精孕母乳味女こっぽんイコッポンｺｯﾎﾟﾝEHKTNehktn:○●_|\*]|はら|ハラ"
+BlackPattern = "[精孕母乳味女子こっぽんイコッポンｺｯﾎﾟﾝEHKTNehktn:○●_|\*]|はら|ハラ"
 CallPattern = "ラフィ|らふぃ|laffey|Laffey"
 
 HelpMessage = """```
