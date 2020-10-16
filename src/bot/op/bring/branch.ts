@@ -33,7 +33,7 @@ export type Query = {
 };
 
 // eslint-disable-next-line max-len
-const ghPattern = /^\/ghb\s+(?<first>[^/\s]+)(?:\/(?<second>[^/\s]+))?(?:\s+(?<third>.+))?$/u;
+const ghPattern = /^\/ghb\s+(?<first>[^/\s]+)(?:\/(?<second>[^/\s]+))?(?:\s+(?<third>.+))?\s*$/u;
 
 const genSubCommands = (
   { groups }: RegExpMatchArray,

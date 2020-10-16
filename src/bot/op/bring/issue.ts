@@ -34,7 +34,7 @@ export type Query = {
 };
 
 // eslint-disable-next-line max-len
-const ghPattern = /^\/ghi\s+(?<first>[^/]+)(?:\/(?<second>[^/]+)(?:\/(?<third>[^/]+))?)?$/u;
+const ghPattern = /^\/ghi\s+(?<first>[^/]+)(?:\/(?<second>[^/]+)(?:\/(?<third>[^/]+))?)?\s*$/u;
 
 const numbersPattern = /^[1-9][0-9]*$/u;
 

@@ -19,7 +19,7 @@ export type Query = {
   ): Promise<boolean>;
 };
 
-const markPattern = /^\/ghm (?<notification>[0-9]+)$/u;
+const markPattern = /^\/ghm (?<notification>[0-9]+)\s*$/u;
 
 export const markAsRead = (
   db: UserDatabase,

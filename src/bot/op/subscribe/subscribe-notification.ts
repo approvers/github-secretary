@@ -13,7 +13,7 @@ export type Query = {
   getGitHubUser(userName: string, token: string): Promise<GitHubUser>;
 };
 
-const subscribePattern = /^\/ghs (?<name>[^/:?]+) (?<token>[^/:?]+)/u;
+const subscribePattern = /^\/ghs (?<name>[^/:?]+) (?<token>[^/:?]+)\s*$/u;
 
 export const subscribeNotification = (
   db: UserDatabase,

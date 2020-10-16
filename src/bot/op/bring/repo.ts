@@ -22,7 +22,7 @@ export type Query = {
   fetchRepo: (owner: string, repoName: string) => Promise<Repository>;
 };
 
-const ghPattern = /^\/ghr\s+(?<first>[^/]+)(?:\/(?<second>.+))?$/u;
+const ghPattern = /^\/ghr\s+(?<first>[^/]+)(?:\/(?<second>.+))?\s*$/u;
 
 const genSubCommands = (
   { groups }: RegExpMatchArray,
