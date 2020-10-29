@@ -7,7 +7,8 @@ import {
   UserDatabase as Subscriber,
 } from "./subscribe/subscribe-notification";
 import { Query as BranchQuery } from "./bring/branch";
-import { GitHubUsers } from "../exp/github-user";
+import type { DiscordId } from "../exp/discord-id";
+import type { GitHubUser } from "../exp/github-user";
 import { Query as IssueQuery } from "./bring/issue";
 import { Query as PRQuery } from "./bring/pr";
 import { Query as RepoQuery } from "./bring/repo";
@@ -24,7 +25,10 @@ export type Query = IssueQuery &
   SubQuery;
 
 export type UpdateHandler = {
-  handleUpdate: (users: Readonly<GitHubUsers>) => Promise<void>;
+  handleUpdate: (
+    discordId: DiscordId,
+    user: Readonly<GitHubUser>,
+  ) => Promise<void>;
 };
 
 export type SubscriptionDatabase = Updater & {

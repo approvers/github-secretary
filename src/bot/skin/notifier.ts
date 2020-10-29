@@ -2,7 +2,6 @@ import {
   GitHubNotifications,
   NotificationId,
 } from "../exp/github-notification";
-import { GitHubUser, GitHubUsers } from "../exp/github-user";
 import { MessageEmbed, User } from "discord.js";
 import {
   Database as NotifyController,
@@ -11,6 +10,7 @@ import {
 } from "../op/subscribe/notify";
 import { Analecta } from "../exp/analecta";
 import { DiscordId } from "../exp/discord-id";
+import { GitHubUser } from "../exp/github-user";
 import { UpdateHandler } from "../op/interfaces";
 import fetch from "node-fetch";
 
@@ -61,7 +61,7 @@ const notificationQuery: Query = {
 };
 
 export class SubscriptionNotifier implements UpdateHandler {
-  private notifyTasks: (() => void)[] = [];
+  private notifyTasks: Map<DiscordId, () => void> = new Map();
 
   constructor(
     private analecta: Analecta,
@@ -69,14 +69,10 @@ export class SubscriptionNotifier implements UpdateHandler {
     private updater: Updater,
   ) {}
 
-  handleUpdate(users: Readonly<GitHubUsers>): Promise<void> {
-    this.stop();
+  handleUpdate(id: DiscordId, user: Readonly<GitHubUser>): Promise<void> {
+    this.stop(id);
 
-    const it = users.entries();
-    for (let next = it.next(); !next.done; next = it.next()) {
-      const [userId, sub] = next.value;
-      this.notifyTasks.push(this.makeNotifyTask(userId, sub));
-    }
+    this.notifyTasks.set(id, this.makeNotifyTask(id, user));
     return Promise.resolve();
   }
 
@@ -117,10 +113,11 @@ export class SubscriptionNotifier implements UpdateHandler {
     };
   }
 
-  private stop(): void {
-    for (const stopTask of this.notifyTasks) {
-      stopTask();
+  private stop(id: DiscordId): void {
+    const task = this.notifyTasks.get(id);
+    if (task) {
+      task();
+      this.notifyTasks.delete(id);
     }
-    this.notifyTasks = [];
   }
 }
