@@ -22,7 +22,14 @@ export class FaunaDB implements SubscriptionDatabase, UserDatabase {
   onUpdate(handler: UpdateHandler): void {
     this.#handlers.push(handler);
 
-    this.#client.query(q.Get(q.Collection("users"))).then((res) => {
+    this.#client.query(q.Get(q.Match(q.Index("all_users")))).then((payload) => {
+      if (!payload) {
+        return;
+      }
+      let res = payload;
+      if (!Array.isArray(res)) {
+        res = { data: [res] };
+      }
       const { data } = res as {
         data: { ref: fauna.values.Ref; data: GitHubUser }[];
       };
