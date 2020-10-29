@@ -2,6 +2,7 @@ import { Client, Message } from "discord.js";
 import { Analecta } from "../src/bot/exp/analecta";
 import { CommandProcessor } from "../src/bot/abst/connector";
 import { DiscordMessage } from "../src/bot/skin/discord-message";
+import { FaunaDB } from "../src/bot/skin/fauna-db";
 import { GitHubApi } from "../src/bot/skin/github-api";
 import { PlainDB } from "../src/bot/skin/plain-db";
 import { SubscriptionNotifier } from "../src/bot/skin/notifier";
@@ -31,9 +32,7 @@ const messageHandler = (
   const loader = new TomlLoader(
     process.env.TOML_PATH || "./analecta/laffey.toml",
   );
-  const db = await PlainDB.make(
-    process.env.DB_CACHE_PATH || "./.cache/users.json",
-  );
+  const db = new FaunaDB(process.env.FAUNA_SECRET || "UNSET");
   const analecta = await loader.load();
 
   const client = new Client();
