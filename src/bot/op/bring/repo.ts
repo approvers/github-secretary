@@ -1,6 +1,6 @@
 import { CommandProcessor, connectProcessors } from "../../abst/connector";
-import { Analecta } from "../../exp/analecta";
-import { Message } from "../../abst/message";
+import type { Analecta } from "../../exp/analecta";
+import type { Message } from "../../abst/message";
 import { MessageEmbed } from "discord.js";
 import { replyFailure } from "../../abst/reply-failure";
 

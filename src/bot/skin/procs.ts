@@ -1,6 +1,6 @@
 import { CommandProcessor, connectProcessors } from "../abst/connector";
-import { Query, UserDatabase } from "../op/interfaces";
-import { Analecta } from "../exp/analecta";
+import type { Query, UserDatabase } from "../op/interfaces";
+import type { Analecta } from "../exp/analecta";
 import { bringBranch } from "../op/bring/branch";
 import { bringIssue } from "../op/bring/issue";
 import { bringPR } from "../op/bring/pr";

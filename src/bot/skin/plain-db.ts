@@ -4,14 +4,14 @@ import {
   deserialize,
   serialize,
 } from "../exp/github-user";
-import {
+import type {
   SubscriptionDatabase,
   UpdateHandler,
   UserDatabase,
 } from "../op/interfaces";
-import { DiscordId } from "../exp/discord-id";
+import type { DiscordId } from "../exp/discord-id";
 import MutexPromise from "mutex-promise";
-import { NotificationId } from "../exp/github-notification";
+import type { NotificationId } from "../exp/github-notification";
 import path from "path";
 import { promises } from "fs";
 

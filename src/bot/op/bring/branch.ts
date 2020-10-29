@@ -1,8 +1,8 @@
 import { CommandProcessor, connectProcessors } from "../../abst/connector";
 import { EmbedFieldData, MessageEmbed } from "discord.js";
-import { Analecta } from "../../exp/analecta";
-import { Message } from "../../abst/message";
-import { Repository } from "./repo";
+import type { Analecta } from "../../exp/analecta";
+import type { Message } from "../../abst/message";
+import type { Repository } from "./repo";
 import { colorFromState } from "../../exp/state-color";
 import { replyFailure } from "../../abst/reply-failure";
 

@@ -1,6 +1,6 @@
 import { Client, Message } from "discord.js";
-import { Analecta } from "../src/bot/exp/analecta";
-import { CommandProcessor } from "../src/bot/abst/connector";
+import type { Analecta } from "../src/bot/exp/analecta";
+import type { CommandProcessor } from "../src/bot/abst/connector";
 import { DiscordMessage } from "../src/bot/skin/discord-message";
 import { GitHubApi } from "../src/bot/skin/github-api";
 import { PlainDB } from "../src/bot/skin/plain-db";
