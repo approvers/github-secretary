@@ -9,7 +9,7 @@ import { fetchErrorHandler } from "../../skin/fetch-error-handler";
 import { replyFailure } from "../../abst/reply-failure";
 
 export type UserDatabase = {
-  fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined>;
+  fetchUser(discordId: DiscordId): Promise<GitHubUser | null>;
 };
 
 export type Query = {

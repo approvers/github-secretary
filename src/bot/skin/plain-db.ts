@@ -26,8 +26,8 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
     this.mutex = new MutexPromise(`plain-db-${fileName}`);
   }
 
-  fetchUser(discordId: DiscordId): Promise<GitHubUser | undefined> {
-    return Promise.resolve(this.users.get(discordId));
+  fetchUser(discordId: DiscordId): Promise<GitHubUser | null> {
+    return Promise.resolve(this.users.get(discordId) ?? null);
   }
 
   onUpdate(handler: UpdateHandler): void {
@@ -48,7 +48,7 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
 
   async register(id: DiscordId, user: GitHubUser): Promise<void> {
     this.users.set(id, user);
-    await this.overwrite();
+    await this.overwrite(id);
   }
 
   async unregister(id: DiscordId): Promise<boolean> {
@@ -56,7 +56,7 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
       return false;
     }
     this.users.delete(id);
-    await this.overwrite();
+    await this.overwrite(id);
     return true;
   }
 
@@ -70,17 +70,21 @@ export class PlainDB implements SubscriptionDatabase, UserDatabase {
     }
     entry.currentNotificationIds = notificationIds;
     this.users.set(id, entry);
-    await this.overwrite();
+    await this.overwrite(id);
   }
 
-  private async overwrite(): Promise<void> {
+  private async overwrite(id: DiscordId): Promise<void> {
     await this.mutex
       .promise()
       .then(() => this.handle.truncate(0))
       .then(() => this.handle.write(serialize(this.users), 0));
 
+    const user = this.users.get(id);
+    if (!user) {
+      return;
+    }
     await Promise.all(
-      this.handlers.map((handler) => handler.handleUpdate(this.users)),
+      this.handlers.map((handler) => handler.handleUpdate(id, user)),
     );
   }
 }
