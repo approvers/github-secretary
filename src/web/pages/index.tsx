@@ -1,7 +1,7 @@
 import { Button } from "../components/button";
-import { FC } from "react";
+import type { FC } from "react";
 import Head from "next/head";
-import { NextPage } from "next";
+import type { NextPage } from "next";
 
 interface MainProps {
   pageSubTitle: string;

@@ -1,4 +1,4 @@
-import { Analecta } from "../exp/analecta";
+import type { Analecta } from "../exp/analecta";
 import { TomlLoader } from "./toml-loader";
 
 export const analectaForTest = async (): Promise<Analecta> => {

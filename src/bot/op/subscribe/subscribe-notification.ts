@@ -1,8 +1,8 @@
-import { Analecta } from "../../exp/analecta";
-import { CommandProcessor } from "../../abst/connector";
-import { DiscordId } from "../../exp/discord-id";
-import { GitHubUser } from "../../exp/github-user";
-import { Message } from "../../abst/message";
+import type { Analecta } from "../../exp/analecta";
+import type { CommandProcessor } from "../../abst/connector";
+import type { DiscordId } from "../../exp/discord-id";
+import type { GitHubUser } from "../../exp/github-user";
+import type { Message } from "../../abst/message";
 import { fetchErrorHandler } from "../../skin/fetch-error-handler";
 
 export type UserDatabase = {

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 
 export const Button: FC<{ children: string }> = ({ children }) => (
   <>

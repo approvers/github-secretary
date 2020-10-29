@@ -1,4 +1,4 @@
-import {
+import type {
   GitHubNotifications,
   NotificationId,
 } from "../exp/github-notification";
@@ -8,10 +8,10 @@ import {
   Query,
   notify,
 } from "../op/subscribe/notify";
-import { Analecta } from "../exp/analecta";
-import { DiscordId } from "../exp/discord-id";
-import { GitHubUser } from "../exp/github-user";
-import { UpdateHandler } from "../op/interfaces";
+import type { Analecta } from "../exp/analecta";
+import type { DiscordId } from "../exp/discord-id";
+import type { GitHubUser } from "../exp/github-user";
+import type { UpdateHandler } from "../op/interfaces";
 import fetch from "node-fetch";
 
 export type Database = {

@@ -1,5 +1,5 @@
-import { DiscordId } from "../exp/discord-id";
-import { MessageEmbed } from "discord.js";
+import type { DiscordId } from "../exp/discord-id";
+import type { MessageEmbed } from "discord.js";
 
 export interface Message {
   getAuthorId(): DiscordId;

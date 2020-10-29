@@ -1,6 +1,6 @@
-import { Analecta } from "../exp/analecta";
-import { CommandProcessor } from "../abst/connector";
-import { Message } from "../abst/message";
+import type { Analecta } from "../exp/analecta";
+import type { CommandProcessor } from "../abst/connector";
+import type { Message } from "../abst/message";
 import { choice } from "../exp/choice";
 
 export const flavor = (

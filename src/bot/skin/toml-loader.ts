@@ -1,5 +1,5 @@
 import { Analecta, validateAnalecta } from "../exp/analecta";
-import { SayingLoader } from "../abst/saying-loader";
+import type { SayingLoader } from "../abst/saying-loader";
 import { promises } from "fs";
 import toml from "toml";
 

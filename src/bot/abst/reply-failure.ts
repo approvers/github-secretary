@@ -1,5 +1,5 @@
-import { Analecta } from "../exp/analecta";
-import { Message } from "./message";
+import type { Analecta } from "../exp/analecta";
+import type { Message } from "./message";
 import { choice } from "../exp/choice";
 
 export const replyFailure = async (

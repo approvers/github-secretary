@@ -1,9 +1,9 @@
-import {
+import type {
   GitHubNotifications,
   NotificationId,
 } from "../../exp/github-notification";
-import { Analecta } from "../../exp/analecta";
-import { GitHubUser } from "../../exp/github-user";
+import type { Analecta } from "../../exp/analecta";
+import type { GitHubUser } from "../../exp/github-user";
 import { MessageEmbed } from "discord.js";
 import { fetchErrorHandler } from "../../skin/fetch-error-handler";
 
