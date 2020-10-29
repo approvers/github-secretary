@@ -21,6 +21,15 @@ export class FaunaDB implements SubscriptionDatabase, UserDatabase {
 
   onUpdate(handler: UpdateHandler): void {
     this.#handlers.push(handler);
+
+    this.#client.query(q.Get(q.Collection("users"))).then((res) => {
+      const { data } = res as {
+        data: { ref: fauna.values.Ref; data: GitHubUser }[];
+      };
+      data.forEach(({ ref: { id }, data: datum }) => {
+        handler.handleUpdate(id as DiscordId, datum);
+      });
+    });
   }
 
   private async notifyUpdate(id: DiscordId): Promise<void> {
