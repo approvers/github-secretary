@@ -20,6 +20,7 @@
   "dependencies": {
     "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
+    "faunadb": "^3.0.1",
     "mutex-promise": "^0.1.0",
     "next": "^9.5.3",
     "node-fetch": "^2.6.1",
