@@ -1,9 +1,9 @@
-import type { Branch, PartialBranch } from "../exp/github/branch";
-import type { Issue, PartialIssue } from "../exp/github/issue";
-import type { PartialPullRequest, PullRequest } from "../exp/github/pr";
+import type { Branch, PartialBranch } from "./github/branch";
+import type { Issue, PartialIssue } from "./github/issue";
+import type { PartialPullRequest, PullRequest } from "./github/pr";
 import type { GitHubUser } from "../exp/github-user";
 import type { NotificationId } from "../exp/github-notification";
-import type { Repository } from "../exp/github/repo";
+import type { Repository } from "./github/repo";
 
 export interface Api {
   fetchRepo: (owner: string, repoName: string) => Promise<Repository>;

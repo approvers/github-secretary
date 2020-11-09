@@ -6,12 +6,12 @@ import {
   PullApi,
   UserApi,
 } from "../abst/api";
-import type { Branch, PartialBranch } from "../exp/github/branch";
-import type { Issue, PartialIssue } from "../exp/github/issue";
-import type { PartialPullRequest, PullRequest } from "../exp/github/pr";
+import type { Branch, PartialBranch } from "../abst/github/branch";
+import type { Issue, PartialIssue } from "../abst/github/issue";
+import type { PartialPullRequest, PullRequest } from "../abst/github/pr";
 import type { GitHubUser } from "../exp/github-user";
 import type { NotificationId } from "../exp/github-notification";
-import type { Repository } from "../exp/github/repo";
+import type { Repository } from "../abst/github/repo";
 import fetch from "node-fetch";
 
 const apiRoot = "https://api.github.com";

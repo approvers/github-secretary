@@ -3,7 +3,7 @@ import { EmbedFieldData, MessageEmbed } from "discord.js";
 import type { Analecta } from "../../exp/analecta";
 import type { BranchApi } from "src/bot/abst/api";
 import type { Message } from "../../abst/message";
-import type { PartialBranch } from "src/bot/exp/github/branch";
+import type { PartialBranch } from "src/bot/abst/github/branch";
 import { colorFromState } from "../../exp/state-color";
 import { replyFailure } from "../../abst/reply-failure";
 

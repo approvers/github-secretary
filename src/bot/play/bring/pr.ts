@@ -2,7 +2,7 @@ import { CommandProcessor, connectProcessors } from "../../abst/connector";
 import { EmbedFieldData, MessageEmbed } from "discord.js";
 import type { Analecta } from "../../exp/analecta";
 import type { Message } from "../../abst/message";
-import type { PartialPullRequest } from "src/bot/exp/github/pr";
+import type { PartialPullRequest } from "src/bot/abst/github/pr";
 import type { PullApi } from "src/bot/abst/api";
 import { colorFromState } from "../../exp/state-color";
 import { omitBody } from "../../exp/omit";
