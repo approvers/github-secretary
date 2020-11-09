@@ -1,10 +1,10 @@
-import type { Branch, PartialBranch } from "../op/bring/branch";
-import type { Issue, PartialIssue } from "../op/bring/issue";
-import type { PartialPullRequest, PullRequest } from "../op/bring/pr";
+import type { Branch, PartialBranch } from "../play/bring/branch";
+import type { Issue, PartialIssue } from "../play/bring/issue";
+import type { PartialPullRequest, PullRequest } from "../play/bring/pr";
 import type { GitHubUser } from "../exp/github-user";
 import type { NotificationId } from "../exp/github-notification";
-import type { Query } from "../op/interfaces";
-import type { Repository } from "../op/bring/repo";
+import type { Query } from "../play/interfaces";
+import type { Repository } from "../play/bring/repo";
 import fetch from "node-fetch";
 
 const apiRoot = "https://api.github.com";

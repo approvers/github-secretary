@@ -1,15 +1,15 @@
 import { CommandProcessor, connectProcessors } from "../abst/connector";
-import type { Query, UserDatabase } from "../op/interfaces";
+import type { Query, UserDatabase } from "../play/interfaces";
 import type { Analecta } from "../exp/analecta";
-import { bringBranch } from "../op/bring/branch";
-import { bringIssue } from "../op/bring/issue";
-import { bringPR } from "../op/bring/pr";
-import { bringRepo } from "../op/bring/repo";
-import { error } from "../op/error";
-import { flavor } from "../op/flavor";
-import { markAsRead } from "../op/subscribe/mark-as-read";
-import { subscribeNotification } from "../op/subscribe/subscribe-notification";
-import { unsubNotification } from "../op/subscribe/unsubscribe-notification";
+import { bringBranch } from "../play/bring/branch";
+import { bringIssue } from "../play/bring/issue";
+import { bringPR } from "../play/bring/pr";
+import { bringRepo } from "../play/bring/repo";
+import { error } from "../play/error";
+import { flavor } from "../play/flavor";
+import { markAsRead } from "../play/subscribe/mark-as-read";
+import { subscribeNotification } from "../play/subscribe/subscribe-notification";
+import { unsubNotification } from "../play/subscribe/unsubscribe-notification";
 
 export const procs = (
   analecta: Analecta,

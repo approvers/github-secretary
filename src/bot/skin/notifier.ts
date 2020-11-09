@@ -7,11 +7,11 @@ import {
   Database as NotifyController,
   Query,
   notify,
-} from "../op/subscribe/notify";
+} from "../play/subscribe/notify";
 import type { Analecta } from "../exp/analecta";
 import type { DiscordId } from "../exp/discord-id";
 import type { GitHubUser } from "../exp/github-user";
-import type { UpdateHandler } from "../op/interfaces";
+import type { UpdateHandler } from "../play/interfaces";
 import fetch from "node-fetch";
 
 export type Database = {
