@@ -3,11 +3,7 @@ import type {
   NotificationId,
 } from "../exp/github-notification";
 import { MessageEmbed, User } from "discord.js";
-import {
-  Database as NotifyController,
-  Query,
-  notify,
-} from "../play/subscribe/notify";
+import { Database as NotifyController, Query, notify } from "../play/notify";
 import type {
   SubscriptionDatabase,
   UpdateHandler,

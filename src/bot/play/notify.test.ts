@@ -2,10 +2,10 @@ import { Database, notify } from "./notify";
 import {
   GitHubNotifications,
   NotificationId,
-} from "../../exp/github-notification";
-import { GitHubUser } from "../../exp/github-user";
+} from "../exp/github-notification";
+import { GitHubUser } from "../exp/github-user";
 import { MessageEmbed } from "discord.js";
-import { analectaForTest } from "../../skin/test-analecta";
+import { analectaForTest } from "../skin/test-analecta";
 
 const db: Database = {
   getUser: () =>

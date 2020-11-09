@@ -1,11 +1,11 @@
 import type {
   GitHubNotifications,
   NotificationId,
-} from "../../exp/github-notification";
-import type { Analecta } from "../../exp/analecta";
-import type { GitHubUser } from "../../exp/github-user";
+} from "../exp/github-notification";
+import type { Analecta } from "../exp/analecta";
+import type { GitHubUser } from "../exp/github-user";
 import { MessageEmbed } from "discord.js";
-import { fetchErrorHandler } from "../../skin/fetch-error-handler";
+import { fetchErrorHandler } from "../skin/fetch-error-handler";
 
 export type Database = {
   getUser(): Promise<GitHubUser>;
