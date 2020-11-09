@@ -8,10 +8,10 @@ import {
   Query,
   notify,
 } from "../play/subscribe/notify";
+import type { SubscriptionDatabase, UpdateHandler } from "../abst/api";
 import type { Analecta } from "../exp/analecta";
 import type { DiscordId } from "../exp/discord-id";
 import type { GitHubUser } from "../exp/github-user";
-import type { UpdateHandler } from "../play/interfaces";
 import fetch from "node-fetch";
 
 export type Database = {
@@ -32,13 +32,6 @@ const NOTIFY_INTERVAL = safeParseDecimal(
 
 export type UserDic = {
   fetch: (userId: string) => Promise<User>;
-};
-
-export type Updater = {
-  update: (
-    discordId: DiscordId,
-    notificationIds: NotificationId[],
-  ) => Promise<void>;
 };
 
 const notificationQuery: Query = {
@@ -66,7 +59,7 @@ export class SubscriptionNotifier implements UpdateHandler {
   constructor(
     private analecta: Analecta,
     private users: UserDic,
-    private updater: Updater,
+    private updater: SubscriptionDatabase,
   ) {}
 
   handleUpdate(id: DiscordId, user: Readonly<GitHubUser>): Promise<void> {

@@ -1,29 +1,18 @@
 import { NotificationId, includes } from "../../exp/github-notification";
 import type { Analecta } from "../../exp/analecta";
 import type { CommandProcessor } from "../../abst/connector";
-import type { DiscordId } from "../../exp/discord-id";
-import type { GitHubUser } from "../../exp/github-user";
 import type { Message } from "../../abst/message";
 import { MessageEmbed } from "discord.js";
+import type { NotificationApi } from "../../abst/api";
+import type { UserDatabase } from "../../abst/user-database";
 import { fetchErrorHandler } from "../../skin/fetch-error-handler";
 import { replyFailure } from "../../abst/reply-failure";
-
-export type UserDatabase = {
-  fetchUser(discordId: DiscordId): Promise<GitHubUser | null>;
-};
-
-export type Query = {
-  markAsRead(
-    user: GitHubUser,
-    notificationId: NotificationId,
-  ): Promise<boolean>;
-};
 
 const markPattern = /^\/ghm (?<notification>[0-9]+)\s*$/u;
 
 export const markAsRead = (
   db: UserDatabase,
-  query: Query,
+  query: NotificationApi,
 ): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,
@@ -59,7 +48,7 @@ const markNotificationAsRead = ({
   msg: Message;
   analecta: Analecta;
   id: NotificationId;
-  query: Query;
+  query: NotificationApi;
 }) => async () => {
   const user = await db.fetchUser(msg.getAuthorId());
   if (!user) {

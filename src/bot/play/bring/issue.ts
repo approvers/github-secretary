@@ -1,37 +1,12 @@
 import { CommandProcessor, connectProcessors } from "../../abst/connector";
 import { EmbedFieldData, MessageEmbed } from "discord.js";
 import type { Analecta } from "../../exp/analecta";
+import type { IssueApi } from "src/bot/abst/api";
 import type { Message } from "../../abst/message";
-import type { Repository } from "./repo";
+import type { PartialIssue } from "src/bot/exp/github/issue";
 import { colorFromState } from "../../exp/state-color";
 import { omitBody } from "../../exp/omit";
 import { replyFailure } from "../../abst/reply-failure";
-
-export type PartialIssue = Pick<Issue, "html_url" | "title" | "number">;
-
-export interface Issue {
-  state: string;
-  title: string;
-  number: number;
-  body?: string;
-  // eslint-disable-next-line camelcase
-  html_url: string;
-  user: {
-    // eslint-disable-next-line camelcase
-    avatar_url: string;
-    login: string;
-  };
-}
-
-export type Query = {
-  fetchRepo: (owner: string, repoName: string) => Promise<Repository>;
-  fetchIssues: (owner: string, repoName: string) => Promise<PartialIssue[]>;
-  fetchAnIssue: (
-    owner: string,
-    repoName: string,
-    dst: string,
-  ) => Promise<Issue>;
-};
 
 // eslint-disable-next-line max-len
 const ghPattern = /^\/ghi\s+(?<first>[^/]+)(?:\/(?<second>[^/]+)(?:\/(?<third>[^/]+))?)?\s*$/u;
@@ -40,7 +15,7 @@ const numbersPattern = /^[1-9][0-9]*$/u;
 
 const genSubCommands = (
   { groups }: RegExpMatchArray,
-  query: Query,
+  query: IssueApi,
 ): CommandProcessor[] =>
   [
     externalIssue(groups?.first)(groups?.second, groups?.third),
@@ -51,7 +26,7 @@ const genSubCommands = (
     .map((processor) => processor(query))
     .concat(replyFailure);
 
-export const bringIssue = (query: Query) => async (
+export const bringIssue = (query: IssueApi) => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
@@ -66,7 +41,7 @@ export const bringIssue = (query: Query) => async (
 };
 
 const externalIssueList = (owner?: string) => (repo?: string) => (
-  query: Query,
+  query: IssueApi,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   if (!owner || !repo) {
     return false;
@@ -104,7 +79,7 @@ const externalIssueList = (owner?: string) => (repo?: string) => (
 const internalIssueList = externalIssueList("approvers");
 
 const externalIssue = (owner?: string) => (repo?: string, dst?: string) => (
-  query: Query,
+  query: IssueApi,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   if (!owner || !repo || !dst || !numbersPattern.test(dst)) {
     return false;

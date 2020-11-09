@@ -1,23 +1,15 @@
 import type { Analecta } from "../../exp/analecta";
 import type { CommandProcessor } from "../../abst/connector";
-import type { DiscordId } from "../../exp/discord-id";
-import type { GitHubUser } from "../../exp/github-user";
 import type { Message } from "../../abst/message";
+import type { UserApi } from "src/bot/abst/api";
+import type { UserDatabase } from "../../abst/user-database";
 import { fetchErrorHandler } from "../../skin/fetch-error-handler";
-
-export type UserDatabase = {
-  register: (id: DiscordId, user: GitHubUser) => Promise<void>;
-};
-
-export type Query = {
-  getGitHubUser(userName: string, token: string): Promise<GitHubUser>;
-};
 
 const subscribePattern = /^\/ghs (?<name>[^/:?]+) (?<token>[^/:?]+)\s*$/u;
 
 export const subscribeNotification = (
   db: UserDatabase,
-  query: Query,
+  query: UserApi,
 ): CommandProcessor => async (
   analecta: Analecta,
   msg: Message,

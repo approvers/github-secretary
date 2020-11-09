@@ -1,43 +1,18 @@
 import { CommandProcessor, connectProcessors } from "../../abst/connector";
 import { EmbedFieldData, MessageEmbed } from "discord.js";
 import type { Analecta } from "../../exp/analecta";
+import type { BranchApi } from "src/bot/abst/api";
 import type { Message } from "../../abst/message";
-import type { Repository } from "./repo";
+import type { PartialBranch } from "src/bot/exp/github/branch";
 import { colorFromState } from "../../exp/state-color";
 import { replyFailure } from "../../abst/reply-failure";
-
-export type PartialBranch = Pick<Branch, "name">;
-
-export interface Branch {
-  name: string;
-  commit: {
-    author: {
-      // eslint-disable-next-line camelcase
-      avatar_url: string;
-      login: string;
-    };
-  };
-  _links: {
-    html: string;
-  };
-}
-
-export type Query = {
-  fetchRepo: (owner: string, repoName: string) => Promise<Repository>;
-  fetchBranches: (owner: string, repoName: string) => Promise<PartialBranch[]>;
-  fetchABranch: (
-    owner: string,
-    repoName: string,
-    branchName: string,
-  ) => Promise<Branch>;
-};
 
 // eslint-disable-next-line max-len
 const ghPattern = /^\/ghb\s+(?<first>[^/\s]+)(?:\/(?<second>[^/\s]+))?(?:\s+(?<third>.+))?\s*$/u;
 
 const genSubCommands = (
   { groups }: RegExpMatchArray,
-  query: Query,
+  query: BranchApi,
 ): CommandProcessor[] =>
   [
     externalBranch(groups?.first)(groups?.second, groups?.third),
@@ -48,7 +23,7 @@ const genSubCommands = (
     .map((processor) => processor(query))
     .concat(replyFailure);
 
-export const bringBranch = (query: Query) => async (
+export const bringBranch = (query: BranchApi) => async (
   analecta: Analecta,
   msg: Message,
 ): Promise<boolean> => {
@@ -63,7 +38,7 @@ export const bringBranch = (query: Query) => async (
 };
 
 const externalBranchList = (owner?: string) => (repo?: string) => (
-  query: Query,
+  query: BranchApi,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   if (!owner || !repo) {
     return false;
@@ -102,7 +77,7 @@ const externalBranchList = (owner?: string) => (repo?: string) => (
 const internalBranchList = externalBranchList("approvers");
 
 const externalBranch = (owner?: string) => (repo?: string, branch?: string) => (
-  query: Query,
+  query: BranchApi,
 ): CommandProcessor => async (analecta: Analecta, msg: Message) => {
   if (!owner || !repo || !branch) {
     return false;

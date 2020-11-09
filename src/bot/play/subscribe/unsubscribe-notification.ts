@@ -1,11 +1,7 @@
 import type { Analecta } from "../../exp/analecta";
 import type { CommandProcessor } from "../../abst/connector";
-import type { DiscordId } from "../../exp/discord-id";
 import type { Message } from "../../abst/message";
-
-export type UserDatabase = {
-  unregister: (id: DiscordId) => Promise<boolean>;
-};
+import type { UserDatabase } from "../../abst/user-database";
 
 const unsubscribePattern = /^\/ghu(?: .*)?/u;
 
