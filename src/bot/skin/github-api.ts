@@ -1,15 +1,23 @@
-import type { Branch, PartialBranch } from "../play/bring/branch";
-import type { Issue, PartialIssue } from "../play/bring/issue";
-import type { PartialPullRequest, PullRequest } from "../play/bring/pr";
+import {
+  Api,
+  BranchApi,
+  IssueApi,
+  NotificationApi,
+  PullApi,
+  UserApi,
+} from "../abst/api";
+import type { Branch, PartialBranch } from "../exp/github/branch";
+import type { Issue, PartialIssue } from "../exp/github/issue";
+import type { PartialPullRequest, PullRequest } from "../exp/github/pr";
 import type { GitHubUser } from "../exp/github-user";
 import type { NotificationId } from "../exp/github-notification";
-import type { Query } from "../play/interfaces";
-import type { Repository } from "../play/bring/repo";
+import type { Repository } from "../exp/github/repo";
 import fetch from "node-fetch";
 
 const apiRoot = "https://api.github.com";
 
-export class GitHubApi implements Query {
+export class GitHubApi
+  implements Api, IssueApi, PullApi, BranchApi, NotificationApi, UserApi {
   async fetchRepo(owner: string, repoName: string): Promise<Repository> {
     const repoInfoApiUrl = `${apiRoot}/repos/${owner}/${repoName}`;
     const infoRes: unknown = await (await fetch(repoInfoApiUrl)).json();

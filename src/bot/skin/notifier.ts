@@ -8,7 +8,10 @@ import {
   Query,
   notify,
 } from "../play/subscribe/notify";
-import type { SubscriptionDatabase, UpdateHandler } from "../abst/api";
+import type {
+  SubscriptionDatabase,
+  UpdateHandler,
+} from "../abst/user-database";
 import type { Analecta } from "../exp/analecta";
 import type { DiscordId } from "../exp/discord-id";
 import type { GitHubUser } from "../exp/github-user";

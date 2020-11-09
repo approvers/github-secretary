@@ -49,3 +49,5 @@ export interface NotificationApi {
 export interface UserApi {
   getGitHubUser(userName: string, token: string): Promise<GitHubUser>;
 }
+
+export type AllApi = IssueApi & PullApi & BranchApi & NotificationApi & UserApi;

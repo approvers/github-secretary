@@ -4,7 +4,7 @@ import type {
   SubscriptionDatabase,
   UpdateHandler,
   UserDatabase,
-} from "../play/interfaces";
+} from "../abst/user-database";
 import fauna, { query as q } from "faunadb";
 import type { DiscordId } from "../exp/discord-id";
 import type { GitHubUser } from "../exp/github-user";

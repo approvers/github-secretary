@@ -8,7 +8,7 @@ import type {
   SubscriptionDatabase,
   UpdateHandler,
   UserDatabase,
-} from "../play/interfaces";
+} from "../abst/user-database";
 import type { DiscordId } from "../exp/discord-id";
 import MutexPromise from "mutex-promise";
 import type { NotificationId } from "../exp/github-notification";
