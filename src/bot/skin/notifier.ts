@@ -1,9 +1,5 @@
-import type {
-  GitHubNotifications,
-  NotificationId,
-} from "../exp/github-notification";
 import { MessageEmbed, User } from "discord.js";
-import { Database as NotifyController, Query, notify } from "../play/notify";
+import { Database as NotifyController, notify } from "../play/notify";
 import type {
   SubscriptionDatabase,
   UpdateHandler,
@@ -11,7 +7,8 @@ import type {
 import type { Analecta } from "../exp/analecta";
 import type { DiscordId } from "../exp/discord-id";
 import type { GitHubUser } from "../exp/github-user";
-import fetch from "node-fetch";
+import type { NotificationId } from "../exp/github-notification";
+import { notificationQuery } from "./github-notification-query";
 
 const safeParseDecimal = (str: string): number => {
   const val = parseInt(str, 10);
@@ -27,25 +24,6 @@ const NOTIFY_INTERVAL = safeParseDecimal(
 
 export type UserDic = {
   fetch: (userId: string) => Promise<User>;
-};
-
-const notificationQuery: Query = {
-  async fetchNotification({
-    userName,
-    notificationToken,
-  }: GitHubUser): Promise<GitHubNotifications> {
-    const rawRes = await fetch("https://api.github.com/notifications", {
-      headers: {
-        Authorization: `Basic ${Buffer.from(
-          `${userName}:${notificationToken}`,
-        ).toString("base64")}`,
-      },
-    });
-    if (!rawRes.ok) {
-      throw new Error("fail to fetch notifications");
-    }
-    return [...((await rawRes.json()) as unknown[])] as GitHubNotifications;
-  },
 };
 
 interface NotifyTask {
