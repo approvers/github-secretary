@@ -13,9 +13,9 @@ import type { DiscordId } from "../exp/discord-id";
 import type { GitHubUser } from "../exp/github-user";
 import fetch from "node-fetch";
 
-export type Database = {
+export interface Database {
   update: (id: DiscordId, notificationIds: NotificationId[]) => Promise<void>;
-};
+}
 
 const safeParseDecimal = (str: string): number => {
   const val = parseInt(str, 10);

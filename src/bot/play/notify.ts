@@ -7,14 +7,14 @@ import type { GitHubUser } from "../exp/github-user";
 import { MessageEmbed } from "discord.js";
 import { fetchErrorHandler } from "../skin/fetch-error-handler";
 
-export type Database = {
+export interface Database {
   getUser(): Promise<GitHubUser>;
   update(ids: NotificationId[]): Promise<void>;
-};
+}
 
-export type Query = {
+export interface Query {
   fetchNotification(user: GitHubUser): Promise<GitHubNotifications>;
-};
+}
 
 export const notify = (db: Database, query: Query) => async (
   analecta: Analecta,
