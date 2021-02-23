@@ -48,8 +48,12 @@ const notificationQuery: Query = {
   },
 };
 
+interface NotifyTask {
+  timer: NodeJS.Timeout;
+}
+
 export class SubscriptionNotifier implements UpdateHandler {
-  private notifyTasks: Map<DiscordId, () => void> = new Map();
+  private notifyTasks: Map<DiscordId, NotifyTask> = new Map();
 
   constructor(
     private analecta: Analecta,
@@ -64,7 +68,7 @@ export class SubscriptionNotifier implements UpdateHandler {
     return Promise.resolve();
   }
 
-  private makeNotifyTask(userId: DiscordId, sub: GitHubUser): () => void {
+  private makeNotifyTask(userId: DiscordId, sub: GitHubUser): NotifyTask {
     const notifyHandler = notify(
       this.notifyController(sub, userId),
       notificationQuery,
@@ -73,13 +77,11 @@ export class SubscriptionNotifier implements UpdateHandler {
       () =>
         notifyHandler(this.analecta, this.sendMessage(userId)).catch((err) => {
           console.error(err);
-          clearInterval(timer);
+          this.stop(userId);
         }),
       NOTIFY_INTERVAL,
     );
-    return (): void => {
-      clearInterval(timer);
-    };
+    return { timer };
   }
 
   private sendMessage(userId: string): (mes: MessageEmbed) => Promise<void> {
@@ -104,7 +106,7 @@ export class SubscriptionNotifier implements UpdateHandler {
   private stop(id: DiscordId): void {
     const task = this.notifyTasks.get(id);
     if (task) {
-      task();
+      clearInterval(task.timer);
       this.notifyTasks.delete(id);
     }
   }
