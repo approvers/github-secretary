@@ -18,6 +18,8 @@ const safeParseDecimal = (str: string): number => {
   return val;
 };
 
+const retryInterval = () => 1000 + Math.floor(Math.random() * 2);
+
 const NOTIFY_INTERVAL = safeParseDecimal(
   process.env.NOTIFY_INTERVAL || "10000",
 );
@@ -59,6 +61,7 @@ export class SubscriptionNotifier implements UpdateHandler {
         notifyHandler(this.analecta, this.sendMessage(userId)).catch((err) => {
           console.error(err);
           this.stop(userId);
+          setTimeout(() => this.handleUpdate(userId, sub), retryInterval());
         }),
       NOTIFY_INTERVAL,
     );
