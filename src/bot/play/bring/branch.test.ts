@@ -38,13 +38,12 @@ const query = {
     ]),
 };
 
-test("get branches list", async (done) => {
+test("get branches list", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghb andy/test-project");
   message.emitter.on("reply", () => {
     expect("").toStrictEqual("`bringBranch` must not reply.");
-    done();
   });
   message.emitter.on("sendEmbed", (embed: MessageEmbed) => {
     expect(embed).toStrictEqual(
@@ -65,19 +64,17 @@ test("get branches list", async (done) => {
           },
         ]),
     );
-    done();
   });
 
   await expect(bringBranch(query)(analecta, message)).resolves.toEqual(true);
 });
 
-test("get a branch", async (done) => {
+test("get a branch", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghb andy/test-project hotfix");
   message.emitter.on("reply", () => {
     expect("").toStrictEqual("`bringBranch` must not reply.");
-    done();
   });
   message.emitter.on("sendEmbed", (embed: MessageEmbed) => {
     expect(embed).toStrictEqual(
@@ -92,7 +89,6 @@ test("get a branch", async (done) => {
         .setTitle("hotfix")
         .setFooter(analecta.BringBranch),
     );
-    done();
   });
 
   await expect(bringBranch(query)(analecta, message)).resolves.toEqual(true);

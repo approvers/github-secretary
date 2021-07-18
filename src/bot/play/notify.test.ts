@@ -32,10 +32,10 @@ const query: Query = {
     ] as GitHubNotifications),
 };
 
-test("emit a notification", async (done) => {
+test("emit a notification", async () => {
   const analecta = await analectaForTest();
 
-  await notify(db, query)(analecta, (message: MessageEmbed) => {
+  return notify(db, query)(analecta, (message: MessageEmbed) => {
     expect(message).toEqual(
       new MessageEmbed()
         .addFields([
@@ -47,7 +47,6 @@ test("emit a notification", async (done) => {
         .setTitle(analecta.BringIssue)
         .setURL("https://github.com/notifications"),
     );
-    done();
     return Promise.resolve();
   });
 });

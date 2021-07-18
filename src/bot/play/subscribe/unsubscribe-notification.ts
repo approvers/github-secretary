@@ -5,20 +5,19 @@ import type { UserDatabase } from "../../abst/user-database";
 
 const unsubscribePattern = /^\/ghu(?: .*)?/u;
 
-export const unsubNotification = (db: UserDatabase): CommandProcessor => async (
-  analecta: Analecta,
-  msg: Message,
-): Promise<boolean> => {
-  if (!(await msg.matchCommand(unsubscribePattern))) {
-    return false;
-  }
+export const unsubNotification =
+  (db: UserDatabase): CommandProcessor =>
+  async (analecta: Analecta, msg: Message): Promise<boolean> => {
+    if (!(await msg.matchCommand(unsubscribePattern))) {
+      return false;
+    }
 
-  const suceed = await db.unregister(msg.getAuthorId());
-  if (!suceed) {
-    await msg.reply(analecta.NotSubscribed);
+    const suceed = await db.unregister(msg.getAuthorId());
+    if (!suceed) {
+      await msg.reply(analecta.NotSubscribed);
+      return true;
+    }
+
+    await msg.reply(analecta.Unsubscribe);
     return true;
-  }
-
-  await msg.reply(analecta.Unsubscribe);
-  return true;
-};
+  };

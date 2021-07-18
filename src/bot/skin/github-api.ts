@@ -17,6 +17,7 @@ import fetch from "node-fetch";
 const apiRoot = "https://api.github.com";
 
 export class GitHubApi
+  // eslint-disable-next-line prettier/prettier
   implements Api, IssueApi, PullApi, BranchApi, NotificationApi, UserApi {
   async fetchRepo(owner: string, repoName: string): Promise<Repository> {
     const repoInfoApiUrl = `${apiRoot}/repos/${owner}/${repoName}`;

@@ -18,6 +18,8 @@ const safeParseDecimal = (str: string): number => {
   return val;
 };
 
+const retryInterval = () => 1000 + Math.floor(Math.random() * 2);
+
 const NOTIFY_INTERVAL = safeParseDecimal(
   process.env.NOTIFY_INTERVAL || "10000",
 );
@@ -46,7 +48,10 @@ export class SubscriptionNotifier implements UpdateHandler {
     return Promise.resolve();
   }
 
-  private makeNotifyTask(userId: DiscordId, sub: GitHubUser): NotifyTask {
+  private makeNotifyTask(
+    userId: DiscordId,
+    sub: Readonly<GitHubUser>,
+  ): NotifyTask {
     const notifyHandler = notify(
       this.notifyController(sub, userId),
       notificationQuery,
@@ -56,6 +61,7 @@ export class SubscriptionNotifier implements UpdateHandler {
         notifyHandler(this.analecta, this.sendMessage(userId)).catch((err) => {
           console.error(err);
           this.stop(userId);
+          setTimeout(() => this.handleUpdate(userId, sub), retryInterval());
         }),
       NOTIFY_INTERVAL,
     );
@@ -71,7 +77,7 @@ export class SubscriptionNotifier implements UpdateHandler {
   }
 
   private notifyController(
-    sub: GitHubUser,
+    sub: Readonly<GitHubUser>,
     userId: DiscordId,
   ): NotifyController {
     return {

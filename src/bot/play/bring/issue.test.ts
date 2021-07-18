@@ -42,13 +42,12 @@ const query = {
     ]),
 };
 
-test("get issues list", async (done) => {
+test("get issues list", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghi andy/test-project");
   message.emitter.on("reply", () => {
     expect("").toStrictEqual("`bringIssue` must not reply.");
-    done();
   });
   message.emitter.on("sendEmbed", (embed: MessageEmbed) => {
     expect(embed).toStrictEqual(
@@ -70,19 +69,17 @@ test("get issues list", async (done) => {
           },
         ]),
     );
-    done();
   });
 
   await expect(bringIssue(query)(analecta, message)).resolves.toEqual(true);
 });
 
-test("get an issue", async (done) => {
+test("get an issue", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghi andy/test-project/1");
   message.emitter.on("reply", () => {
     expect("").toStrictEqual("`bringIssue` must not reply.");
-    done();
   });
   message.emitter.on("sendEmbed", (embed: MessageEmbed) => {
     expect(embed).toStrictEqual(
@@ -94,7 +91,6 @@ test("get an issue", async (done) => {
         .setTitle("I have an issue")
         .setFooter(analecta.BringIssue),
     );
-    done();
   });
 
   await expect(bringIssue(query)(analecta, message)).resolves.toEqual(true);
