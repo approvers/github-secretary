@@ -15,7 +15,7 @@
     "start:web": "next start ./src/web",
     "test": "jest --passWithNoTests",
     "lint": "eslint --ext .ts,.tsx --ignore-path .gitignore --ignore-path .eslintignore ./src/",
-    "lint:fix": "npm run lint --fix"
+    "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
     "discord.js": "^12.5.3",
