@@ -4,16 +4,19 @@ import { MockMessage } from "../../skin/mock-message";
 import { analectaForTest } from "../../skin/test-analecta";
 import { unsubNotification } from "./unsubscribe-notification";
 
-test("subscribe a member", async (done) => {
+test("subscribe a member", async () => {
   const analecta = await analectaForTest();
   const db = new MockDB();
-  db.onUnregister.on(placeholder, (id) => {
-    expect(id).toStrictEqual("alice_discord");
-    done();
+  const unregisterDone = new Promise<void>((resolve) => {
+    db.onUnregister.on(placeholder, (id) => {
+      expect(id).toStrictEqual("alice_discord");
+      resolve();
+    });
   });
 
   const proc = unsubNotification(db);
 
   const message = new MockMessage("/ghu", "alice_discord" as DiscordId);
   await expect(proc(analecta, message)).resolves.toEqual(true);
+  await unregisterDone;
 });

@@ -6,7 +6,7 @@ import { NotificationId } from "../../exp/github-notification";
 import { analectaForTest } from "../../skin/test-analecta";
 import { markAsRead } from "./mark-as-read";
 
-test("mark a notification as read", async (done) => {
+test("mark a notification as read", async () => {
   const analecta = await analectaForTest();
   const db = new MockDB({
     userName: "Alice",
@@ -17,7 +17,6 @@ test("mark a notification as read", async (done) => {
   const proc = markAsRead(db, {
     markAsRead: (_user: GitHubUser, id: NotificationId) => {
       expect(id).toStrictEqual("0123456789");
-      done();
       return Promise.resolve(true);
     },
   });

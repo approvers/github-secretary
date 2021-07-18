@@ -6,7 +6,7 @@ import { NotificationId } from "../../exp/github-notification";
 import { analectaForTest } from "../../skin/test-analecta";
 import { subscribeNotification } from "./subscribe-notification";
 
-test("subscribe a member", async (done) => {
+test("subscribe a member", async () => {
   const analecta = await analectaForTest();
   const db = new MockDB({
     userName: "Alice",
@@ -20,7 +20,6 @@ test("subscribe a member", async (done) => {
       notificationToken: "TEST_TOKEN",
       currentNotificationIds: [],
     });
-    done();
   });
 
   const proc = subscribeNotification(db, {
