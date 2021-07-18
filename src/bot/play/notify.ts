@@ -7,7 +7,7 @@ import type { GitHubUser } from "../exp/github-user";
 import { MessageEmbed } from "discord.js";
 
 export interface Database {
-  getUser(): Promise<GitHubUser>;
+  getUser(): Promise<Readonly<GitHubUser>>;
   update(ids: NotificationId[]): Promise<void>;
 }
 

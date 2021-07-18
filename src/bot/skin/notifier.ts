@@ -46,7 +46,10 @@ export class SubscriptionNotifier implements UpdateHandler {
     return Promise.resolve();
   }
 
-  private makeNotifyTask(userId: DiscordId, sub: GitHubUser): NotifyTask {
+  private makeNotifyTask(
+    userId: DiscordId,
+    sub: Readonly<GitHubUser>,
+  ): NotifyTask {
     const notifyHandler = notify(
       this.notifyController(sub, userId),
       notificationQuery,
@@ -71,7 +74,7 @@ export class SubscriptionNotifier implements UpdateHandler {
   }
 
   private notifyController(
-    sub: GitHubUser,
+    sub: Readonly<GitHubUser>,
     userId: DiscordId,
   ): NotifyController {
     return {
