@@ -15,18 +15,17 @@ export interface Query {
   fetchNotification(user: GitHubUser): Promise<GitHubNotifications>;
 }
 
-const fetchErrorHandler = (send: (message: MessageEmbed) => Promise<void>) => (
-  reason: unknown,
-) => {
-  const yellow = 0xffc208;
-  send(
-    new MessageEmbed()
-      .setColor(yellow)
-      .setTitle("通知データ取得のエラー発生")
-      .setDescription(reason),
-  );
-  return null;
-};
+const fetchErrorHandler =
+  (send: (message: MessageEmbed) => Promise<void>) => (reason: unknown) => {
+    const yellow = 0xffc208;
+    send(
+      new MessageEmbed()
+        .setColor(yellow)
+        .setTitle("通知データ取得のエラー発生")
+        .setDescription(reason),
+    );
+    return null;
+  };
 
 const hasIdsUpdated = (
   older: readonly NotificationId[],
@@ -57,23 +56,25 @@ const sendSubjects = async (
   );
 };
 
-export const notify = (db: Database, query: Query) => async (
-  analecta: Analecta,
-  send: (message: MessageEmbed) => Promise<void>,
-): Promise<void> => {
-  const user = await db.getUser();
-  const { currentNotificationIds } = user;
+export const notify =
+  (db: Database, query: Query) =>
+  async (
+    analecta: Analecta,
+    send: (message: MessageEmbed) => Promise<void>,
+  ): Promise<void> => {
+    const user = await db.getUser();
+    const { currentNotificationIds } = user;
 
-  const res = await query
-    .fetchNotification(user)
-    .catch(fetchErrorHandler(send));
-  if (res === null) {
-    return;
-  }
-  const newIds = res.map(({ id }) => id);
-  await db.update(newIds);
+    const res = await query
+      .fetchNotification(user)
+      .catch(fetchErrorHandler(send));
+    if (res === null) {
+      return;
+    }
+    const newIds = res.map(({ id }) => id);
+    await db.update(newIds);
 
-  if (hasIdsUpdated(currentNotificationIds, newIds)) {
-    await sendSubjects(res, send, analecta);
-  }
-};
+    if (hasIdsUpdated(currentNotificationIds, newIds)) {
+      await sendSubjects(res, send, analecta);
+    }
+  };
