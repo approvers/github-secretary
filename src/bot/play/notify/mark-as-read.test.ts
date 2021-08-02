@@ -1,14 +1,14 @@
 import { DiscordId } from "../../exp/discord-id";
 import { GitHubUser } from "../../exp/github-user";
-import { MockDB } from "../../skin/mock-db";
-import { MockMessage } from "../../skin/mock-message";
+import { MockMessage } from "../../skin/mock/message";
+import { MockUserDB } from "../../skin/mock/user-db";
 import { NotificationId } from "../../exp/github-notification";
 import { analectaForTest } from "../../skin/test-analecta";
 import { markAsRead } from "./mark-as-read";
 
 test("mark a notification as read", async () => {
   const analecta = await analectaForTest();
-  const db = new MockDB({
+  const db = new MockUserDB({
     userName: "Alice",
     notificationToken: "TEST_TOKEN",
     currentNotificationIds: ["0123456789" as NotificationId],

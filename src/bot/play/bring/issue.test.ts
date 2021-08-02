@@ -1,5 +1,5 @@
 import { MessageEmbed } from "discord.js";
-import { MockMessage } from "../../skin/mock-message";
+import { MockMessage } from "../../skin/mock/message";
 import { analectaForTest } from "../../skin/test-analecta";
 import { bringIssue } from "./issue";
 import { colorFromState } from "../../exp/state-color";

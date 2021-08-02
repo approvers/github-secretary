@@ -17,7 +17,7 @@ export class TomlLoader implements SayingLoader {
 
     const analecta: unknown = toml.parse(tomlStr);
     if (!validateAnalecta(analecta)) {
-      console.log({ analecta });
+      console.dir(analecta);
       throw new Error("invalid toml");
     }
     return analecta;

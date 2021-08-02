@@ -1,12 +1,12 @@
-import { MockDB, placeholder } from "../../skin/mock-db";
+import { MockUserDB, placeholder } from "../../skin/mock/user-db";
 import { DiscordId } from "../../exp/discord-id";
-import { MockMessage } from "../../skin/mock-message";
+import { MockMessage } from "../../skin/mock/message";
 import { analectaForTest } from "../../skin/test-analecta";
-import { unsubNotification } from "./unsubscribe-notification";
+import { unsubNotification } from "./unsubscribe";
 
 test("subscribe a member", async () => {
   const analecta = await analectaForTest();
-  const db = new MockDB();
+  const db = new MockUserDB();
   const unregisterDone = new Promise<void>((resolve) => {
     db.onUnregister.on(placeholder, (id) => {
       expect(id).toStrictEqual("alice_discord");

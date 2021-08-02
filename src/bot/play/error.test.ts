@@ -1,4 +1,4 @@
-import { MockMessage } from "../skin/mock-message";
+import { MockMessage } from "../skin/mock/message";
 import { analectaForTest } from "../skin/test-analecta";
 import { error } from "./error";
 
