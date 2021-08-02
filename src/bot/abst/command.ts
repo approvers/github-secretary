@@ -1,7 +1,16 @@
+import type { DiscordId } from "../exp/discord-id";
+import type { MessageEmbed } from "discord.js";
+
 export interface ApplicationCommand {
   name: string;
   description: string;
   options: ApplicationCommandOption[];
+
+  getAuthorId(): DiscordId;
+  matchCommand(regex: RegExp): Promise<RegExpMatchArray | null>;
+  reply(message: string): Promise<void>;
+  sendEmbed(embed: MessageEmbed): Promise<void>;
+  panic(reason: unknown): never;
 }
 
 export const commandIntoBody = (command: ApplicationCommand): unknown => ({
@@ -10,7 +19,7 @@ export const commandIntoBody = (command: ApplicationCommand): unknown => ({
 });
 
 export interface ApplicationCommandOption {
-  type: ApplicationCommandOptionType;
+  type: number;
   name: string;
   description: string;
   required?: boolean;
@@ -20,7 +29,6 @@ export interface ApplicationCommandOption {
 
 const optionIntoRawValue = (self: ApplicationCommandOption): unknown => ({
   ...self,
-  type: commandOptionTypeMap[self.type],
   options: self.options?.map(optionIntoRawValue),
 });
 
@@ -34,7 +42,10 @@ export type ApplicationCommandOptionType =
   | "CHANNEL"
   | "ROLE";
 
-const commandOptionTypeMap: Record<ApplicationCommandOptionType, number> = {
+export const commandOptionTypeMap: Record<
+  ApplicationCommandOptionType,
+  number
+> = {
   SUB_COMMAND: 1,
   SUB_COMMAND_GROUP: 2,
   STRING: 3,
@@ -44,6 +55,18 @@ const commandOptionTypeMap: Record<ApplicationCommandOptionType, number> = {
   CHANNEL: 7,
   ROLE: 8,
 };
+
+export const commandOptionTypeReverseMap: Record<
+  number,
+  ApplicationCommandOptionType
+> = Object.fromEntries(
+  (
+    Object.entries(commandOptionTypeMap) as [
+      ApplicationCommandOptionType,
+      number,
+    ][]
+  ).map<[number, ApplicationCommandOptionType]>(([key, value]) => [value, key]),
+);
 
 export interface ApplicationCommandOptionChoice {
   name: string;
