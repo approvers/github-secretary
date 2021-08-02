@@ -4,7 +4,7 @@ import { GitHubUser } from "../../exp/github-user";
 import { MockMessage } from "../../skin/mock/message";
 import { NotificationId } from "../../exp/github-notification";
 import { analectaForTest } from "../../skin/test-analecta";
-import { subscribeNotification } from "./subscribe-notification";
+import { subscribeNotification } from "./subscribe";
 
 test("subscribe a member", async () => {
   const analecta = await analectaForTest();

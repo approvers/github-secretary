@@ -10,10 +10,10 @@ import { bringPR } from "../play/bring/pr";
 import { bringRepo } from "../play/bring/repo";
 import { error } from "../play/error";
 import { flavor } from "../play/flavor";
-import { markAsRead } from "../play/subscribe/mark-as-read";
+import { markAsRead } from "../play/notify/mark-as-read";
 // eslint-disable-next-line max-len
-import { subscribeNotification } from "../play/subscribe/subscribe-notification";
-import { unsubNotification } from "../play/subscribe/unsubscribe-notification";
+import { subscribeNotification } from "../play/notify/subscribe";
+import { unsubNotification } from "../play/notify/unsubscribe";
 
 export const procs = (
   analecta: Analecta,

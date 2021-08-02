@@ -2,7 +2,7 @@ import { MockUserDB, placeholder } from "../../skin/mock/user-db";
 import { DiscordId } from "../../exp/discord-id";
 import { MockMessage } from "../../skin/mock/message";
 import { analectaForTest } from "../../skin/test-analecta";
-import { unsubNotification } from "./unsubscribe-notification";
+import { unsubNotification } from "./unsubscribe";
 
 test("subscribe a member", async () => {
   const analecta = await analectaForTest();
