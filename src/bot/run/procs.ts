@@ -11,7 +11,6 @@ import { bringRepo } from "../play/bring/repo";
 import { error } from "../play/error";
 import { flavor } from "../play/flavor";
 import { markAsRead } from "../play/notify/mark-as-read";
-// eslint-disable-next-line max-len
 import { subscribeNotification } from "../play/notify/subscribe";
 import { unsubNotification } from "../play/notify/unsubscribe";
 
