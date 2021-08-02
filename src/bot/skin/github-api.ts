@@ -23,7 +23,7 @@ export class GitHubApi
     const repoInfoApiUrl = `${apiRoot}/repos/${owner}/${repoName}`;
     const infoRes: unknown = await (await fetch(repoInfoApiUrl)).json();
     if (checkNotFound(infoRes)) {
-      throw new Error("not found the repositpory");
+      throw new Error("not found the repository");
     }
     return infoRes as Repository;
   }
@@ -32,7 +32,7 @@ export class GitHubApi
     const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/issues`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
-      throw new Error("not found the repositpory");
+      throw new Error("not found the repository");
     }
     return res as PartialIssue[];
   }
@@ -57,7 +57,7 @@ export class GitHubApi
     const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/pulls`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
-      throw new Error("not found the repositpory");
+      throw new Error("not found the repository");
     }
     return res as PartialPullRequest[];
   }
