@@ -7,7 +7,7 @@ import { GitHubApi } from "../skin/github-api";
 import { SubscriptionNotifier } from "../skin/notifier";
 import { TomlLoader } from "../skin/toml-loader";
 import dotenv from "dotenv";
-import { procs } from "../skin/procs";
+import { procs } from "./procs";
 
 dotenv.config();
 
