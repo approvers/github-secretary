@@ -5,7 +5,7 @@ import type { UserDatabase } from "../abst/user-database";
 
 export const placeholder = Symbol("placeholder for MockDB");
 
-export class MockDB implements UserDatabase {
+export class MockUserDB implements UserDatabase {
   constructor(private readonly passed?: GitHubUser) {}
 
   readonly onRegister = new EventEmitter();

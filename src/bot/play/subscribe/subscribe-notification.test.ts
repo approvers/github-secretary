@@ -1,4 +1,4 @@
-import { MockDB, placeholder } from "../../skin/mock-db";
+import { MockUserDB, placeholder } from "../../skin/mock-user-db";
 import { DiscordId } from "../../exp/discord-id";
 import { GitHubUser } from "../../exp/github-user";
 import { MockMessage } from "../../skin/mock-message";
@@ -8,7 +8,7 @@ import { subscribeNotification } from "./subscribe-notification";
 
 test("subscribe a member", async () => {
   const analecta = await analectaForTest();
-  const db = new MockDB({
+  const db = new MockUserDB({
     userName: "Alice",
     notificationToken: "TEST_TOKEN",
     currentNotificationIds: [] as NotificationId[],
