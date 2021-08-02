@@ -1,30 +1,12 @@
-import { Client, Message } from "discord.js";
-import type { Analecta } from "../exp/analecta";
-import type { CommandProcessor } from "../abst/connector";
-import { DiscordMessage } from "../skin/discord-message";
+import { messageHandler, procs } from "./procs";
+import { Client } from "discord.js";
 import { FaunaDB } from "../skin/fauna-db";
 import { GitHubApi } from "../skin/github-api";
 import { SubscriptionNotifier } from "../skin/notifier";
 import { TomlLoader } from "../skin/toml-loader";
 import dotenv from "dotenv";
-import { procs } from "./procs";
 
 dotenv.config();
-
-const messageHandler =
-  (analecta: Analecta, builtProcs: CommandProcessor) =>
-  async (msg: Message) => {
-    if (msg.author.bot) {
-      return;
-    }
-    if (msg.content.startsWith("/gh?")) {
-      const dm = await msg.author.createDM();
-      dm.send(analecta.HelpMessage);
-      return;
-    }
-    const discordMessage = new DiscordMessage(msg);
-    await builtProcs(analecta, discordMessage);
-  };
 
 (async () => {
   const loader = new TomlLoader(
