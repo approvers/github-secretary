@@ -20,7 +20,7 @@ export interface ApplicationCommandOption {
 
 const optionIntoRawValue = (self: ApplicationCommandOption): unknown => ({
   ...self,
-  type: typeIntoRawValue(self.type),
+  type: commandOptionTypeMap[self.type],
   options: self.options?.map(optionIntoRawValue),
 });
 
@@ -34,27 +34,15 @@ export type ApplicationCommandOptionType =
   | "CHANNEL"
   | "ROLE";
 
-const typeIntoRawValue = (self: ApplicationCommandOptionType): number => {
-  switch (self) {
-    case "SUB_COMMAND":
-      return 1;
-    case "SUB_COMMAND_GROUP":
-      return 2;
-    case "STRING":
-      return 3;
-    case "INTEGER":
-      return 4;
-    case "BOOLEAN":
-      return 5;
-    case "USER":
-      return 6;
-    case "CHANNEL":
-      return 7;
-    case "ROLE":
-      return 8;
-    default:
-      throw new Error("unreachable");
-  }
+const commandOptionTypeMap: Record<ApplicationCommandOptionType, number> = {
+  SUB_COMMAND: 1,
+  SUB_COMMAND_GROUP: 2,
+  STRING: 3,
+  INTEGER: 4,
+  BOOLEAN: 5,
+  USER: 6,
+  CHANNEL: 7,
+  ROLE: 8,
 };
 
 export interface ApplicationCommandOptionChoice {
