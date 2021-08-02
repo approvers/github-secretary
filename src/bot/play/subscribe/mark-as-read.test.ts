@@ -1,7 +1,7 @@
 import { DiscordId } from "../../exp/discord-id";
 import { GitHubUser } from "../../exp/github-user";
-import { MockUserDB } from "../../skin/mock-user-db";
-import { MockMessage } from "../../skin/mock-message";
+import { MockMessage } from "../../skin/mock/message";
+import { MockUserDB } from "../../skin/mock/user-db";
 import { NotificationId } from "../../exp/github-notification";
 import { analectaForTest } from "../../skin/test-analecta";
 import { markAsRead } from "./mark-as-read";

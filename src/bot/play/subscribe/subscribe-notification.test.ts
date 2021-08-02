@@ -1,7 +1,7 @@
-import { MockUserDB, placeholder } from "../../skin/mock-user-db";
+import { MockUserDB, placeholder } from "../../skin/mock/user-db";
 import { DiscordId } from "../../exp/discord-id";
 import { GitHubUser } from "../../exp/github-user";
-import { MockMessage } from "../../skin/mock-message";
+import { MockMessage } from "../../skin/mock/message";
 import { NotificationId } from "../../exp/github-notification";
 import { analectaForTest } from "../../skin/test-analecta";
 import { subscribeNotification } from "./subscribe-notification";

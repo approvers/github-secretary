@@ -1,6 +1,6 @@
-import type { DiscordId } from "../exp/discord-id";
+import type { DiscordId } from "../../exp/discord-id";
 import { EventEmitter } from "events";
-import type { Message } from "../abst/message";
+import type { Message } from "../../abst/message";
 import type { MessageEmbed } from "discord.js";
 
 export class MockMessage implements Message {

@@ -1,7 +1,7 @@
-import type { DiscordId } from "../exp/discord-id";
+import type { DiscordId } from "../../exp/discord-id";
 import { EventEmitter } from "events";
-import type { GitHubUser } from "../exp/github-user";
-import type { UserDatabase } from "../abst/user-database";
+import type { GitHubUser } from "../../exp/github-user";
+import type { UserDatabase } from "../../abst/user-database";
 
 export const placeholder = Symbol("placeholder for MockDB");
 
