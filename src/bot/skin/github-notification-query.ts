@@ -8,11 +8,12 @@ export const notificationQuery: Query = {
     userName,
     notificationToken,
   }: GitHubUser): Promise<GitHubNotifications> {
+    const base64 = Buffer.from(`${userName}:${notificationToken}`).toString(
+      "base64",
+    );
     const rawRes = await fetch("https://api.github.com/notifications", {
       headers: {
-        Authorization: `Basic ${Buffer.from(
-          `${userName}:${notificationToken}`,
-        ).toString("base64")}`,
+        Authorization: `Basic ${base64}`,
       },
     });
     if (!rawRes.ok) {
