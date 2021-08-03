@@ -2,6 +2,7 @@ import { messageHandler, procs } from "./procs";
 import { Client } from "discord.js";
 import { FaunaDB } from "../skin/fauna-db";
 import { GitHubApi } from "../skin/github-api";
+import { InteractionsCommandReceiver } from "../skin/interactions-command";
 import { SubscriptionNotifier } from "../skin/notifier";
 import { TomlLoader } from "../skin/toml-loader";
 import dotenv from "dotenv";
@@ -21,6 +22,11 @@ dotenv.config();
   const query = new GitHubApi();
 
   const builtProcs = procs(analecta, db, query);
+
+  const interactions = new InteractionsCommandReceiver(client);
+  interactions.onReceive(async (message) => {
+    await builtProcs(analecta, message);
+  });
 
   client.on("ready", () => {
     console.log("I got ready.");
