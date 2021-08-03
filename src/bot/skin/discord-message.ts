@@ -17,13 +17,8 @@ export class DiscordMessage implements Message {
     return Promise.resolve(regex.exec(this.raw.content.split("\n")[0]));
   }
 
-  async withTyping(callee: () => Promise<boolean>): Promise<boolean> {
-    try {
-      this.raw.channel.startTyping();
-      return await callee();
-    } finally {
-      this.raw.channel.stopTyping(true);
-    }
+  withTyping(callee: () => Promise<boolean>): Promise<boolean> {
+    return callee();
   }
 
   async reply(message: string): Promise<void> {
@@ -31,7 +26,7 @@ export class DiscordMessage implements Message {
   }
 
   async sendEmbed(embed: MessageEmbed): Promise<void> {
-    await this.raw.channel.send(embed);
+    await this.raw.channel.send({ embeds: [embed] });
   }
 
   panic(reason: unknown): never {
@@ -40,7 +35,7 @@ export class DiscordMessage implements Message {
       new MessageEmbed()
         .setColor(yellow)
         .setTitle("エラー発生, リトライはされません")
-        .setDescription(reason),
+        .setDescription(`${reason}`),
     );
     throw reason;
   }
