@@ -1,4 +1,4 @@
-FROM node:12.18.4-alpine as BUILD
+FROM node:14.17.4-alpine3.14 as BUILD
 
 COPY . .
 
@@ -6,7 +6,7 @@ RUN npm install --no-save && npm run build:bot
 
 # ---
 
-FROM node:12.18.4-alpine
+FROM node:14.17.4-alpine3.14
 
 RUN addgroup -g 1993 -S bot \
   && adduser -u 1993 -S bot -G bot

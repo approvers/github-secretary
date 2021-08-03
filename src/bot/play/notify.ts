@@ -22,7 +22,7 @@ const fetchErrorHandler =
       new MessageEmbed()
         .setColor(yellow)
         .setTitle("通知データ取得のエラー発生")
-        .setDescription(reason),
+        .setDescription(`${reason}`),
     );
     return null;
   };

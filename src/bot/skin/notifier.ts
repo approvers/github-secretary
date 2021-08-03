@@ -72,7 +72,7 @@ export class SubscriptionNotifier implements UpdateHandler {
     return async (mes: MessageEmbed): Promise<void> => {
       const user = await this.users.fetch(userId);
       const dm = await user.createDM();
-      await dm.send(mes);
+      await dm.send({ embeds: [mes] });
     };
   }
 

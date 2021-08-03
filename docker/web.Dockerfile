@@ -1,4 +1,4 @@
-FROM node:12.18.1-alpine
+FROM node:14.17.4-alpine3.14
 
 EXPOSE 3000
 
