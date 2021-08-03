@@ -5,6 +5,7 @@ on:
     types:
       - published
       - created
+      - edited
 
 env:
   IMAGE_NAME: github-secretary
@@ -31,6 +32,6 @@ jobs:
           context: .
           file: docker/bot.Dockerfile
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:${{ github.event.release.tag_name }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
           push: true
