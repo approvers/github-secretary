@@ -38,7 +38,7 @@ dotenv.config();
     console.log("I got ready.");
   });
 
-  client.on("message", messageHandler(analecta, builtProcs));
+  client.on("messageCreate", messageHandler(analecta, builtProcs));
 
   client.login(process.env.DISCORD_TOKEN);
 })().catch((err) => console.error(err));
