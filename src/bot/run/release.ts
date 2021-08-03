@@ -1,5 +1,5 @@
+import { Client, Intents } from "discord.js";
 import { messageHandler, procs } from "./procs";
-import { Client } from "discord.js";
 import { FaunaDB } from "../skin/fauna-db";
 import { GitHubApi } from "../skin/github-api";
 import { InteractionsCommandReceiver } from "../skin/interactions-command";
@@ -16,7 +16,13 @@ dotenv.config();
   const db = new FaunaDB(process.env.FAUNA_SECRET || "UNSET");
   const analecta = await loader.load();
 
-  const client = new Client();
+  const client = new Client({
+    intents: [
+      Intents.FLAGS.DIRECT_MESSAGES,
+      Intents.FLAGS.GUILDS,
+      Intents.FLAGS.GUILD_MESSAGES,
+    ],
+  });
   const notifier = new SubscriptionNotifier(analecta, client.users, db);
   db.onUpdate(notifier);
   const query = new GitHubApi();
