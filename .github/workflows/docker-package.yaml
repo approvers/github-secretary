@@ -4,8 +4,6 @@ on:
   release:
     types:
       - published
-      - created
-      - edited
 
 env:
   IMAGE_NAME: github-secretary
