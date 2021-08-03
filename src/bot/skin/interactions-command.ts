@@ -67,7 +67,7 @@ export class InteractionsCommandReceiver {
         return;
       }
       this.initialized = true;
-      const registrar = client.guilds.cache.get("")?.commands;
+      const registrar = client.guilds.cache.get("683939861539192860")?.commands;
       if (!registrar) {
         return;
       }
