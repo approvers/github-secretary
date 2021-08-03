@@ -1,16 +1,7 @@
-import type { DiscordId } from "../exp/discord-id";
-import type { MessageEmbed } from "discord.js";
-
 export interface ApplicationCommand {
   name: string;
   description: string;
   options: ApplicationCommandOption[];
-
-  getAuthorId(): DiscordId;
-  matchCommand(regex: RegExp): Promise<RegExpMatchArray | null>;
-  reply(message: string): Promise<void>;
-  sendEmbed(embed: MessageEmbed): Promise<void>;
-  panic(reason: unknown): never;
 }
 
 export const commandIntoBody = (command: ApplicationCommand): unknown => ({
