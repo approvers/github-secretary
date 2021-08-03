@@ -8,6 +8,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^4.29.0
   '@typescript-eslint/parser': ^4.29.0
   discord.js: ^12.5.3
+  discord.js-slash-command: ^1.2.1
   dotenv: ^10.0.0
   esbuild: ^0.12.17
   eslint: ^7.32.0
@@ -30,6 +31,7 @@ specifiers:
 
 dependencies:
   discord.js: 12.5.3
+  discord.js-slash-command: 1.2.1
   dotenv: 10.0.0
   faunadb: 4.3.0
   mutex-promise: 0.1.0
@@ -1907,6 +1909,20 @@ packages:
     dependencies:
       path-type: 4.0.0
     dev: true
+
+  /discord.js-slash-command/1.2.1:
+    resolution: {integrity: sha512-sHW4UJ1LXfKjwN1FDZzxj3WEyRzLELQZtWSzjeKM/BMvxMOJ9HLnb9EDP5dPoncGTVtfqbQ3cpu7GCM7ZuobHQ==}
+    dependencies:
+      discord.js: 12.5.3
+      node-fetch: 2.6.1
+    transitivePeerDependencies:
+      - '@discordjs/opus'
+      - bufferutil
+      - ffmpeg-static
+      - node-opus
+      - opusscript
+      - utf-8-validate
+    dev: false
 
   /discord.js/12.5.3:
     resolution: {integrity: sha512-D3nkOa/pCkNyn6jLZnAiJApw2N9XrIsXUAdThf01i7yrEuqUmDGc7/CexVWwEcgbQR97XQ+mcnqJpmJ/92B4Aw==}
