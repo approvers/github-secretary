@@ -1,86 +1,87 @@
-import type { Client, GuildChannel, GuildMember } from "discord.js";
-import { CommandBuilder, Slash } from "discord.js-slash-command";
+import {
+  ApplicationCommand,
+  ApplicationCommandOption,
+  commandOptionTypeMap,
+} from "../abst/command";
+import type { Client, CommandInteraction } from "discord.js";
 import type { DiscordId } from "../exp/discord-id";
 import type { Message } from "../abst/message";
-import { commandOptionTypeMap } from "../abst/command";
 
-const organizationOption = new CommandBuilder();
-organizationOption.setName("org");
-organizationOption.setDescription("The organization name.");
-organizationOption.setType(commandOptionTypeMap.STRING);
+const organizationOption: ApplicationCommandOption = {
+  name: "org",
+  description: "The organization name.",
+  type: commandOptionTypeMap.STRING,
+};
 
-const repositoryOption = new CommandBuilder();
-repositoryOption.setName("repo");
-repositoryOption.setDescription("The repository name.");
-repositoryOption.setType(commandOptionTypeMap.STRING);
-repositoryOption.setRequired(true);
+const repositoryOption: ApplicationCommandOption = {
+  name: "repo",
+  description: "The repository name.",
+  type: commandOptionTypeMap.STRING,
+  required: true,
+};
 
-const branchOption = new CommandBuilder();
-repositoryOption.setName("branch");
-repositoryOption.setDescription("The branch name.");
-repositoryOption.setType(commandOptionTypeMap.STRING);
+const branchOption: ApplicationCommandOption = {
+  name: "branch",
+  description: "The branch name.",
+  type: commandOptionTypeMap.STRING,
+};
 
-const issueOption = new CommandBuilder();
-repositoryOption.setName("issue");
-repositoryOption.setDescription("The issue number.");
-repositoryOption.setType(commandOptionTypeMap.INTEGER);
+const issueOption: ApplicationCommandOption = {
+  name: "issue",
+  description: "The issue number.",
+  type: commandOptionTypeMap.INTEGER,
+};
 
-const repositoryCommand = new CommandBuilder();
-repositoryCommand.setName("ghr");
-repositoryCommand.setDescription("Fetch the repository.");
-repositoryCommand.addOption(organizationOption);
-repositoryCommand.addOption(repositoryOption);
+const repositoryCommand: ApplicationCommand = {
+  name: "ghr",
+  description: "Fetch the repository.",
+  options: [organizationOption, repositoryOption],
+};
 
-const branchCommand = new CommandBuilder();
-branchCommand.setName("ghb");
-branchCommand.setDescription("Fetch the branch in the repository.");
-branchCommand.addOption(organizationOption);
-branchCommand.addOption(repositoryOption);
-branchCommand.addOption(branchOption);
+const branchCommand: ApplicationCommand = {
+  name: "ghb",
+  description: "Fetch the branch in the repository.",
+  options: [organizationOption, repositoryOption, branchOption],
+};
 
-const issueCommand = new CommandBuilder();
-issueCommand.setName("ghi");
-issueCommand.setDescription("Fetch the issue in the repository.");
-issueCommand.addOption(organizationOption);
-issueCommand.addOption(repositoryOption);
-issueCommand.addOption(issueOption);
+const issueCommand: ApplicationCommand = {
+  name: "ghi",
+  description: "Fetch the issue in the repository.",
+  options: [organizationOption, repositoryOption, issueOption],
+};
 
-const prCommand = new CommandBuilder();
-prCommand.setName("ghp");
-prCommand.setDescription("Fetch the pull request in the repository.");
-prCommand.addOption(organizationOption);
-prCommand.addOption(repositoryOption);
-prCommand.addOption(issueOption);
+const prCommand: ApplicationCommand = {
+  name: "ghi",
+  description: "Fetch the pull request in the repository.",
+  options: [organizationOption, repositoryOption, issueOption],
+};
 
 const commands = [repositoryCommand, branchCommand, issueCommand, prCommand];
-
-interface Interaction {
-  id: string;
-  command: {
-    name: string;
-    options?: readonly {
-      name: string;
-      type: number;
-      value: unknown;
-    }[];
-  };
-  author: GuildMember;
-  channel: GuildChannel;
-  callback(message: unknown): void;
-}
 
 export type Handler = (message: Message) => Promise<void>;
 
 export class InteractionsCommandReceiver {
   constructor(private readonly client: Client) {
-    this.slash = new Slash(client);
-    for (const command of commands) {
-      this.slash.create(command);
-    }
-    this.slash.on("slashInteraction", this.onCommand);
+    client.on("messageCreate", async () => {
+      if (this.initialized) {
+        return;
+      }
+      this.initialized = true;
+      const registrar = client.guilds.cache.get("")?.commands;
+      if (!registrar) {
+        return;
+      }
+      await Promise.all(commands.map((command) => registrar.create(command)));
+    });
+    client.on("interactionCreate", (interaction) => {
+      if (!interaction.isCommand()) {
+        return;
+      }
+      this.onCommand(interaction);
+    });
   }
 
-  private slash: Slash;
+  private initialized = false;
 
   private handlers: Handler[] = [];
 
@@ -88,7 +89,7 @@ export class InteractionsCommandReceiver {
     this.handlers.push(handler);
   }
 
-  private onCommand(interaction: Interaction) {
+  private onCommand(interaction: CommandInteraction) {
     const commandStr = this.buildCommandStr(interaction);
     const message: Message = this.buildMessage(interaction, commandStr);
     for (const handler of this.handlers) {
@@ -96,18 +97,21 @@ export class InteractionsCommandReceiver {
     }
   }
 
-  private buildMessage(interaction: Interaction, commandStr: string): Message {
+  private buildMessage(
+    interaction: CommandInteraction,
+    commandStr: string,
+  ): Message {
     return {
-      getAuthorId: () => interaction.author.id as DiscordId,
+      getAuthorId: () => interaction.user.id as DiscordId,
       matchPlainText: () => Promise.resolve(null),
       matchCommand: (regex) => Promise.resolve(regex.exec(commandStr)),
       withTyping: (callee) => callee(),
       reply: (text) => {
-        interaction.callback(text);
+        interaction.reply(text);
         return Promise.resolve();
       },
       sendEmbed: (embed) => {
-        interaction.callback(embed);
+        interaction.reply({ embeds: [embed] });
         return Promise.resolve();
       },
       panic: (reason) => {
@@ -117,18 +121,16 @@ export class InteractionsCommandReceiver {
     };
   }
 
-  private buildCommandStr(interaction: Interaction): string {
-    let commandStr = `/${interaction.command.name} `;
-    if (interaction.command.options) {
-      commandStr += interaction.command.options
-        .filter(({ name }) => name !== "branch")
-        .map(({ value }) => value)
-        .join("/");
-      commandStr += interaction.command.options
-        .filter(({ name }) => name === "branch")
-        .map(({ value }) => value)
-        .join(" ");
-    }
+  private buildCommandStr(interaction: CommandInteraction): string {
+    let commandStr = `/${interaction.commandName} `;
+    commandStr += interaction.options.data
+      .filter(({ name }) => name !== "branch")
+      .map(({ value }) => value)
+      .join("/");
+    commandStr += interaction.options.data
+      .filter(({ name }) => name === "branch")
+      .map(({ value }) => value)
+      .join(" ");
     return commandStr;
   }
 }
