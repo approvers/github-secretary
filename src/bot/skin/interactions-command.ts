@@ -35,25 +35,25 @@ const issueOption: ApplicationCommandOption = {
 const repositoryCommand: ApplicationCommand = {
   name: "ghr",
   description: "Fetch the repository.",
-  options: [organizationOption, repositoryOption],
+  options: [repositoryOption, organizationOption],
 };
 
 const branchCommand: ApplicationCommand = {
   name: "ghb",
   description: "Fetch the branch in the repository.",
-  options: [organizationOption, repositoryOption, branchOption],
+  options: [repositoryOption, organizationOption, branchOption],
 };
 
 const issueCommand: ApplicationCommand = {
   name: "ghi",
   description: "Fetch the issue in the repository.",
-  options: [organizationOption, repositoryOption, issueOption],
+  options: [repositoryOption, organizationOption, issueOption],
 };
 
 const prCommand: ApplicationCommand = {
   name: "ghi",
   description: "Fetch the pull request in the repository.",
-  options: [organizationOption, repositoryOption, issueOption],
+  options: [repositoryOption, organizationOption, issueOption],
 };
 
 const commands = [repositoryCommand, branchCommand, issueCommand, prCommand];
