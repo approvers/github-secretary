@@ -73,6 +73,10 @@ export class InteractionsCommandReceiver {
       if (!registrar) {
         return;
       }
+      const oldCommands = await registrar.fetch();
+      await Promise.all(
+        [...oldCommands.values()].map((com) => registrar.delete(com)),
+      );
       await Promise.all(commands.map((command) => registrar.create(command)));
     });
     client.on("interactionCreate", (interaction) => {
