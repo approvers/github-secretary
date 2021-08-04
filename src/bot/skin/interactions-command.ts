@@ -123,14 +123,28 @@ export class InteractionsCommandReceiver {
 
   private buildCommandStr(interaction: CommandInteraction): string {
     let commandStr = `/${interaction.commandName} `;
-    commandStr += interaction.options.data
-      .filter(({ name }) => name !== "branch")
-      .map(({ value }) => value)
-      .join("/");
-    commandStr += interaction.options.data
-      .filter(({ name }) => name === "branch")
-      .map(({ value }) => value)
-      .join(" ");
+    const [orgArg] = interaction.options.data.filter(
+      ({ name }) => name === "org",
+    );
+    if (orgArg) {
+      commandStr += `${orgArg.value}/`;
+    }
+    const [repoArg] = interaction.options.data.filter(
+      ({ name }) => name === "repo",
+    );
+    commandStr += repoArg.value;
+    const [issueArg] = interaction.options.data.filter(
+      ({ name }) => name === "issue",
+    );
+    if (issueArg) {
+      commandStr += `/${issueArg.value}`;
+    }
+    const [branchArg] = interaction.options.data.filter(
+      ({ name }) => name === "branch",
+    );
+    if (branchArg) {
+      commandStr += ` ${branchArg.value}`;
+    }
     return commandStr;
   }
 }
