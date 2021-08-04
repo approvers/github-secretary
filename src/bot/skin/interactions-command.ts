@@ -58,6 +58,8 @@ const prCommand: ApplicationCommand = {
 
 const commands = [repositoryCommand, branchCommand, issueCommand, prCommand];
 
+const GUILD_ID = "683939861539192860";
+
 export type Handler = (message: Message) => Promise<void>;
 
 export class InteractionsCommandReceiver {
@@ -67,14 +69,21 @@ export class InteractionsCommandReceiver {
         return;
       }
       this.initialized = true;
-      const registrar = client.guilds.cache.get("683939861539192860")?.commands;
+      const registrar = client.guilds.cache.get(GUILD_ID)?.commands;
       if (!registrar) {
         return;
       }
+      const oldCommands = await registrar.fetch();
+      await Promise.all(
+        [...oldCommands.values()].map((com) => registrar.delete(com)),
+      );
       await Promise.all(commands.map((command) => registrar.create(command)));
     });
     client.on("interactionCreate", (interaction) => {
       if (!interaction.isCommand()) {
+        return;
+      }
+      if (interaction.guildId !== GUILD_ID) {
         return;
       }
       this.onCommand(interaction);
@@ -123,14 +132,28 @@ export class InteractionsCommandReceiver {
 
   private buildCommandStr(interaction: CommandInteraction): string {
     let commandStr = `/${interaction.commandName} `;
-    commandStr += interaction.options.data
-      .filter(({ name }) => name !== "branch")
-      .map(({ value }) => value)
-      .join("/");
-    commandStr += interaction.options.data
-      .filter(({ name }) => name === "branch")
-      .map(({ value }) => value)
-      .join(" ");
+    const [orgArg] = interaction.options.data.filter(
+      ({ name }) => name === "org",
+    );
+    if (orgArg) {
+      commandStr += `${orgArg.value}/`;
+    }
+    const [repoArg] = interaction.options.data.filter(
+      ({ name }) => name === "repo",
+    );
+    commandStr += repoArg.value;
+    const [issueArg] = interaction.options.data.filter(
+      ({ name }) => name === "issue",
+    );
+    if (issueArg) {
+      commandStr += `/${issueArg.value}`;
+    }
+    const [branchArg] = interaction.options.data.filter(
+      ({ name }) => name === "branch",
+    );
+    if (branchArg) {
+      commandStr += ` ${branchArg.value}`;
+    }
     return commandStr;
   }
 }
