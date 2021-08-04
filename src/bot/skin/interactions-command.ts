@@ -58,6 +58,8 @@ const prCommand: ApplicationCommand = {
 
 const commands = [repositoryCommand, branchCommand, issueCommand, prCommand];
 
+const GUILD_ID = "683939861539192860";
+
 export type Handler = (message: Message) => Promise<void>;
 
 export class InteractionsCommandReceiver {
@@ -67,7 +69,7 @@ export class InteractionsCommandReceiver {
         return;
       }
       this.initialized = true;
-      const registrar = client.guilds.cache.get("683939861539192860")?.commands;
+      const registrar = client.guilds.cache.get(GUILD_ID)?.commands;
       if (!registrar) {
         return;
       }
@@ -75,6 +77,9 @@ export class InteractionsCommandReceiver {
     });
     client.on("interactionCreate", (interaction) => {
       if (!interaction.isCommand()) {
+        return;
+      }
+      if (interaction.guildId !== GUILD_ID) {
         return;
       }
       this.onCommand(interaction);
