@@ -63,7 +63,7 @@ const GUILD_ID = "683939861539192860";
 export type Handler = (message: Message) => Promise<void>;
 
 export class InteractionsCommandReceiver {
-  constructor(private readonly client: Client) {
+  constructor(client: Client) {
     client.on("messageCreate", async () => {
       const registrar = client.guilds.cache.get(GUILD_ID)?.commands;
       if (!registrar) {
