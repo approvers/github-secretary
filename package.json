@@ -18,7 +18,7 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
-    "discord.js": "^13.0.0-dev.t1627949059.35fa3b3",
+    "discord.js": "^13.0.0",
     "dotenv": "^10.0.0",
     "faunadb": "^4.3.0",
     "mutex-promise": "^0.1.0",
