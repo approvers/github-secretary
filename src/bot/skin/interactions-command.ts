@@ -63,16 +63,18 @@ const GUILD_ID = "683939861539192860";
 export type Handler = (message: Message) => Promise<void>;
 
 export class InteractionsCommandReceiver {
-  constructor(private readonly client: Client) {
+  constructor(client: Client) {
     client.on("messageCreate", async () => {
-      if (this.initialized) {
-        return;
-      }
-      this.initialized = true;
       const registrar = client.guilds.cache.get(GUILD_ID)?.commands;
       if (!registrar) {
         return;
       }
+
+      if (this.initialized) {
+        return;
+      }
+      this.initialized = true;
+
       const oldCommands = await registrar.fetch();
       await Promise.all(
         [...oldCommands.values()].map((com) => registrar.delete(com)),
