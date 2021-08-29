@@ -7,9 +7,9 @@ import type { Client, CommandInteraction } from "discord.js";
 import type { DiscordId } from "../exp/discord-id";
 import type { Message } from "../abst/message";
 
-const organizationOption: ApplicationCommandOption = {
-  name: "org",
-  description: "The organization name.",
+const ownerOption: ApplicationCommandOption = {
+  name: "owner",
+  description: "The owner name.",
   type: commandOptionTypeMap.STRING,
 };
 
@@ -35,25 +35,25 @@ const issueOption: ApplicationCommandOption = {
 const repositoryCommand: ApplicationCommand = {
   name: "ghr",
   description: "Fetch the repository.",
-  options: [repositoryOption, organizationOption],
+  options: [repositoryOption, ownerOption],
 };
 
 const branchCommand: ApplicationCommand = {
   name: "ghb",
   description: "Fetch the branch in the repository.",
-  options: [repositoryOption, organizationOption, branchOption],
+  options: [repositoryOption, ownerOption, branchOption],
 };
 
 const issueCommand: ApplicationCommand = {
   name: "ghi",
   description: "Fetch the issue in the repository.",
-  options: [repositoryOption, organizationOption, issueOption],
+  options: [repositoryOption, ownerOption, issueOption],
 };
 
 const prCommand: ApplicationCommand = {
   name: "ghi",
   description: "Fetch the pull request in the repository.",
-  options: [repositoryOption, organizationOption, issueOption],
+  options: [repositoryOption, ownerOption, issueOption],
 };
 
 const commands = [repositoryCommand, branchCommand, issueCommand, prCommand];
@@ -134,11 +134,11 @@ export class InteractionsCommandReceiver {
 
   private buildCommandStr(interaction: CommandInteraction): string {
     let commandStr = `/${interaction.commandName} `;
-    const [orgArg] = interaction.options.data.filter(
-      ({ name }) => name === "org",
+    const [ownerArg] = interaction.options.data.filter(
+      ({ name }) => name === "owner",
     );
-    if (orgArg) {
-      commandStr += `${orgArg.value}/`;
+    if (ownerArg) {
+      commandStr += `${ownerArg.value}/`;
     }
     const [repoArg] = interaction.options.data.filter(
       ({ name }) => name === "repo",
