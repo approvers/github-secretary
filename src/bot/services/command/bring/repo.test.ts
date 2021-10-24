@@ -22,9 +22,6 @@ test("get a repository", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghr andy/test-project");
-  message.emitter.on("reply", () => {
-    expect("").toStrictEqual("`bringRepo` must not reply.");
-  });
   message.emitter.on("sendEmbed", (embed: EmbedMessage) => {
     expect(embed).toStrictEqual({
       author: {

@@ -42,9 +42,6 @@ test("get branches list", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghb andy/test-project");
-  message.emitter.on("reply", () => {
-    expect("").toStrictEqual("`bringBranch` must not reply.");
-  });
   message.emitter.on("sendEmbed", (embed: EmbedMessage) => {
     expect(embed).toStrictEqual({
       color: colorFromState("open"),
@@ -72,9 +69,6 @@ test("get a branch", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghb andy/test-project hotfix");
-  message.emitter.on("reply", () => {
-    expect("").toStrictEqual("`bringBranch` must not reply.");
-  });
   message.emitter.on("sendEmbed", (embed: EmbedMessage) => {
     expect(embed).toStrictEqual({
       color: colorFromState("open"),

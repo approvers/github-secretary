@@ -46,9 +46,6 @@ test("get PRs list", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghp andy/test-project");
-  message.emitter.on("reply", () => {
-    expect("").toStrictEqual("`bringPR` must not reply.");
-  });
   message.emitter.on("sendEmbed", (embed: EmbedMessage) => {
     expect(embed).toStrictEqual({
       color: colorFromState("open"),
@@ -76,9 +73,6 @@ test("get an issue", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghp andy/test-project/1");
-  message.emitter.on("reply", () => {
-    expect("").toStrictEqual("`bringIssue` must not reply.");
-  });
   message.emitter.on("sendEmbed", (embed: EmbedMessage) => {
     expect(embed).toStrictEqual({
       color: colorFromState("open"),
