@@ -93,4 +93,4 @@ const messageHandler =
   client.on("messageCreate", messageHandler(analecta, builtProcs));
 
   client.login(process.env.DISCORD_TOKEN);
-})().catch((err) => console.error(err));
+})().catch(console.error);
