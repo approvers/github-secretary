@@ -1,7 +1,6 @@
+import type { EmbedMessage, Message } from "../../model/message";
 import type { DiscordId } from "../../model/discord-id";
 import { EventEmitter } from "events";
-import type { Message } from "../../model/message";
-import type { MessageEmbed } from "discord.js";
 
 export class MockMessage implements Message {
   emitter = new EventEmitter();
@@ -32,7 +31,7 @@ export class MockMessage implements Message {
     return Promise.resolve();
   }
 
-  sendEmbed(embed: MessageEmbed): Promise<void> {
+  sendEmbed(embed: EmbedMessage): Promise<void> {
     this.emitter.emit("sendEmbed", embed);
     return Promise.resolve();
   }

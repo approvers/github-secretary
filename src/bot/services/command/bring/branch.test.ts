@@ -1,8 +1,8 @@
-import { MessageEmbed } from "discord.js";
-import { MockMessage } from "../../adaptors/mock/message";
-import { analectaForTest } from "../../adaptors/test-analecta";
+import type { EmbedMessage } from "src/bot/model/message";
+import { MockMessage } from "../../../adaptors/mock/message";
+import { analectaForTest } from "../../../adaptors/mock/test-analecta";
 import { bringBranch } from "./branch";
-import { colorFromState } from "../../model/state-color";
+import { colorFromState } from "../../../model/state-color";
 
 const query = {
   fetchRepo: () =>
@@ -45,28 +45,27 @@ test("get branches list", async () => {
   message.emitter.on("reply", () => {
     expect("").toStrictEqual("`bringBranch` must not reply.");
   });
-  message.emitter.on("sendEmbed", (embed: MessageEmbed) => {
-    expect(embed).toStrictEqual(
-      new MessageEmbed()
-        .setColor(colorFromState("open"))
-        .setAuthor(
-          "Andy",
-          "https://github.com/andy.png",
-          "https://github.com/andy",
-        )
-        .setURL("https://github.com/andy/test-project")
-        .setTitle("test-project")
-        .setFooter(analecta.EnumBranch)
-        .addFields([
-          {
-            name: "01",
-            value: "[hotfix](https://github.com/andy/test-project/tree/hotfix)",
-          },
-        ]),
-    );
+  message.emitter.on("sendEmbed", (embed: EmbedMessage) => {
+    expect(embed).toStrictEqual({
+      color: colorFromState("open"),
+      author: {
+        name: "Andy",
+        iconUrl: "https://github.com/andy.png",
+        url: "https://github.com/andy",
+      },
+      url: "https://github.com/andy/test-project",
+      title: "test-project",
+      footer: analecta.EnumBranch,
+      fields: [
+        {
+          name: "01",
+          value: "[hotfix](https://github.com/andy/test-project/tree/hotfix)",
+        },
+      ],
+    });
   });
 
-  await expect(bringBranch(query)(analecta, message)).resolves.toEqual(true);
+  await expect(bringBranch(query, analecta)(message)).resolves.toEqual(true);
 });
 
 test("get a branch", async () => {
@@ -76,20 +75,19 @@ test("get a branch", async () => {
   message.emitter.on("reply", () => {
     expect("").toStrictEqual("`bringBranch` must not reply.");
   });
-  message.emitter.on("sendEmbed", (embed: MessageEmbed) => {
-    expect(embed).toStrictEqual(
-      new MessageEmbed()
-        .setColor(colorFromState("open"))
-        .setAuthor(
-          "Bob",
-          "https://github.com/bob.png",
-          "https://github.com/bob",
-        )
-        .setURL("https://github.com/andy/test-project/tree/hotfix")
-        .setTitle("hotfix")
-        .setFooter(analecta.BringBranch),
-    );
+  message.emitter.on("sendEmbed", (embed: EmbedMessage) => {
+    expect(embed).toStrictEqual({
+      color: colorFromState("open"),
+      author: {
+        name: "Bob",
+        iconUrl: "https://github.com/bob.png",
+        url: "https://github.com/bob",
+      },
+      url: "https://github.com/andy/test-project/tree/hotfix",
+      title: "hotfix",
+      footer: analecta.BringBranch,
+    });
   });
 
-  await expect(bringBranch(query)(analecta, message)).resolves.toEqual(true);
+  await expect(bringBranch(query, analecta)(message)).resolves.toEqual(true);
 });

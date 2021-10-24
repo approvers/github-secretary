@@ -1,6 +1,6 @@
-import { MessageEmbed } from "discord.js";
-import { MockMessage } from "../../adaptors/mock/message";
-import { analectaForTest } from "../../adaptors/test-analecta";
+import type { EmbedMessage } from "src/bot/model/message";
+import { MockMessage } from "../../../adaptors/mock/message";
+import { analectaForTest } from "../../../adaptors/mock/test-analecta";
 import { bringRepo } from "./repo";
 
 const query = {
@@ -25,20 +25,18 @@ test("get a repository", async () => {
   message.emitter.on("reply", () => {
     expect("").toStrictEqual("`bringRepo` must not reply.");
   });
-  message.emitter.on("sendEmbed", (embed: MessageEmbed) => {
-    expect(embed).toStrictEqual(
-      new MessageEmbed()
-        .setAuthor(
-          "Andy",
-          "https://github.com/andy.png",
-          "https://github.com/andy",
-        )
-        .setURL("https://github.com/andy/test-project")
-        .setDescription("")
-        .setTitle("test-project")
-        .setFooter(analecta.BringRepo),
-    );
+  message.emitter.on("sendEmbed", (embed: EmbedMessage) => {
+    expect(embed).toStrictEqual({
+      author: {
+        name: "Andy",
+        iconUrl: "https://github.com/andy.png",
+        url: "https://github.com/andy",
+      },
+      description: "",
+      footer: analecta.BringRepo,
+      title: "test-project",
+    });
   });
 
-  await expect(bringRepo(query)(analecta, message)).resolves.toEqual(true);
+  await expect(bringRepo(query, analecta)(message)).resolves.toEqual(true);
 });

@@ -3,7 +3,7 @@ import { DiscordId } from "../../model/discord-id";
 import { GitHubUser } from "../../model/github-user";
 import { MockMessage } from "../../adaptors/mock/message";
 import { NotificationId } from "../../model/github-notification";
-import { analectaForTest } from "../../adaptors/test-analecta";
+import { analectaForTest } from "../../adaptors/mock/test-analecta";
 import { subscribeNotification } from "./subscribe";
 
 test("subscribe a member", async () => {
@@ -22,18 +22,22 @@ test("subscribe a member", async () => {
     });
   });
 
-  const proc = subscribeNotification(db, {
-    getGitHubUser: () =>
-      Promise.resolve({
-        userName: "Alice",
-        notificationToken: "TEST_TOKEN",
-        currentNotificationIds: [] as NotificationId[],
-      } as GitHubUser),
-  });
+  const proc = subscribeNotification(
+    db,
+    {
+      getGitHubUser: () =>
+        Promise.resolve({
+          userName: "Alice",
+          notificationToken: "TEST_TOKEN",
+          currentNotificationIds: [] as NotificationId[],
+        } as GitHubUser),
+    },
+    analecta,
+  );
 
   const message = new MockMessage(
     "/ghs Alice TEST_TOKEN",
     "alice_discord" as DiscordId,
   );
-  await expect(proc(analecta, message)).resolves.toEqual(true);
+  await expect(proc(message)).resolves.toEqual(true);
 });

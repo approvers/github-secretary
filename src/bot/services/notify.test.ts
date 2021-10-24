@@ -5,7 +5,7 @@ import {
 } from "../model/github-notification";
 import { GitHubUser } from "../model/github-user";
 import { MessageEmbed } from "discord.js";
-import { analectaForTest } from "../adaptors/test-analecta";
+import { analectaForTest } from "../adaptors/mock/test-analecta";
 
 const db: Database = {
   getUser: () =>
