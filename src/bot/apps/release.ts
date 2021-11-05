@@ -15,7 +15,7 @@ import { DiscordMessage } from "../adaptors/discord-message";
 import { FaunaDB } from "../adaptors/fauna-db";
 import { GitHubApi } from "../adaptors/github-api";
 import { InteractionsCommandReceiver } from "../adaptors/interactions-command";
-import { SubscriptionNotifier } from "../runners/notifier";
+import { SubscriptionNotifier } from "../adaptors/notifier";
 import { TomlLoader } from "../adaptors/toml-loader";
 import { UserDatabase } from "../services/notify/user-database";
 import dotenv from "dotenv";

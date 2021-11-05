@@ -8,7 +8,7 @@ import type { Analecta } from "../model/analecta";
 import type { DiscordId } from "../model/discord-id";
 import type { GitHubUser } from "../model/github-user";
 import type { NotificationId } from "../model/github-notification";
-import { notificationQuery } from "../adaptors/github-notification-query";
+import { notificationQuery } from "./github-notification-query";
 
 const safeParseDecimal = (str: string): number => {
   const val = parseInt(str, 10);
