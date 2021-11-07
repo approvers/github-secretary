@@ -1,16 +1,16 @@
 import { NotificationId, includes } from "../../model/github-notification";
 import type { Analecta } from "../../model/analecta";
-import { CommandProcessor } from "../../runners/connector";
+import type { CommandProcessor } from "../../runners/connector";
 import type { Message } from "../../model/message";
 import type { NotificationApi } from "../command/api";
-import type { UserDatabase } from "./user-database";
+import type { SubscriberRepository } from "../notify";
 import { replyFailure } from "../../services/reply-failure";
 
 const markPattern = /^\/ghm (?<notification>[0-9]+)\s*$/u;
 
 export const markAsRead =
   (
-    db: UserDatabase,
+    db: SubscriberRepository,
     query: NotificationApi,
     analecta: Analecta,
   ): CommandProcessor<Message> =>
@@ -35,22 +35,18 @@ export const markAsRead =
       .catch(msg.panic);
   };
 
+interface MarkAsReadOptions {
+  db: SubscriberRepository;
+  msg: Message;
+  analecta: Analecta;
+  id: NotificationId;
+  query: NotificationApi;
+}
+
 const markNotificationAsRead =
-  ({
-    db,
-    msg,
-    analecta,
-    id,
-    query,
-  }: {
-    db: UserDatabase;
-    msg: Message;
-    analecta: Analecta;
-    id: NotificationId;
-    query: NotificationApi;
-  }) =>
+  ({ db, msg, analecta, id, query }: MarkAsReadOptions) =>
   async () => {
-    const user = await db.fetchUser(msg.getAuthorId());
+    const user = await db.user(msg.getAuthorId());
     if (!user) {
       await msg.reply(analecta.NotSubscribed);
       return true;

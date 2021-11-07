@@ -1,17 +1,35 @@
+import {
+  NotificationRepository,
+  SubscriberRepository,
+  notify,
+} from "../notify";
 import type { Analecta } from "../../model/analecta";
 import type { CommandProcessor } from "../../runners/connector";
 import type { Message } from "../../model/message";
-import type { UserApi } from "src/bot/services/command/api";
-import type { UserDatabase } from "./user-database";
+import type { Scheduler } from "../../runners/scheduler";
+import type { SubscriberRegistry } from "./user-database";
+import { UserApi } from "../command";
 
 const subscribePattern = /^\/ghs (?<name>[^/:?]+) (?<token>[^/:?]+)\s*$/u;
 
+export interface SubscribeOptions {
+  db: SubscriberRepository;
+  registry: SubscriberRegistry;
+  associator: UserApi;
+  query: NotificationRepository;
+  analecta: Analecta;
+  scheduler: Scheduler;
+}
+
 export const subscribeNotification =
-  (
-    db: UserDatabase,
-    query: UserApi,
-    analecta: Analecta,
-  ): CommandProcessor<Message> =>
+  ({
+    db,
+    registry,
+    associator,
+    query,
+    analecta,
+    scheduler,
+  }: SubscribeOptions): CommandProcessor<Message> =>
   async (msg: Message): Promise<boolean> => {
     const matches = await msg.matchCommand(subscribePattern);
     if (matches === null || !matches.groups) {
@@ -22,10 +40,20 @@ export const subscribeNotification =
       return false;
     }
 
-    const user = await query.getGitHubUser(name, token).catch(msg.panic);
+    const user = await associator.getGitHubUser(name, token).catch(msg.panic);
 
-    await db.register(msg.getAuthorId(), user);
-
+    const destination = msg.getAuthorId();
+    await registry.register(destination, user);
+    scheduler.start(
+      destination as string,
+      notify({
+        destination,
+        db,
+        query,
+        analecta,
+        send: msg.sendEmbed,
+      }),
+    );
     await msg.reply(analecta.Subscribe);
     return true;
   };

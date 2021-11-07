@@ -1,66 +1,27 @@
 /* eslint-disable new-cap */
 
-import type {
-  SubscriptionDatabase,
-  UpdateHandler,
-  UserDatabase,
-} from "../services/notify/user-database";
 import fauna, { query as q } from "faunadb";
 import type { DiscordId } from "../model/discord-id";
 import type { GitHubUser } from "../model/github-user";
 import type { NotificationId } from "../model/github-notification";
+import type { SubscriberRepository } from "../services/notify";
 
-export class FaunaDB implements SubscriptionDatabase, UserDatabase {
+export class FaunaDB implements SubscriberRepository {
   private client: fauna.Client;
 
   constructor(secret: string) {
     this.client = new fauna.Client({ secret });
   }
 
-  private handlers: UpdateHandler[] = [];
-
-  onUpdate(handler: UpdateHandler): void {
-    this.handlers.push(handler);
-
-    this.client.query(q.Get(q.Match(q.Index("all_users")))).then((payload) => {
-      if (!payload) {
-        return;
-      }
-      let res = payload;
-      if (!Array.isArray(res)) {
-        res = { data: [res] };
-      }
-      const { data } = res as {
-        data: { ref: fauna.values.Ref; data: GitHubUser }[];
-      };
-      data.forEach(({ ref: { id }, data: datum }) => {
-        handler.handleUpdate(id as DiscordId, datum);
-      });
-    });
-  }
-
-  private async notifyUpdate(id: DiscordId): Promise<void> {
-    const { data } = (await this.client.query(
-      q.Get(q.Ref(q.Collection("users"), id)),
-    )) as {
-      data: GitHubUser;
-    };
-
-    for (const handler of this.handlers) {
-      handler.handleUpdate(id, data);
-    }
-  }
-
-  async update(
+  async updateNotifications(
     id: DiscordId,
-    notificationIds: NotificationId[],
+    notificationIds: readonly NotificationId[],
   ): Promise<void> {
     await this.client.query(
       q.Update(q.Ref(q.Collection("users"), id), {
         data: { currentNotificationIds: notificationIds },
       }),
     );
-    await this.notifyUpdate(id);
   }
 
   async register(id: DiscordId, user: GitHubUser): Promise<void> {
@@ -71,7 +32,6 @@ export class FaunaDB implements SubscriptionDatabase, UserDatabase {
     } catch (ignore) {
       // Ignore
     }
-    await this.notifyUpdate(id);
   }
 
   async unregister(id: DiscordId): Promise<boolean> {
@@ -80,11 +40,10 @@ export class FaunaDB implements SubscriptionDatabase, UserDatabase {
     } catch (_err) {
       return false;
     }
-    await this.notifyUpdate(id);
     return true;
   }
 
-  async fetchUser(discordId: DiscordId): Promise<GitHubUser | null> {
+  async user(discordId: DiscordId): Promise<GitHubUser | null> {
     try {
       const { data } = (await this.client.query(
         q.Get(q.Ref(q.Collection("users"), discordId)),

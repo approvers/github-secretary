@@ -1,5 +1,6 @@
+import { Client, Intents, Message as RawDiscordMessage } from "discord.js";
+import { CommandProcessor, connectProcessors } from "../runners/connector";
 import {
-  AllApi,
   Message,
   bringBranch,
   bringIssue,
@@ -8,43 +9,19 @@ import {
   error,
   flavor,
 } from "../services/command";
-import { Client, Intents, Message as RawDiscordMessage } from "discord.js";
-import { CommandProcessor, connectProcessors } from "../runners/connector";
 import { Analecta } from "../model/analecta";
 import { DiscordMessage } from "../adaptors/discord-message";
 import { FaunaDB } from "../adaptors/fauna-db";
 import { GitHubApi } from "../adaptors/github-api";
 import { InteractionsCommandReceiver } from "../adaptors/interactions-command";
-import { SubscriptionNotifier } from "../adaptors/notifier";
+import { Scheduler } from "../runners/scheduler";
 import { TomlLoader } from "../adaptors/toml-loader";
-import { UserDatabase } from "../services/notify/user-database";
 import dotenv from "dotenv";
 import { markAsRead } from "../services/notify/mark-as-read";
 import { subscribeNotification } from "../services/notify/subscribe";
 import { unsubNotification } from "../services/notify/unsubscribe";
 
 dotenv.config();
-
-const procs = (
-  analecta: Analecta,
-  db: UserDatabase,
-  query: AllApi,
-): CommandProcessor<Message> =>
-  connectProcessors([
-    flavor(
-      new RegExp(analecta.CallPattern, "u"),
-      new RegExp(analecta.BlackPattern, "mu"),
-      analecta,
-    ),
-    bringIssue(query, analecta),
-    bringPR(query, analecta),
-    bringBranch(query, analecta),
-    bringRepo(query, analecta),
-    subscribeNotification(db, query, analecta),
-    unsubNotification(db, analecta),
-    markAsRead(db, query, analecta),
-    error(analecta),
-  ]);
 
 const messageHandler =
   (analecta: Analecta, builtProcs: CommandProcessor<Message>) =>
@@ -75,11 +52,32 @@ const messageHandler =
       Intents.FLAGS.GUILD_MESSAGES,
     ],
   });
-  const notifier = new SubscriptionNotifier(analecta, client.users, db);
-  db.onUpdate(notifier);
   const query = new GitHubApi();
 
-  const builtProcs = procs(analecta, db, query);
+  const scheduler = new Scheduler();
+
+  const builtProcs = connectProcessors([
+    flavor(
+      new RegExp(analecta.CallPattern, "u"),
+      new RegExp(analecta.BlackPattern, "mu"),
+      analecta,
+    ),
+    bringIssue(query, analecta),
+    bringPR(query, analecta),
+    bringBranch(query, analecta),
+    bringRepo(query, analecta),
+    subscribeNotification({
+      db,
+      registry: db,
+      query,
+      associator: query,
+      analecta,
+      scheduler,
+    }),
+    unsubNotification(db, analecta, scheduler),
+    markAsRead(db, query, analecta),
+    error(analecta),
+  ]);
 
   const interactions = new InteractionsCommandReceiver(client);
   interactions.onReceive(async (message) => {

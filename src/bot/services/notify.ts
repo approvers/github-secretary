@@ -3,29 +3,36 @@ import type {
   NotificationId,
 } from "../model/github-notification";
 import type { Analecta } from "../model/analecta";
+import type { DiscordId } from "../model/discord-id";
+import type { EmbedMessage } from "../model/message";
 import type { GitHubUser } from "../model/github-user";
-import { MessageEmbed } from "discord.js";
+import type { ScheduledTask } from "../runners/scheduler";
 
-export interface Database {
-  getUser(): Promise<Readonly<GitHubUser>>;
-  update(ids: NotificationId[]): Promise<void>;
+export interface NotificationRepository {
+  notifications(user: GitHubUser): Promise<GitHubNotifications>;
 }
 
-export interface Query {
-  fetchNotification(user: GitHubUser): Promise<GitHubNotifications>;
+export interface SubscriberRepository {
+  user(discordId: DiscordId): Promise<GitHubUser | null>;
+  updateNotifications(
+    user: DiscordId,
+    notifications: readonly NotificationId[],
+  ): Promise<void>;
 }
 
-const fetchErrorHandler =
-  (send: (message: MessageEmbed) => Promise<void>) => (reason: unknown) => {
-    const yellow = 0xffc208;
-    send(
-      new MessageEmbed()
-        .setColor(yellow)
-        .setTitle("通知データ取得のエラー発生")
-        .setDescription(`${reason}`),
-    );
-    return null;
-  };
+export interface NotificationSender {
+  (message: EmbedMessage): Promise<void>;
+}
+
+const fetchErrorHandler = (send: NotificationSender) => (reason: unknown) => {
+  const yellow = 0xffc208;
+  send({
+    color: yellow,
+    title: "通知データ取得のエラー発生",
+    description: `${reason}`,
+  });
+  return null;
+};
 
 const hasIdsUpdated = (
   older: readonly NotificationId[],
@@ -40,7 +47,7 @@ const hasIdsUpdated = (
 
 const sendSubjects = async (
   res: GitHubNotifications,
-  send: (message: MessageEmbed) => Promise<void>,
+  send: NotificationSender,
   analecta: Analecta,
 ) => {
   const subjects = res.map(({ id, subject: { title } }) => ({
@@ -48,33 +55,53 @@ const sendSubjects = async (
     value: title,
   }));
 
-  await send(
-    new MessageEmbed()
-      .addFields(subjects)
-      .setTitle(analecta.BringIssue)
-      .setURL("https://github.com/notifications"),
-  );
+  await send({
+    fields: subjects,
+    title: analecta.BringIssue,
+    url: "https://github.com/notifications",
+  });
 };
 
+const safeParseDecimal = (str: string): number => {
+  const val = parseInt(str, 10);
+  if (Number.isNaN(val)) {
+    throw new Error(`Cannot parse \`str\`: ${str}`);
+  }
+  return val;
+};
+
+const retryInterval = () => 1000 + Math.floor(Math.random() * 2);
+
+const NOTIFY_INTERVAL = safeParseDecimal(
+  process.env.NOTIFY_INTERVAL || "10000",
+);
+
+export interface NotifyOptions {
+  destination: DiscordId;
+  db: SubscriberRepository;
+  query: NotificationRepository;
+  analecta: Analecta;
+  send: NotificationSender;
+}
+
 export const notify =
-  (db: Database, query: Query) =>
-  async (
-    analecta: Analecta,
-    send: (message: MessageEmbed) => Promise<void>,
-  ): Promise<void> => {
-    const user = await db.getUser();
+  ({ destination, db, query, analecta, send }: NotifyOptions): ScheduledTask =>
+  async () => {
+    const user = await db.user(destination);
+    if (!user) {
+      return null;
+    }
     const { currentNotificationIds } = user;
 
-    const res = await query
-      .fetchNotification(user)
-      .catch(fetchErrorHandler(send));
+    const res = await query.notifications(user).catch(fetchErrorHandler(send));
     if (res === null) {
-      return;
+      return retryInterval();
     }
     const newIds = res.map(({ id }) => id);
-    await db.update(newIds);
+    await db.updateNotifications(destination, newIds);
 
     if (hasIdsUpdated(currentNotificationIds, newIds)) {
       await sendSubjects(res, send, analecta);
     }
+    return NOTIFY_INTERVAL;
   };

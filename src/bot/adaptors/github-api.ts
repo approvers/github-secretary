@@ -7,14 +7,18 @@ import type {
   PullRequest,
   Repository,
 } from "../services/command/bring";
+import type {
+  GitHubNotifications,
+  NotificationId,
+} from "../model/github-notification";
 import type { AllApi } from "../services/command/api";
 import type { GitHubUser } from "../model/github-user";
-import type { NotificationId } from "../model/github-notification";
+import type { NotificationRepository } from "../services/notify";
 import fetch from "node-fetch";
 
 const apiRoot = "https://api.github.com";
 
-export class GitHubApi implements AllApi {
+export class GitHubApi implements AllApi, NotificationRepository {
   async fetchRepo(owner: string, repoName: string): Promise<Repository> {
     const repoInfoApiUrl = `${apiRoot}/repos/${owner}/${repoName}`;
     const infoRes: unknown = await (await fetch(repoInfoApiUrl)).json();
@@ -124,6 +128,24 @@ export class GitHubApi implements AllApi {
       notificationToken: token,
       currentNotificationIds: [] as NotificationId[],
     } as GitHubUser;
+  }
+
+  async notifications({
+    userName,
+    notificationToken,
+  }: GitHubUser): Promise<GitHubNotifications> {
+    const base64 = Buffer.from(`${userName}:${notificationToken}`).toString(
+      "base64",
+    );
+    const rawRes = await fetch("https://api.github.com/notifications", {
+      headers: {
+        Authorization: `Basic ${base64}`,
+      },
+    });
+    if (!rawRes.ok) {
+      return [];
+    }
+    return [...((await rawRes.json()) as unknown[])] as GitHubNotifications;
   }
 }
 
