@@ -1,8 +1,9 @@
 import { MockUserDB, placeholder } from "../../adaptors/mock/user-db";
-import { DiscordId } from "../../model/discord-id";
-import { GitHubUser } from "../../model/github-user";
+import type { DiscordId } from "../../model/discord-id";
+import type { GitHubUser } from "../../model/github-user";
 import { MockMessage } from "../../adaptors/mock/message";
 import { NotificationId } from "../../model/github-notification";
+import { Scheduler } from "../../runners/scheduler";
 import { analectaForTest } from "../../adaptors/mock/test-analecta";
 import { subscribeNotification } from "./subscribe";
 
@@ -21,10 +22,15 @@ test("subscribe a member", async () => {
       currentNotificationIds: [],
     });
   });
+  const scheduler = new Scheduler();
 
-  const proc = subscribeNotification(
+  const proc = subscribeNotification({
     db,
-    {
+    registry: db,
+    query: {
+      notifications: () => Promise.resolve([]),
+    },
+    associator: {
       getGitHubUser: () =>
         Promise.resolve({
           userName: "Alice",
@@ -33,7 +39,8 @@ test("subscribe a member", async () => {
         } as GitHubUser),
     },
     analecta,
-  );
+    scheduler,
+  });
 
   const message = new MockMessage(
     "/ghs Alice TEST_TOKEN",

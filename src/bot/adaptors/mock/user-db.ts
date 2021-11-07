@@ -1,11 +1,13 @@
 import type { DiscordId } from "../../model/discord-id";
 import { EventEmitter } from "events";
 import type { GitHubUser } from "../../model/github-user";
-import type { UserDatabase } from "../../services/notify/user-database";
+import type { NotificationId } from "src/bot/model/github-notification";
+import type { SubscriberRegistry } from "src/bot/services/notify/user-database";
+import type { SubscriberRepository } from "src/bot/services/notify";
 
 export const placeholder = Symbol("placeholder for MockDB");
 
-export class MockUserDB implements UserDatabase {
+export class MockUserDB implements SubscriberRepository, SubscriberRegistry {
   constructor(private readonly passed?: GitHubUser) {}
 
   readonly onRegister = new EventEmitter();
@@ -25,7 +27,17 @@ export class MockUserDB implements UserDatabase {
     return Promise.resolve(true);
   }
 
-  fetchUser(): Promise<GitHubUser | null> {
+  user(): Promise<GitHubUser | null> {
     return Promise.resolve(this.passed ?? null);
+  }
+
+  readonly onUpdate = new EventEmitter();
+
+  updateNotifications(
+    user: DiscordId,
+    notifications: readonly NotificationId[],
+  ): Promise<void> {
+    this.onUpdate.emit(user, notifications);
+    return Promise.resolve();
   }
 }
