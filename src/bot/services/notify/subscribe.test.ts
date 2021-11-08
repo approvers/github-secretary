@@ -47,4 +47,5 @@ test("subscribe a member", async () => {
     "alice_discord" as DiscordId,
   );
   await expect(proc(message)).resolves.toEqual(true);
+  scheduler.killAll();
 });

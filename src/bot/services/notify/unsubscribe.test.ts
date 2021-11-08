@@ -21,4 +21,5 @@ test("subscribe a member", async () => {
   const message = new MockMessage("/ghu", "alice_discord" as DiscordId);
   await expect(proc(message)).resolves.toEqual(true);
   await unregisterDone;
+  scheduler.killAll();
 });
