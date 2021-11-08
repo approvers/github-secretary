@@ -5,12 +5,23 @@ export interface ScheduledTask {
 export class Scheduler {
   private runningTasks = new Map<string, NodeJS.Timeout>();
 
+  killAll(): void {
+    for (const task of this.runningTasks.values()) {
+      clearTimeout(task);
+    }
+    this.runningTasks.clear();
+  }
+
   start(key: string, task: ScheduledTask): void {
     this.startInner(key, task, 0);
   }
 
   stop(key: string): void {
-    this.runningTasks.delete(key);
+    const id = this.runningTasks.get(key);
+    if (id !== undefined) {
+      clearTimeout(id);
+      this.runningTasks.delete(key);
+    }
   }
 
   private startInner(key: string, task: ScheduledTask, timeout: number): void {
