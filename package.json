@@ -18,33 +18,33 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
-    "discord.js": "^13.1.0",
+    "discord.js": "^13.3.1",
     "dotenv": "^10.0.0",
     "faunadb": "^4.4.1",
     "mutex-promise": "^0.1.0",
     "next": "^11.1.2",
-    "node-fetch": "^2.6.5",
+    "node-fetch": "^2.6.6",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "toml": "^3.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.24",
-    "@types/node": "^16.9.6",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
     "@types/node-fetch": "^2.5.12",
-    "@types/react": "^17.0.24",
-    "@typescript-eslint/eslint-plugin": "^4.31.2",
-    "@typescript-eslint/parser": "^4.31.2",
+    "@types/react": "^17.0.35",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
     "esbuild": "^0.12.29",
     "eslint": "^7.32.0",
     "eslint-config-next": "^11.1.2",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-react": "^7.26.0",
-    "jest": "^27.2.1",
+    "eslint-plugin-react": "^7.27.0",
+    "jest": "^27.3.1",
     "prettier": "^2.4.1",
-    "ts-jest": "^27.0.5",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.4.3"
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
   }
 }
