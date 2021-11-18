@@ -1,8 +1,8 @@
 {
   "name": "github-secretary",
-  "version": "1.2.0",
+  "version": "1.6.0",
   "main": "index.js",
-  "repository": "https://github.com/MikuroXina/github-secretary",
+  "repository": "https://github.com/approvers/github-secretary",
   "author": "MikuroXina <ryosukadnak@gmail.com>",
   "license": "Apache-2.0",
   "private": true,
