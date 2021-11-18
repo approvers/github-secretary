@@ -1,14 +1,14 @@
 {
   "name": "github-secretary",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "index.js",
   "repository": "https://github.com/MikuroXina/github-secretary",
   "author": "MikuroXina <ryosukadnak@gmail.com>",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "dev:bot": "ts-node src/bot/run/release.ts",
-    "build:bot": "esbuild --outfile=dist/bundle.js --sourcemap --bundle src/bot/run/release.ts --platform=node --target=es2019 --external:discord.js --external:node-fetch",
+    "dev:bot": "ts-node src/bot/apps/release.ts",
+    "build:bot": "esbuild --outfile=dist/bundle.js --sourcemap --bundle src/bot/apps/release.ts --platform=node --target=es2019 --external:discord.js --external:node-fetch",
     "start:bot": "node dist/bundle.js",
     "dev:web": "next ./src/web",
     "build:web": "next build ./src/web",
