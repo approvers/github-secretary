@@ -12,7 +12,11 @@ export const intoMessageEmbed = ({
 }: EmbedMessage): MessageEmbed => {
   const embed = new MessageEmbed();
   if (author) {
-    embed.setAuthor(author.name, author.iconUrl, author.url);
+    embed.setAuthor({
+      name: author.name,
+      url: author.url,
+      iconURL: author.iconUrl,
+    });
   }
   if (color) {
     embed.setColor(color);
@@ -24,7 +28,9 @@ export const intoMessageEmbed = ({
     embed.setFields(fields);
   }
   if (footer) {
-    embed.setFooter(footer);
+    embed.setFooter({
+      text: footer,
+    });
   }
   if (title) {
     embed.setTitle(title);
