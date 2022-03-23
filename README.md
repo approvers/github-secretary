@@ -10,6 +10,7 @@
 | DISCORD_TOKEN | Discord の Bot のトークン | なし |
 | TOML_PATH | セリフを登録した TOML ファイルのパス | `./analecta/laffey.toml` |
 | NOTIFY_INTERVAL | 最新の通知データを取得するミリ秒間隔 | `10000` |
+| FAUNA_SECRET | 通知システム用の Fauna DB のデータベースのシークレット | なし |
 
 
 ## やること
