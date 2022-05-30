@@ -1,0 +1,12 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "next"
+    ],
+    "rules": {
+        "@next/next/no-html-link-for-pages": [
+            "error",
+            "src/web/pages/"
+        ]
+    }
+}
