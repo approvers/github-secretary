@@ -7,11 +7,11 @@ RUN addgroup -g 1994 -S web \
 
 WORKDIR /app
 
-COPY --chown=web:web package.json /app/
+COPY package.json /app/
 RUN npm install --no-save
 
-COPY --chown=web:web tsconfig.json /app/
-COPY --chown=web:web src/web/ /app/
+COPY tsconfig.json /app/
+COPY src/web/ /app/
 RUN npx next build
 
 USER web
