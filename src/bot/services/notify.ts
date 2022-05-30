@@ -24,7 +24,7 @@ export interface NotificationSender {
   (message: EmbedMessage): Promise<void>;
 }
 
-const fetchErrorHandler = (send: NotificationSender) => (reason: unknown) => {
+const fetchErrorHandler = (send: NotificationSender, reason: unknown) => {
   const yellow = 0xffc208;
   send({
     color: yellow,
@@ -93,7 +93,9 @@ export const notify =
     }
     const { currentNotificationIds } = user;
 
-    const res = await query.notifications(user).catch(fetchErrorHandler(send));
+    const res = await query
+      .notifications(user)
+      .catch((reason) => fetchErrorHandler(send, reason));
     if (res === null) {
       return retryInterval();
     }
