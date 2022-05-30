@@ -18,9 +18,9 @@ EXPOSE 3000
 
 WORKDIR /app
 
-COPY --from=BUILD node_modules/ .
-COPY --from=BUILD package.json .
-COPY --from=BUILD .next/ .
+COPY --from=BUILD /app/node_modules/ .
+COPY package.json .
+COPY --from=BUILD /app/.next/ .
 
 USER web
 
