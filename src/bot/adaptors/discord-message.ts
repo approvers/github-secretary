@@ -1,7 +1,7 @@
-import type { EmbedMessage, Message } from "../model/message";
-import type { DiscordId } from "../model/discord-id";
+import type { EmbedMessage, Message } from "../model/message.js";
+import type { DiscordId } from "../model/discord-id.js";
 import { Message as RawMessage } from "discord.js";
-import { intoMessageEmbed } from "./message-convert";
+import { intoMessageEmbed } from "./message-convert.js";
 
 export class DiscordMessage implements Message {
   constructor(private raw: RawMessage) {}

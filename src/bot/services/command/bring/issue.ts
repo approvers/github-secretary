@@ -1,13 +1,13 @@
 import {
   CommandProcessor,
   connectProcessors,
-} from "../../../runners/connector";
-import type { EmbedMessageField, Message } from "../../../model/message";
-import type { Analecta } from "src/bot/model/analecta";
-import type { IssueApi } from "src/bot/services/command/api";
-import { colorFromState } from "../../../model/state-color";
-import { omitBody } from "../../../model/omit";
-import { replyFailure } from "../../reply-failure";
+} from "../../../runners/connector.js";
+import type { EmbedMessageField, Message } from "../../../model/message.js";
+import type { Analecta } from "src/bot/model/analecta.js";
+import type { IssueApi } from "src/bot/services/command/api.js";
+import { colorFromState } from "../../../model/state-color.js";
+import { omitBody } from "../../../model/omit.js";
+import { replyFailure } from "../../reply-failure.js";
 
 export type PartialIssue = Pick<Issue, "html_url" | "title" | "number">;
 

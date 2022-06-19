@@ -1,11 +1,11 @@
 import {
   CommandProcessor,
   connectProcessors,
-} from "../../../runners/connector";
-import type { Analecta } from "src/bot/model/analecta";
-import type { Api } from "src/bot/services/command/api";
-import type { Message } from "../../../model/message";
-import { replyFailure } from "../../reply-failure";
+} from "../../../runners/connector.js";
+import type { Analecta } from "src/bot/model/analecta.js";
+import type { Api } from "src/bot/services/command/api.js";
+import type { Message } from "../../../model/message.js";
+import { replyFailure } from "../../reply-failure.js";
 
 export interface Repository {
   name: string;

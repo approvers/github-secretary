@@ -1,9 +1,9 @@
-import type { DiscordId } from "../../model/discord-id";
-import { EventEmitter } from "events";
-import type { GitHubUser } from "../../model/github-user";
-import type { NotificationId } from "src/bot/model/github-notification";
-import type { SubscriberRegistry } from "src/bot/services/notify/user-database";
-import type { SubscriberRepository } from "src/bot/services/notify";
+import type { DiscordId } from "../../model/discord-id.js";
+import { EventEmitter } from "node:events";
+import type { GitHubUser } from "../../model/github-user.js";
+import type { NotificationId } from "src/bot/model/github-notification.js";
+import type { SubscriberRegistry } from "src/bot/services/notify/user-database.js";
+import type { SubscriberRepository } from "src/bot/services/notify.js";
 
 export const placeholder = Symbol("placeholder for MockDB");
 

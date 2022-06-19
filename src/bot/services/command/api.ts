@@ -6,9 +6,9 @@ import type {
   PartialPullRequest,
   PullRequest,
   Repository,
-} from "./bring";
-import type { GitHubUser } from "../../model/github-user";
-import type { NotificationId } from "../../model/github-notification";
+} from "./bring.js";
+import type { GitHubUser } from "../../model/github-user.js";
+import type { NotificationId } from "../../model/github-notification.js";
 
 export interface Api {
   fetchRepo: (owner: string, repoName: string) => Promise<Repository>;

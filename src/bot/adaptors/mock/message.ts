@@ -1,6 +1,6 @@
-import type { EmbedMessage, Message } from "../../model/message";
-import type { DiscordId } from "../../model/discord-id";
-import { EventEmitter } from "events";
+import type { EmbedMessage, Message } from "../../model/message.js";
+import type { DiscordId } from "../../model/discord-id.js";
+import { EventEmitter } from "node:events";
 
 export class MockMessage implements Message {
   emitter = new EventEmitter();

@@ -1,7 +1,7 @@
-import type { Analecta } from "../model/analecta";
-import { CommandProcessor } from "../runners/connector";
-import type { Message } from "../model/message";
-import { choice } from "../model/choice";
+import type { Analecta } from "../model/analecta.js";
+import { CommandProcessor } from "../runners/connector.js";
+import type { Message } from "../model/message.js";
+import { choice } from "../model/choice.js";
 
 export const replyFailure =
   (analecta: Analecta): CommandProcessor<Message> =>

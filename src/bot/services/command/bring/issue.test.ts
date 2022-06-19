@@ -1,8 +1,8 @@
-import type { EmbedMessage } from "src/bot/model/message";
-import { MockMessage } from "../../../adaptors/mock/message";
-import { analectaForTest } from "../../../adaptors/mock/test-analecta";
-import { bringIssue } from "./issue";
-import { colorFromState } from "../../../model/state-color";
+import type { EmbedMessage } from "src/bot/model/message.js";
+import { MockMessage } from "../../../adaptors/mock/message.js";
+import { analectaForTest } from "../../../adaptors/mock/test-analecta.js";
+import { bringIssue } from "./issue.js";
+import { colorFromState } from "../../../model/state-color.js";
 
 const query = {
   fetchRepo: () =>

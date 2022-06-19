@@ -2,11 +2,11 @@ import {
   ApplicationCommand,
   ApplicationCommandOption,
   commandOptionTypeMap,
-} from "./discord-command";
+} from "./discord-command.js";
 import { Client, CommandInteraction } from "discord.js";
-import type { DiscordId } from "../model/discord-id";
-import type { Message } from "../model/message";
-import { intoMessageEmbed } from "./message-convert";
+import type { DiscordId } from "../model/discord-id.js";
+import type { Message } from "../model/message.js";
+import { intoMessageEmbed } from "./message-convert.js";
 
 const ownerOption: ApplicationCommandOption = {
   name: "owner",
@@ -57,7 +57,12 @@ const prCommand: ApplicationCommand = {
   options: [repositoryOption, ownerOption, issueOption],
 };
 
-const commands = [repositoryCommand, branchCommand, issueCommand, prCommand];
+const commands: ApplicationCommand[] = [
+  repositoryCommand,
+  branchCommand,
+  issueCommand,
+  prCommand,
+];
 
 const GUILD_ID = "683939861539192860";
 
@@ -76,11 +81,7 @@ export class InteractionsCommandReceiver {
       }
       this.initialized = true;
 
-      const oldCommands = await registrar.fetch();
-      await Promise.all(
-        [...oldCommands.values()].map((com) => registrar.delete(com)),
-      );
-      await Promise.all(commands.map((command) => registrar.create(command)));
+      await registrar.set(commands);
     });
     client.on("interactionCreate", (interaction) => {
       if (!interaction.isCommand()) {

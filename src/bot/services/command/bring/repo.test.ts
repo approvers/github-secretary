@@ -1,7 +1,7 @@
-import type { EmbedMessage } from "src/bot/model/message";
-import { MockMessage } from "../../../adaptors/mock/message";
-import { analectaForTest } from "../../../adaptors/mock/test-analecta";
-import { bringRepo } from "./repo";
+import type { EmbedMessage } from "src/bot/model/message.js";
+import { MockMessage } from "../../../adaptors/mock/message.js";
+import { analectaForTest } from "../../../adaptors/mock/test-analecta.js";
+import { bringRepo } from "./repo.js";
 
 const query = {
   fetchRepo: () =>

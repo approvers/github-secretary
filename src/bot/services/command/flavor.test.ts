@@ -1,6 +1,6 @@
-import { MockMessage } from "../../adaptors/mock/message";
-import { analectaForTest } from "../../adaptors/mock/test-analecta";
-import { flavor } from "./flavor";
+import { MockMessage } from "../../adaptors/mock/message.js";
+import { analectaForTest } from "../../adaptors/mock/test-analecta.js";
+import { flavor } from "./flavor.js";
 
 test("simple action", async () => {
   const analecta = await analectaForTest();

@@ -1,6 +1,6 @@
-import { MockMessage } from "../../adaptors/mock/message";
-import { analectaForTest } from "../../adaptors/mock/test-analecta";
-import { error } from "./error";
+import { MockMessage } from "../../adaptors/mock/message.js";
+import { analectaForTest } from "../../adaptors/mock/test-analecta.js";
+import { error } from "./error.js";
 
 test("show error message", async () => {
   const analecta = await analectaForTest();

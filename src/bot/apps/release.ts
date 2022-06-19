@@ -1,5 +1,5 @@
 import { Client, Intents, Message as RawDiscordMessage } from "discord.js";
-import { CommandProcessor, connectProcessors } from "../runners/connector";
+import { CommandProcessor, connectProcessors } from "../runners/connector.js";
 import {
   Message,
   bringBranch,
@@ -8,18 +8,18 @@ import {
   bringRepo,
   error,
   flavor,
-} from "../services/command";
-import { Analecta } from "../model/analecta";
-import { DiscordMessage } from "../adaptors/discord-message";
-import { FaunaDB } from "../adaptors/fauna-db";
-import { GitHubApi } from "../adaptors/github-api";
-import { InteractionsCommandReceiver } from "../adaptors/interactions-command";
-import { Scheduler } from "../runners/scheduler";
-import { TomlLoader } from "../adaptors/toml-loader";
+} from "../services/command.js";
+import { Analecta } from "../model/analecta.js";
+import { DiscordMessage } from "../adaptors/discord-message.js";
+import { FaunaDB } from "../adaptors/fauna-db.js";
+import { GitHubApi } from "../adaptors/github-api.js";
+import { InteractionsCommandReceiver } from "../adaptors/interactions-command.js";
+import { Scheduler } from "../runners/scheduler.js";
+import { TomlLoader } from "../adaptors/toml-loader.js";
 import dotenv from "dotenv";
-import { markAsRead } from "../services/notify/mark-as-read";
-import { subscribeNotification } from "../services/notify/subscribe";
-import { unsubNotification } from "../services/notify/unsubscribe";
+import { markAsRead } from "../services/notify/mark-as-read.js";
+import { subscribeNotification } from "../services/notify/subscribe.js";
+import { unsubNotification } from "../services/notify/unsubscribe.js";
 
 dotenv.config();
 

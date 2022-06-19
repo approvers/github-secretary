@@ -3,17 +3,17 @@ import {
   GitHubUsers,
   deserialize,
   serialize,
-} from "../../model/github-user";
+} from "../../model/github-user.js";
 import type {
   SubscriptionDatabase,
   UpdateHandler,
   UserDatabase,
-} from "../../services/notify/user-database";
-import type { DiscordId } from "../../model/discord-id";
+} from "../../services/notify/user-database.js";
+import type { DiscordId } from "../../model/discord-id.js";
 import MutexPromise from "mutex-promise";
-import type { NotificationId } from "../../model/github-notification";
-import path from "path";
-import { promises } from "fs";
+import type { NotificationId } from "../../model/github-notification.js";
+import path from "node:path";
+import { promises } from "node:fs";
 
 export class PlainDB implements SubscriptionDatabase, UserDatabase {
   private users: GitHubUsers = new Map<DiscordId, GitHubUser>();

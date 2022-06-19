@@ -1,4 +1,4 @@
-import type { DiscordId } from "./discord-id";
+import type { DiscordId } from "./discord-id.js";
 
 export interface EmbedMessageField {
   name: string;

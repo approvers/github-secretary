@@ -2,13 +2,13 @@ import {
   NotificationRepository,
   SubscriberRepository,
   notify,
-} from "../notify";
-import type { Analecta } from "../../model/analecta";
-import type { CommandProcessor } from "../../runners/connector";
-import type { Message } from "../../model/message";
-import type { Scheduler } from "../../runners/scheduler";
-import type { SubscriberRegistry } from "./user-database";
-import { UserApi } from "../command";
+} from "../notify.js";
+import type { Analecta } from "../../model/analecta.js";
+import type { CommandProcessor } from "../../runners/connector.js";
+import type { Message } from "../../model/message.js";
+import type { Scheduler } from "../../runners/scheduler.js";
+import type { SubscriberRegistry } from "./user-database.js";
+import { UserApi } from "../command.js";
 
 const subscribePattern = /^\/ghs (?<name>[^/:?]+) (?<token>[^/:?]+)\s*$/u;
 
