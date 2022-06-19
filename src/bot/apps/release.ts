@@ -13,7 +13,10 @@ import { Analecta } from "../model/analecta.js";
 import { DiscordMessage } from "../adaptors/discord-message.js";
 import { FaunaDB } from "../adaptors/fauna-db.js";
 import { GitHubApi } from "../adaptors/github-api.js";
-import { InteractionsCommandReceiver } from "../adaptors/interactions-command.js";
+import {
+  // Newline for format
+  InteractionsCommandReceiver,
+} from "../adaptors/interactions-command.js";
 import { Scheduler } from "../runners/scheduler.js";
 import { TomlLoader } from "../adaptors/toml-loader.js";
 import dotenv from "dotenv";

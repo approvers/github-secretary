@@ -1,11 +1,12 @@
 /* eslint-disable new-cap */
 
-import fauna from "faunadb";
-const { query: q } = fauna;
 import type { DiscordId } from "../model/discord-id.js";
 import type { GitHubUser } from "../model/github-user.js";
 import type { NotificationId } from "../model/github-notification.js";
 import type { SubscriberRepository } from "../services/notify.js";
+import fauna from "faunadb";
+// eslint-disable-next-line id-length
+const { query: q } = fauna;
 
 export class FaunaDB implements SubscriberRepository {
   private client: fauna.Client;
