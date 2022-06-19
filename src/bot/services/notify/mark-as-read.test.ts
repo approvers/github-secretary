@@ -1,12 +1,13 @@
-import { DiscordId } from "../../model/discord-id";
-import { GitHubUser } from "../../model/github-user";
-import { MockMessage } from "../../adaptors/mock/message";
-import { MockUserDB } from "../../adaptors/mock/user-db";
-import { NotificationId } from "../../model/github-notification";
-import { analectaForTest } from "../../adaptors/mock/test-analecta";
-import { markAsRead } from "./mark-as-read";
+import { expect, it } from "vitest";
+import { DiscordId } from "../../model/discord-id.js";
+import { GitHubUser } from "../../model/github-user.js";
+import { MockMessage } from "../../adaptors/mock/message.js";
+import { MockUserDB } from "../../adaptors/mock/user-db.js";
+import { NotificationId } from "../../model/github-notification.js";
+import { analectaForTest } from "../../adaptors/mock/test-analecta.js";
+import { markAsRead } from "./mark-as-read.js";
 
-test("mark a notification as read", async () => {
+it("mark a notification as read", async () => {
   const analecta = await analectaForTest();
   const db = new MockUserDB({
     userName: "Alice",

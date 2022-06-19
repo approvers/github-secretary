@@ -1,6 +1,6 @@
-import { Analecta, validateAnalecta } from "../model/analecta";
-import type { SayingLoader } from "../services/saying-loader";
-import { promises } from "fs";
+import { Analecta, validateAnalecta } from "../model/analecta.js";
+import type { SayingLoader } from "../services/saying-loader.js";
+import { promises } from "node:fs";
 import toml from "toml";
 
 const { readFile } = promises;

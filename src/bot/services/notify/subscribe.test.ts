@@ -1,13 +1,14 @@
-import { MockUserDB, placeholder } from "../../adaptors/mock/user-db";
-import type { DiscordId } from "../../model/discord-id";
-import type { GitHubUser } from "../../model/github-user";
-import { MockMessage } from "../../adaptors/mock/message";
-import { NotificationId } from "../../model/github-notification";
-import { Scheduler } from "../../runners/scheduler";
-import { analectaForTest } from "../../adaptors/mock/test-analecta";
-import { subscribeNotification } from "./subscribe";
+import { MockUserDB, placeholder } from "../../adaptors/mock/user-db.js";
+import { expect, it } from "vitest";
+import type { DiscordId } from "../../model/discord-id.js";
+import type { GitHubUser } from "../../model/github-user.js";
+import { MockMessage } from "../../adaptors/mock/message.js";
+import { NotificationId } from "../../model/github-notification.js";
+import { Scheduler } from "../../runners/scheduler.js";
+import { analectaForTest } from "../../adaptors/mock/test-analecta.js";
+import { subscribeNotification } from "./subscribe.js";
 
-test("subscribe a member", async () => {
+it("subscribe a member", async () => {
   const analecta = await analectaForTest();
   const db = new MockUserDB({
     userName: "Alice",

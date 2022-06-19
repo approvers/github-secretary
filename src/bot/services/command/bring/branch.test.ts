@@ -1,8 +1,9 @@
-import type { EmbedMessage } from "src/bot/model/message";
-import { MockMessage } from "../../../adaptors/mock/message";
-import { analectaForTest } from "../../../adaptors/mock/test-analecta";
-import { bringBranch } from "./branch";
-import { colorFromState } from "../../../model/state-color";
+import { expect, it } from "vitest";
+import type { EmbedMessage } from "src/bot/model/message.js";
+import { MockMessage } from "../../../adaptors/mock/message.js";
+import { analectaForTest } from "../../../adaptors/mock/test-analecta.js";
+import { bringBranch } from "./branch.js";
+import { colorFromState } from "../../../model/state-color.js";
 
 const query = {
   fetchRepo: () =>
@@ -38,7 +39,7 @@ const query = {
     ]),
 };
 
-test("get branches list", async () => {
+it("get branches list", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghb andy/test-project");
@@ -65,7 +66,7 @@ test("get branches list", async () => {
   await expect(bringBranch(query, analecta)(message)).resolves.toEqual(true);
 });
 
-test("get a branch", async () => {
+it("get a branch", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghb andy/test-project hotfix");

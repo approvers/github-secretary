@@ -1,10 +1,10 @@
-import { NotificationId, includes } from "../../model/github-notification";
-import type { Analecta } from "../../model/analecta";
-import type { CommandProcessor } from "../../runners/connector";
-import type { Message } from "../../model/message";
-import type { NotificationApi } from "../command/api";
-import type { SubscriberRepository } from "../notify";
-import { replyFailure } from "../../services/reply-failure";
+import { NotificationId, includes } from "../../model/github-notification.js";
+import type { Analecta } from "../../model/analecta.js";
+import type { CommandProcessor } from "../../runners/connector.js";
+import type { Message } from "../../model/message.js";
+import type { NotificationApi } from "../command/api.js";
+import type { SubscriberRepository } from "../notify.js";
+import { replyFailure } from "../../services/reply-failure.js";
 
 const markPattern = /^\/ghm (?<notification>[0-9]+)\s*$/u;
 

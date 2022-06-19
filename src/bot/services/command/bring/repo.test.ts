@@ -1,7 +1,8 @@
-import type { EmbedMessage } from "src/bot/model/message";
-import { MockMessage } from "../../../adaptors/mock/message";
-import { analectaForTest } from "../../../adaptors/mock/test-analecta";
-import { bringRepo } from "./repo";
+import { expect, expect, it } from "vitest";
+import type { EmbedMessage } from "src/bot/model/message.js";
+import { MockMessage } from "../../../adaptors/mock/message.js";
+import { analectaForTest } from "../../../adaptors/mock/test-analecta.js";
+import { bringRepo } from "./repo.js";
 
 const query = {
   fetchRepo: () =>
@@ -18,7 +19,7 @@ const query = {
       },
     }),
 };
-test("get a repository", async () => {
+it("get a repository", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghr andy/test-project");

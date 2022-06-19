@@ -6,14 +6,14 @@ import type {
   PartialPullRequest,
   PullRequest,
   Repository,
-} from "../services/command/bring";
+} from "../services/command/bring.js";
 import type {
   GitHubNotifications,
   NotificationId,
-} from "../model/github-notification";
-import type { AllApi } from "../services/command/api";
-import type { GitHubUser } from "../model/github-user";
-import type { NotificationRepository } from "../services/notify";
+} from "../model/github-notification.js";
+import type { AllApi } from "../services/command/api.js";
+import type { GitHubUser } from "../model/github-user.js";
+import type { NotificationRepository } from "../services/notify.js";
 import fetch from "node-fetch";
 
 const apiRoot = "https://api.github.com";

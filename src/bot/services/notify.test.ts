@@ -1,12 +1,17 @@
 import type {
   GitHubNotifications,
   NotificationId,
-} from "../model/github-notification";
-import { NotificationRepository, SubscriberRepository, notify } from "./notify";
-import type { DiscordId } from "../model/discord-id";
-import type { EmbedMessage } from "../model/message";
-import type { GitHubUser } from "../model/github-user";
-import { analectaForTest } from "../adaptors/mock/test-analecta";
+} from "../model/github-notification.js";
+import {
+  NotificationRepository,
+  SubscriberRepository,
+  notify,
+} from "./notify.js";
+import { expect, it } from "vitest";
+import type { DiscordId } from "../model/discord-id.js";
+import type { EmbedMessage } from "../model/message.js";
+import type { GitHubUser } from "../model/github-user.js";
+import { analectaForTest } from "../adaptors/mock/test-analecta.js";
 
 const db: SubscriberRepository = {
   user: () =>
@@ -33,7 +38,7 @@ const query: NotificationRepository = {
     ] as GitHubNotifications),
 };
 
-test("emit a notification", async () => {
+it("emit a notification", async () => {
   const analecta = await analectaForTest();
 
   return notify({

@@ -1,7 +1,7 @@
-import type { Analecta } from "src/bot/model/analecta";
-import type { CommandProcessor } from "src/bot/runners/connector";
-import type { Message } from "../../model/message";
-import { choice } from "../../model/choice";
+import type { Analecta } from "src/bot/model/analecta.js";
+import type { CommandProcessor } from "src/bot/runners/connector.js";
+import type { Message } from "../../model/message.js";
+import { choice } from "../../model/choice.js";
 
 export const flavor =
   (

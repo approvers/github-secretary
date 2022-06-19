@@ -1,12 +1,12 @@
 import type {
   GitHubNotifications,
   NotificationId,
-} from "../model/github-notification";
-import type { Analecta } from "../model/analecta";
-import type { DiscordId } from "../model/discord-id";
-import type { EmbedMessage } from "../model/message";
-import type { GitHubUser } from "../model/github-user";
-import type { ScheduledTask } from "../runners/scheduler";
+} from "../model/github-notification.js";
+import type { Analecta } from "../model/analecta.js";
+import type { DiscordId } from "../model/discord-id.js";
+import type { EmbedMessage } from "../model/message.js";
+import type { GitHubUser } from "../model/github-user.js";
+import type { ScheduledTask } from "../runners/scheduler.js";
 
 export interface NotificationRepository {
   notifications(user: GitHubUser): Promise<GitHubNotifications>;
