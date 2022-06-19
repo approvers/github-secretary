@@ -1,3 +1,4 @@
+import { expect, it } from "vitest";
 import { DiscordId } from "../../model/discord-id.js";
 import { GitHubUser } from "../../model/github-user.js";
 import { MockMessage } from "../../adaptors/mock/message.js";
@@ -6,7 +7,7 @@ import { NotificationId } from "../../model/github-notification.js";
 import { analectaForTest } from "../../adaptors/mock/test-analecta.js";
 import { markAsRead } from "./mark-as-read.js";
 
-test("mark a notification as read", async () => {
+it("mark a notification as read", async () => {
   const analecta = await analectaForTest();
   const db = new MockUserDB({
     userName: "Alice",

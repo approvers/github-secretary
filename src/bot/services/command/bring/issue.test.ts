@@ -1,3 +1,4 @@
+import { expect, it } from "vitest";
 import type { EmbedMessage } from "src/bot/model/message.js";
 import { MockMessage } from "../../../adaptors/mock/message.js";
 import { analectaForTest } from "../../../adaptors/mock/test-analecta.js";
@@ -42,7 +43,7 @@ const query = {
     ]),
 };
 
-test("get issues list", async () => {
+it("get issues list", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghi andy/test-project");
@@ -69,7 +70,7 @@ test("get issues list", async () => {
   await expect(bringIssue(query, analecta)(message)).resolves.toEqual(true);
 });
 
-test("get an issue", async () => {
+it("get an issue", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghi andy/test-project/1");

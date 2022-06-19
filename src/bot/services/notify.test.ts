@@ -7,6 +7,7 @@ import {
   SubscriberRepository,
   notify,
 } from "./notify.js";
+import { expect, it } from "vitest";
 import type { DiscordId } from "../model/discord-id.js";
 import type { EmbedMessage } from "../model/message.js";
 import type { GitHubUser } from "../model/github-user.js";
@@ -37,7 +38,7 @@ const query: NotificationRepository = {
     ] as GitHubNotifications),
 };
 
-test("emit a notification", async () => {
+it("emit a notification", async () => {
   const analecta = await analectaForTest();
 
   return notify({

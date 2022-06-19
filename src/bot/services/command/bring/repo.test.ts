@@ -1,3 +1,4 @@
+import { expect, expect, it } from "vitest";
 import type { EmbedMessage } from "src/bot/model/message.js";
 import { MockMessage } from "../../../adaptors/mock/message.js";
 import { analectaForTest } from "../../../adaptors/mock/test-analecta.js";
@@ -18,7 +19,7 @@ const query = {
       },
     }),
 };
-test("get a repository", async () => {
+it("get a repository", async () => {
   const analecta = await analectaForTest();
 
   const message = new MockMessage("/ghr andy/test-project");

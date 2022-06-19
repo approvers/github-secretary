@@ -1,11 +1,12 @@
 import { MockUserDB, placeholder } from "../../adaptors/mock/user-db.js";
+import { expect, it } from "vitest";
 import { DiscordId } from "../../model/discord-id.js";
 import { MockMessage } from "../../adaptors/mock/message.js";
 import { Scheduler } from "../../runners/scheduler.js";
 import { analectaForTest } from "../../adaptors/mock/test-analecta.js";
 import { unsubNotification } from "./unsubscribe.js";
 
-test("subscribe a member", async () => {
+it("subscribe a member", async () => {
   const analecta = await analectaForTest();
   const db = new MockUserDB();
   const unregisterDone = new Promise<void>((resolve) => {

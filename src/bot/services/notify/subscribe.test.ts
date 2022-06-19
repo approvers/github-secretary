@@ -1,4 +1,5 @@
 import { MockUserDB, placeholder } from "../../adaptors/mock/user-db.js";
+import { expect, it } from "vitest";
 import type { DiscordId } from "../../model/discord-id.js";
 import type { GitHubUser } from "../../model/github-user.js";
 import { MockMessage } from "../../adaptors/mock/message.js";
@@ -7,7 +8,7 @@ import { Scheduler } from "../../runners/scheduler.js";
 import { analectaForTest } from "../../adaptors/mock/test-analecta.js";
 import { subscribeNotification } from "./subscribe.js";
 
-test("subscribe a member", async () => {
+it("subscribe a member", async () => {
   const analecta = await analectaForTest();
   const db = new MockUserDB({
     userName: "Alice",
