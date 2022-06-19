@@ -52,7 +52,7 @@ const issueCommand: ApplicationCommand = {
 };
 
 const prCommand: ApplicationCommand = {
-  name: "ghi",
+  name: "ghp",
   description: "Fetch the pull request in the repository.",
   options: [repositoryOption, ownerOption, issueOption],
 };
