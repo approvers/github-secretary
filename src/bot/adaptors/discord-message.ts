@@ -1,28 +1,14 @@
 import type { EmbedMessage, EmbedPage, Message } from "../model/message.js";
 import {
-  MessageActionRow,
-  MessageButton,
+  InteractionCollector,
+  MessageComponentInteraction,
   Message as RawMessage,
 } from "discord.js";
+import { isButtonId, sendPages } from "./pagination.js";
 import type { DiscordId } from "../model/discord-id.js";
 import { intoMessageEmbed } from "./message-convert.js";
 
 const ONE_MINUTE_MS = 60_000;
-const CONTROLS = new MessageActionRow().addComponents(
-  new MessageButton()
-    .setStyle("SECONDARY")
-    .setCustomId("prev")
-    .setLabel("戻る")
-    .setEmoji("⏪"),
-  new MessageButton()
-    .setStyle("SECONDARY")
-    .setCustomId("next")
-    .setLabel("進む")
-    .setEmoji("⏩"),
-);
-
-const pagesFooter = (currentPage: number, pagesLength: number) =>
-  `ページ ${currentPage + 1}/${pagesLength}`;
 
 export class DiscordMessage implements Message {
   constructor(private raw: RawMessage) {}
@@ -52,46 +38,31 @@ export class DiscordMessage implements Message {
     await this.raw.channel.send({ embeds: [messageEmbed] });
   }
 
-  async sendPages(pages: EmbedPage[]): Promise<void> {
-    if (pages.length === 0) {
-      throw new Error("pages must not be empty array");
-    }
-
-    const generatePage = (index: number) =>
-      intoMessageEmbed(pages[index]).setFooter({
-        text: pagesFooter(index, pages.length),
-      });
-
-    const paginated = await this.raw.reply({
-      embeds: [generatePage(0)],
-      components: [CONTROLS],
-    });
-
-    const collector = paginated.createMessageComponentCollector({
-      time: ONE_MINUTE_MS,
-    });
-    let currentPage = 0;
-    collector.on("collect", async (interaction) => {
-      switch (interaction.customId) {
-        case "prev":
-          if (currentPage > 0) {
-            currentPage -= 1;
-          } else {
-            currentPage = pages.length - 1;
+  sendPages(pages: EmbedPage[]) {
+    let paginated: RawMessage | null = null;
+    let collector: InteractionCollector<MessageComponentInteraction> | null =
+      null;
+    return sendPages({
+      send: async (message) => {
+        paginated = await this.raw.reply(message);
+        collector = paginated.createMessageComponentCollector({
+          time: ONE_MINUTE_MS,
+        });
+      },
+      edit: async (message) => {
+        await paginated?.edit(message);
+      },
+      onClick: (handler) => {
+        collector?.on("collect", ({ customId }) => {
+          if (isButtonId(customId)) {
+            handler(customId);
           }
-          break;
-        case "next":
-          if (currentPage < pages.length - 1) {
-            currentPage += 1;
-          } else {
-            currentPage = 0;
-          }
-          break;
-        default:
-          return;
-      }
-      await interaction.update({ embeds: [generatePage(currentPage)] });
-    });
+        });
+      },
+      onFinish: (handler) => {
+        collector?.on("end", handler);
+      },
+    })(pages);
   }
 
   panic(reason: unknown): never {
