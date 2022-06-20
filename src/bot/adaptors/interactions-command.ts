@@ -177,9 +177,6 @@ const adaptor = (interaction: CommandInteraction): PagesSender => {
     send(message) {
       return interaction.reply(message);
     },
-    async edit(message) {
-      await interaction.editReply(message);
-    },
     onClick(handler) {
       if (!interaction.channel) {
         throw new Error("pages unavailable on the channel");
@@ -189,14 +186,20 @@ const adaptor = (interaction: CommandInteraction): PagesSender => {
           buttonInteraction.user.id === interaction.user.id,
         time: ONE_MINUTE_MS,
       });
-      collector.on("collect", ({ customId }) => {
-        if (isButtonId(customId)) {
-          handler(customId);
+      collector.on("collect", (buttonInteraction) => {
+        if (isButtonId(buttonInteraction.customId)) {
+          handler(buttonInteraction.customId, async (content) => {
+            await buttonInteraction.editReply(content);
+          });
         }
       });
     },
     onFinish(handler) {
-      collector?.on("end", handler);
+      collector?.on("end", () =>
+        handler(async (content) => {
+          await interaction.editReply(content);
+        }),
+      );
     },
   };
 };

@@ -49,18 +49,21 @@ export class DiscordMessage implements Message {
           time: ONE_MINUTE_MS,
         });
       },
-      edit: async (message) => {
-        await paginated?.edit(message);
-      },
       onClick: (handler) => {
-        collector?.on("collect", ({ customId }) => {
-          if (isButtonId(customId)) {
-            handler(customId);
+        collector?.on("collect", (interaction) => {
+          if (isButtonId(interaction.customId)) {
+            handler(interaction.customId, async (content) => {
+              await interaction.update(content);
+            });
           }
         });
       },
       onFinish: (handler) => {
-        collector?.on("end", handler);
+        collector?.on("end", () => {
+          handler(async (content) => {
+            await paginated?.edit(content);
+          });
+        });
       },
     })(pages);
   }

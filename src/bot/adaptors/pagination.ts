@@ -42,11 +42,10 @@ const pagesFooter = (currentPage: number, pagesLength: number) =>
 const controlsHandler = (
   pagesLength: number,
   generatePage: (index: number) => MessageEmbed,
-  edit: (message: { embeds: MessageEmbed[] }) => Promise<void>,
 ) => {
   let currentPage = 0;
 
-  return async (buttonId: ButtonId) => {
+  return async (buttonId: ButtonId, edit: PageEditor) => {
     switch (buttonId) {
       case "prev":
         if (currentPage > 0) {
@@ -69,21 +68,24 @@ const controlsHandler = (
   };
 };
 
+export interface PageEditor {
+  (message: {
+    embeds?: MessageEmbed[];
+    components?: MessageActionRow[];
+  }): Promise<void>;
+}
+
 export interface PagesSender {
   send(message: {
     embeds: MessageEmbed[];
     components: MessageActionRow[];
   }): Promise<void>;
-  edit(message: {
-    embeds?: MessageEmbed[];
-    components?: MessageActionRow[];
-  }): Promise<void>;
-  onClick(handler: (buttonId: ButtonId) => void): void;
-  onFinish(handler: () => void): void;
+  onClick(handler: (buttonId: ButtonId, edit: PageEditor) => void): void;
+  onFinish(handler: (edit: PageEditor) => void): void;
 }
 
 export const sendPages =
-  ({ send, edit, onClick, onFinish }: PagesSender) =>
+  ({ send, onClick, onFinish }: PagesSender) =>
   async (pages: EmbedPage[]) => {
     if (pages.length === 0) {
       throw new Error("pages must not be empty array");
@@ -99,8 +101,8 @@ export const sendPages =
       components: [CONTROLS],
     });
 
-    onClick(controlsHandler(pages.length, generatePage, edit));
-    onFinish(() => {
+    onClick(controlsHandler(pages.length, generatePage));
+    onFinish((edit) => {
       edit({
         components: [DISABLED_CONTROLS],
       });
