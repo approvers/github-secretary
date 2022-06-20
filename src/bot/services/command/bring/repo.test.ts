@@ -1,4 +1,4 @@
-import { expect, expect, it } from "vitest";
+import { expect, it } from "vitest";
 import type { EmbedMessage } from "src/bot/model/message.js";
 import { MockMessage } from "../../../adaptors/mock/message.js";
 import { analectaForTest } from "../../../adaptors/mock/test-analecta.js";

@@ -35,10 +35,16 @@ const query = {
   fetchPullRequests: () =>
     Promise.resolve([
       {
-        // eslint-disable-next-line camelcase
-        html_url: "https://github.com/test-peoject/issues/1",
+        state: "open",
         title: "I have an issue",
         number: 1,
+        // eslint-disable-next-line camelcase
+        html_url: "https://github.com/test-peoject/issues/1",
+        user: {
+          // eslint-disable-next-line camelcase
+          avatar_url: "https://github.com/bob.png",
+          login: "Bob",
+        },
       },
     ]),
 };
