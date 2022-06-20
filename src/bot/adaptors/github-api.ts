@@ -1,9 +1,6 @@
 import type {
   Branch,
   Issue,
-  PartialBranch,
-  PartialIssue,
-  PartialPullRequest,
   PullRequest,
   Repository,
 } from "../services/command/bring.js";
@@ -28,13 +25,13 @@ export class GitHubApi implements AllApi, NotificationRepository {
     return infoRes as Repository;
   }
 
-  async fetchIssues(owner: string, repoName: string): Promise<PartialIssue[]> {
+  async fetchIssues(owner: string, repoName: string): Promise<Issue[]> {
     const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/issues`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
       throw new Error("not found the repository");
     }
-    return res as PartialIssue[];
+    return res as Issue[];
   }
 
   async fetchAnIssue(
@@ -53,13 +50,13 @@ export class GitHubApi implements AllApi, NotificationRepository {
   async fetchPullRequests(
     owner: string,
     repoName: string,
-  ): Promise<PartialPullRequest[]> {
+  ): Promise<PullRequest[]> {
     const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/pulls`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
       throw new Error("not found the repository");
     }
-    return res as PartialPullRequest[];
+    return res as PullRequest[];
   }
 
   async fetchAPullRequest(
@@ -75,16 +72,13 @@ export class GitHubApi implements AllApi, NotificationRepository {
     return res as PullRequest;
   }
 
-  async fetchBranches(
-    owner: string,
-    repoName: string,
-  ): Promise<PartialBranch[]> {
+  async fetchBranches(owner: string, repoName: string): Promise<Branch[]> {
     const apiUrl = `${apiRoot}/repos/${owner}/${repoName}/branches`;
     const res: unknown = await (await fetch(apiUrl)).json();
     if (checkNotFound(res)) {
       throw new Error("not found the branches");
     }
-    return res as PartialBranch[];
+    return res as Branch[];
   }
 
   async fetchABranch(
