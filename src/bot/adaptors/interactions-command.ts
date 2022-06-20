@@ -3,7 +3,13 @@ import {
   ApplicationCommandOption,
   commandOptionTypeMap,
 } from "./discord-command.js";
-import { Client, CommandInteraction } from "discord.js";
+import {
+  Client,
+  CommandInteraction,
+  InteractionCollector,
+  MessageComponentInteraction,
+} from "discord.js";
+import { PagesSender, isButtonId, sendPages } from "./pagination.js";
 import type { DiscordId } from "../model/discord-id.js";
 import type { Message } from "../model/message.js";
 import { intoMessageEmbed } from "./message-convert.js";
@@ -65,6 +71,7 @@ const commands: ApplicationCommand[] = [
 ];
 
 const GUILD_ID = "683939861539192860";
+const ONE_MINUTE_MS = 60_000;
 
 export type Handler = (message: Message) => Promise<void>;
 
@@ -127,6 +134,7 @@ export class InteractionsCommandReceiver {
         interaction.reply({ embeds: [intoMessageEmbed(embed)] });
         return Promise.resolve();
       },
+      sendPages: sendPages(adaptor(interaction)),
       panic: (reason) => {
         console.error(reason);
         throw new Error();
@@ -161,3 +169,37 @@ export class InteractionsCommandReceiver {
     return commandStr;
   }
 }
+
+const adaptor = (interaction: CommandInteraction): PagesSender => {
+  let collector: InteractionCollector<MessageComponentInteraction> | null =
+    null;
+  return {
+    send(message) {
+      return interaction.reply(message);
+    },
+    onClick(handler) {
+      if (!interaction.channel) {
+        throw new Error("pages unavailable on the channel");
+      }
+      collector = interaction.channel.createMessageComponentCollector({
+        filter: (buttonInteraction) =>
+          buttonInteraction.user.id === interaction.user.id,
+        time: ONE_MINUTE_MS,
+      });
+      collector.on("collect", (buttonInteraction) => {
+        if (isButtonId(buttonInteraction.customId)) {
+          handler(buttonInteraction.customId, async (content) => {
+            await buttonInteraction.editReply(content);
+          });
+        }
+      });
+    },
+    onFinish(handler) {
+      collector?.on("end", () =>
+        handler(async (content) => {
+          await interaction.editReply(content);
+        }),
+      );
+    },
+  };
+};

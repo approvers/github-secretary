@@ -2,7 +2,7 @@ import {
   CommandProcessor,
   connectProcessors,
 } from "../../../runners/connector.js";
-import type { EmbedMessageField, Message } from "../../../model/message.js";
+import type { EmbedPage, Message } from "../../../model/message.js";
 import type { Analecta } from "../../../model/analecta.js";
 import type { PullApi } from "../api.js";
 import { colorFromState } from "../../../model/state-color.js";
@@ -70,32 +70,15 @@ const externalPRList =
       return false;
     }
     try {
-      const {
-        name: repoName,
-        html_url: linkUrl,
-        owner: { avatar_url: iconUrl, html_url: ownerUrl, login },
-      } = await query.fetchRepo(owner, repo);
-
-      const fields: EmbedMessageField[] = (
+      const pages: EmbedPage[] = (
         await query.fetchPullRequests(owner, repo)
-      ).map(linkField);
-      if (fields.length === 0) {
+      ).map(makeEmbed);
+      if (pages.length === 0) {
         await msg.reply(analecta.NothingToBring);
         return true;
       }
 
-      await msg.sendEmbed({
-        author: {
-          name: login,
-          iconUrl,
-          url: ownerUrl,
-        },
-        color: colorFromState("open"),
-        fields,
-        footer: analecta.EnumPR,
-        title: repoName,
-        url: linkUrl,
-      });
+      await msg.sendPages(pages);
     } catch (_e) {
       return false;
     }
@@ -115,26 +98,10 @@ const externalPR =
     }
 
     try {
-      const {
-        state,
-        title,
-        body,
-        html_url: linkUrl,
-        user: { avatar_url: iconUrl, login },
-      } = await query.fetchAPullRequest(owner, repo, dst);
-
-      const color = colorFromState(state);
-      const description = body ? omitBody(body) : "";
+      const pr = await query.fetchAPullRequest(owner, repo, dst);
       await msg.sendEmbed({
-        author: {
-          name: login,
-          iconUrl,
-        },
-        color,
-        description,
+        ...makeEmbed(pr),
         footer: analecta.BringPR,
-        title,
-        url: linkUrl,
       });
     } catch (_e) {
       return false;
@@ -145,11 +112,19 @@ const externalPR =
 
 const internalPR = externalPR("approvers");
 
-const linkField = ({
-  html_url: htmlUrl,
+const makeEmbed = ({
+  state,
   title,
-  number,
-}: PartialPullRequest): { name: string; value: string } => ({
-  name: `#${number}`,
-  value: `[${title}](${htmlUrl})`,
+  body,
+  html_url: linkUrl,
+  user: { avatar_url: iconUrl, login },
+}: PullRequest) => ({
+  author: {
+    name: login,
+    iconUrl,
+  },
+  color: colorFromState(state),
+  description: body ? omitBody(body) : "",
+  title,
+  url: linkUrl,
 });

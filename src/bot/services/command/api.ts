@@ -1,12 +1,4 @@
-import type {
-  Branch,
-  Issue,
-  PartialBranch,
-  PartialIssue,
-  PartialPullRequest,
-  PullRequest,
-  Repository,
-} from "./bring.js";
+import type { Branch, Issue, PullRequest, Repository } from "./bring.js";
 import type { GitHubUser } from "../../model/github-user.js";
 import type { NotificationId } from "../../model/github-notification.js";
 
@@ -15,7 +7,7 @@ export interface Api {
 }
 
 export interface IssueApi extends Api {
-  fetchIssues: (owner: string, repoName: string) => Promise<PartialIssue[]>;
+  fetchIssues: (owner: string, repoName: string) => Promise<Issue[]>;
   fetchAnIssue: (
     owner: string,
     repoName: string,
@@ -27,7 +19,7 @@ export interface PullApi extends Api {
   fetchPullRequests: (
     owner: string,
     repoName: string,
-  ) => Promise<PartialPullRequest[]>;
+  ) => Promise<PullRequest[]>;
   fetchAPullRequest: (
     owner: string,
     repoName: string,
@@ -36,7 +28,7 @@ export interface PullApi extends Api {
 }
 
 export interface BranchApi extends Api {
-  fetchBranches: (owner: string, repoName: string) => Promise<PartialBranch[]>;
+  fetchBranches: (owner: string, repoName: string) => Promise<Branch[]>;
   fetchABranch: (
     owner: string,
     repoName: string,

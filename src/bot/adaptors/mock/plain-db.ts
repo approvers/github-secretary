@@ -4,18 +4,18 @@ import {
   deserialize,
   serialize,
 } from "../../model/github-user.js";
-import type {
-  SubscriptionDatabase,
-  UpdateHandler,
-  UserDatabase,
-} from "../../services/notify/user-database.js";
 import type { DiscordId } from "../../model/discord-id.js";
 import MutexPromise from "mutex-promise";
 import type { NotificationId } from "../../model/github-notification.js";
+import { SubscriberRegistry } from "src/bot/services/notify/user-database.js";
 import path from "node:path";
 import { promises } from "node:fs";
 
-export class PlainDB implements SubscriptionDatabase, UserDatabase {
+export interface UpdateHandler {
+  handleUpdate(id: DiscordId, user: GitHubUser): void;
+}
+
+export class PlainDB implements SubscriberRegistry {
   private users: GitHubUsers = new Map<DiscordId, GitHubUser>();
 
   private mutex: MutexPromise;

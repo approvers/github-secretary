@@ -8,8 +8,6 @@ import type { BranchApi } from "src/bot/services/command/api.js";
 import { colorFromState } from "../../../model/state-color.js";
 import { replyFailure } from "../../../services/reply-failure.js";
 
-export type PartialBranch = Pick<Branch, "name">;
-
 export interface Branch {
   name: string;
   commit: {
@@ -137,10 +135,7 @@ const internalBranch = externalBranch("approvers");
 
 const linkField =
   (login: string, repo: string) =>
-  (
-    { name }: PartialBranch,
-    index: number,
-  ): { name: string; value: string } => ({
+  ({ name }: Branch, index: number): { name: string; value: string } => ({
     name: (index + 1).toString().padStart(2, "0"),
     value: linkMarkdown(name, login, repo),
   });

@@ -35,6 +35,14 @@ const query = {
     Promise.resolve([
       {
         name: "hotfix",
+        _links: { html: "https://github.com/andy/test-project/tree/hotfix" },
+        commit: {
+          author: {
+            // eslint-disable-next-line camelcase
+            avatar_url: "https://github.com/bob.png",
+            login: "Bob",
+          },
+        },
       },
     ]),
 };
