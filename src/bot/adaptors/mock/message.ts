@@ -1,4 +1,4 @@
-import type { EmbedMessage, Message } from "../../model/message.js";
+import type { EmbedMessage, EmbedPage, Message } from "../../model/message.js";
 import type { DiscordId } from "../../model/discord-id.js";
 import { EventEmitter } from "node:events";
 
@@ -33,6 +33,11 @@ export class MockMessage implements Message {
 
   sendEmbed(embed: EmbedMessage): Promise<void> {
     this.emitter.emit("sendEmbed", embed);
+    return Promise.resolve();
+  }
+
+  sendPages(pages: EmbedPage[]): Promise<void> {
+    this.emitter.emit("sendPages", pages);
     return Promise.resolve();
   }
 

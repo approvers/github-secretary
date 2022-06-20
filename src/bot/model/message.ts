@@ -20,6 +20,8 @@ export interface EmbedMessage {
   url?: string;
 }
 
+export type EmbedPage = Omit<EmbedMessage, "footer">;
+
 export interface Message {
   getAuthorId(): DiscordId;
   matchPlainText(regex: RegExp): Promise<RegExpMatchArray | null>;
@@ -27,5 +29,6 @@ export interface Message {
   withTyping(callee: () => Promise<boolean>): Promise<boolean>;
   reply(message: string): Promise<void>;
   sendEmbed(embed: EmbedMessage): Promise<void>;
+  sendPages(pages: EmbedPage[]): Promise<void>;
   panic(reason: unknown): never;
 }
