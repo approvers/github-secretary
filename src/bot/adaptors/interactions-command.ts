@@ -3,9 +3,16 @@ import {
   ApplicationCommandOption,
   commandOptionTypeMap,
 } from "./discord-command.js";
-import { Client, CommandInteraction } from "discord.js";
+import {
+  Client,
+  CommandInteraction,
+  MessageActionRow,
+  MessageButton,
+  MessageComponentInteraction,
+  MessageEmbed,
+} from "discord.js";
+import type { EmbedPage, Message } from "../model/message.js";
 import type { DiscordId } from "../model/discord-id.js";
-import type { Message } from "../model/message.js";
 import { intoMessageEmbed } from "./message-convert.js";
 
 const ownerOption: ApplicationCommandOption = {
@@ -65,6 +72,36 @@ const commands: ApplicationCommand[] = [
 ];
 
 const GUILD_ID = "683939861539192860";
+const ONE_MINUTE_MS = 60_000;
+const CONTROLS = new MessageActionRow().addComponents(
+  new MessageButton()
+    .setStyle("SECONDARY")
+    .setCustomId("prev")
+    .setLabel("戻る")
+    .setEmoji("⏪"),
+  new MessageButton()
+    .setStyle("SECONDARY")
+    .setCustomId("next")
+    .setLabel("進む")
+    .setEmoji("⏩"),
+);
+const DISABLED_CONTROLS = new MessageActionRow().addComponents(
+  new MessageButton()
+    .setStyle("SECONDARY")
+    .setCustomId("prev")
+    .setLabel("戻る")
+    .setEmoji("⏪")
+    .setDisabled(true),
+  new MessageButton()
+    .setStyle("SECONDARY")
+    .setCustomId("next")
+    .setLabel("進む")
+    .setEmoji("⏩")
+    .setDisabled(true),
+);
+
+const pagesFooter = (currentPage: number, pagesLength: number) =>
+  `ページ ${currentPage + 1}/${pagesLength}`;
 
 export type Handler = (message: Message) => Promise<void>;
 
@@ -127,6 +164,7 @@ export class InteractionsCommandReceiver {
         interaction.reply({ embeds: [intoMessageEmbed(embed)] });
         return Promise.resolve();
       },
+      sendPages: sendPages(interaction),
       panic: (reason) => {
         console.error(reason);
         throw new Error();
@@ -161,3 +199,64 @@ export class InteractionsCommandReceiver {
     return commandStr;
   }
 }
+
+const sendPages =
+  (interaction: CommandInteraction) => async (pages: EmbedPage[]) => {
+    if (pages.length === 0) {
+      throw new Error("pages must not be empty array");
+    }
+
+    const generatePage = (index: number) =>
+      intoMessageEmbed(pages[index]).setFooter({
+        text: pagesFooter(index, pages.length),
+      });
+
+    await interaction.reply({
+      embeds: [generatePage(0)],
+      components: [CONTROLS],
+    });
+
+    if (!interaction.channel) {
+      throw new Error("pages unavailable on the channel");
+    }
+
+    const collector = interaction.channel.createMessageComponentCollector({
+      filter: (buttonInteraction) =>
+        buttonInteraction.user.id === interaction.user.id,
+      time: ONE_MINUTE_MS,
+    });
+    collector.on("collect", controlsHandler(pages.length, generatePage));
+    collector.on("end", () => {
+      interaction.editReply({
+        components: [DISABLED_CONTROLS],
+      });
+    });
+  };
+
+const controlsHandler = (
+  pagesLength: number,
+  generatePage: (index: number) => MessageEmbed,
+) => {
+  let currentPage = 0;
+  return async (interaction: MessageComponentInteraction) => {
+    switch (interaction.customId) {
+      case "prev":
+        if (currentPage > 0) {
+          currentPage -= 1;
+        } else {
+          currentPage = pagesLength - 1;
+        }
+        break;
+      case "next":
+        if (currentPage < pagesLength - 1) {
+          currentPage += 1;
+        } else {
+          currentPage = 0;
+        }
+        break;
+      default:
+        return;
+    }
+    await interaction.editReply({ embeds: [generatePage(currentPage)] });
+  };
+};
