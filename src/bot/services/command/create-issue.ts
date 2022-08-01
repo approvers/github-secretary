@@ -22,7 +22,6 @@ export const createIssue =
   (api: Api, analecta: Analecta) =>
   async (msg: Message): Promise<boolean> => {
     const matches = await msg.matchCommand(ghPattern);
-    console.log(matches);
     if (matches === null) {
       return false;
     }
