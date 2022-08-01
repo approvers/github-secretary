@@ -7,7 +7,7 @@ import type { Api } from "./api.js";
 import type { Message } from "../command.js";
 import { replyFailure } from "../reply-failure.js";
 
-const ghPattern = /^\/ghni\s+(?<first>[^/]+)(?:\/(?<second>[^/]+))\s*$/u;
+const ghPattern = /^\/ghni\s+(?<first>[^/]+)(?:\/(?<second>[^/]+))?\s*$/u;
 
 const genSubCommands = (
   { groups }: RegExpMatchArray,
@@ -22,6 +22,7 @@ export const createIssue =
   (api: Api, analecta: Analecta) =>
   async (msg: Message): Promise<boolean> => {
     const matches = await msg.matchCommand(ghPattern);
+    console.log(matches);
     if (matches === null) {
       return false;
     }
