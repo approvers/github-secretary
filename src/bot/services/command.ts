@@ -1,4 +1,5 @@
 export * from "./command/api.js";
+export * from "./command/create-issue.js";
 export * from "./command/bring.js";
 export * from "./command/error.js";
 export * from "./command/flavor.js";

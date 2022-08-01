@@ -6,6 +6,7 @@ import {
   bringIssue,
   bringPR,
   bringRepo,
+  createIssue,
   error,
   flavor,
 } from "../services/command.js";
@@ -23,7 +24,6 @@ import dotenv from "dotenv";
 import { markAsRead } from "../services/notify/mark-as-read.js";
 import { subscribeNotification } from "../services/notify/subscribe.js";
 import { unsubNotification } from "../services/notify/unsubscribe.js";
-import { createIssue } from "../services/command/create-issue.js";
 
 dotenv.config();
 
