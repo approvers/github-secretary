@@ -41,7 +41,7 @@ const externalIssue =
     try {
       await api.fetchRepo(owner, repo);
       await msg.sendEmbed({
-        title: "https://github.com/${owner}/${repo}/issues/new",
+        title: `https://github.com/${owner}/${repo}/issues/new`,
         url: `https://github.com/${owner}/${repo}/issues/new`,
         footer: analecta.CreatingIssue,
       });
