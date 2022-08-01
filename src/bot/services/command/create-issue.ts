@@ -7,7 +7,7 @@ import type { Api } from "./api.js";
 import type { Message } from "../command.js";
 import { replyFailure } from "../reply-failure.js";
 
-const ghPattern = /^\/ghni\s+(?<first>[^/]+)(?:\/(?<second>[^/]+)\s*$/u;
+const ghPattern = /^\/ghni\s+(?<first>[^/]+)(?:\/(?<second>[^/]+))\s*$/u;
 
 const genSubCommands = (
   { groups }: RegExpMatchArray,
