@@ -6,6 +6,7 @@ import {
   bringIssue,
   bringPR,
   bringRepo,
+  createIssue,
   error,
   flavor,
 } from "../services/command.js";
@@ -69,6 +70,7 @@ const messageHandler =
     bringPR(query, analecta),
     bringBranch(query, analecta),
     bringRepo(query, analecta),
+    createIssue(query, analecta),
     subscribeNotification({
       db,
       registry: db,

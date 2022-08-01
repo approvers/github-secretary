@@ -11,6 +11,7 @@ const AnalectaKeyArray = [
   "EnumIssue",
   "EnumPR",
   "EnumBranch",
+  "CreatingIssue",
   "InvalidToken",
   "CallPattern",
   "BlackPattern",
