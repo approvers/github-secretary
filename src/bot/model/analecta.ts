@@ -19,7 +19,7 @@ const AnalectaKeyArray = [
   "ErrorMessage",
 ] as const;
 
-export type AnalectaKey = typeof AnalectaKeyArray[number];
+export type AnalectaKey = (typeof AnalectaKeyArray)[number];
 
 export interface Analecta extends Record<AnalectaKey, string> {
   Failure: string[];

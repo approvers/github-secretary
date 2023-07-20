@@ -22,7 +22,10 @@ export class PlainDB implements SubscriberRegistry {
 
   private handlers: UpdateHandler[] = [];
 
-  private constructor(fileName: string, private handle: promises.FileHandle) {
+  private constructor(
+    fileName: string,
+    private handle: promises.FileHandle,
+  ) {
     this.mutex = new MutexPromise(`plain-db-${fileName}`);
   }
 
