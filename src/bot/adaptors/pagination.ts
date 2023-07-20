@@ -31,7 +31,7 @@ const DISABLED_CONTROLS = new MessageActionRow().addComponents(
 
 const BUTTON_IDS = ["next", "prev"] as const;
 
-export type ButtonId = typeof BUTTON_IDS[number];
+export type ButtonId = (typeof BUTTON_IDS)[number];
 
 export const isButtonId = (str: string): str is ButtonId =>
   (BUTTON_IDS as readonly string[]).includes(str);
