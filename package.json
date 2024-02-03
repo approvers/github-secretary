@@ -37,7 +37,7 @@
     "@types/react": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
-    "esbuild": "~0.19.0",
+    "esbuild": "~0.20.0",
     "eslint": "^8.45.0",
     "eslint-config-next": "^14.0.0",
     "eslint-config-prettier": "^9.0.0",
