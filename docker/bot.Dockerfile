@@ -1,24 +1,24 @@
-FROM node:16-alpine as BUILD
+FROM oven/bun:1-slim as BUILD
 
 WORKDIR /work
 
-COPY package.json .
-RUN npm install --no-save
+COPY package.json bun.lockb ./
+RUN bun install --save-lockfile
 
 COPY tsconfig.json .
 COPY src/ ./src
-RUN npm run build:bot
+RUN bun run build:bot
 
 # ---
 
-FROM node:16-alpine
+FROM oven/bun:1-alpine
 
 RUN addgroup -g 1993 -S bot \
   && adduser -u 1993 -S bot -G bot
 
 WORKDIR /app
 
-COPY package.json .
+COPY package.json bun.lockb ./
 COPY --from=BUILD work/node_modules/ ./node_modules/
 COPY --from=BUILD work/dist/bundle.js ./dist/bundle.js
 COPY analecta/ ./analecta/
@@ -27,4 +27,4 @@ VOLUME [ "/app/.cache" ]
 
 USER bot
 
-ENTRYPOINT [ "npm", "run", "start:bot" ]
+ENTRYPOINT [ "bun", "run", "start:bot" ]

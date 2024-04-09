@@ -16,7 +16,7 @@
     "start:web": "next start ./src/web",
     "test": "vitest run",
     "lint": "eslint --ext .ts,.tsx --ignore-path .gitignore --ignore-path .eslintignore ./src/",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "eslint --fix --ext .ts,.tsx --ignore-path .gitignore --ignore-path .eslintignore ./src/"
   },
   "dependencies": {
     "@babel/core": "^7.22.9",
