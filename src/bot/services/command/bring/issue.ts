@@ -14,16 +14,13 @@ export interface Issue {
   title: string;
   number: number;
   body?: string;
-  // eslint-disable-next-line camelcase
   html_url: string;
   user: {
-    // eslint-disable-next-line camelcase
     avatar_url: string;
     login: string;
   };
 }
 
-// eslint-disable-next-line max-len
 const ghPattern =
   /^\/ghi\s+(?<first>[^/]+)(?:\/(?<second>[^/]+)(?:\/(?<third>[^/]+))?)?\s*$/u;
 

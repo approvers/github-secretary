@@ -19,7 +19,6 @@ export const markAsRead =
     if (matches === null) {
       return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const notificationId = matches.groups!.notification as NotificationId;
 
     return msg
