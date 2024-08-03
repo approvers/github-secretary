@@ -45,7 +45,7 @@ const externalIssue =
         url: `https://github.com/${owner}/${repo}/issues/new`,
         footer: analecta.CreatingIssue,
       });
-    } catch (_ignore) {
+    } catch {
       return false;
     }
     return true;

@@ -43,7 +43,7 @@ export class PlainDB implements SubscriberRegistry {
     try {
       const buf = await handle.readFile();
       obj.users = deserialize(buf.toString());
-    } catch (ignore) {
+    } catch {
       obj.users = new Map<DiscordId, GitHubUser>();
     }
     return obj;

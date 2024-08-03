@@ -76,7 +76,7 @@ const externalPRList =
       }
 
       await msg.sendPages(pages);
-    } catch (_e) {
+    } catch {
       return false;
     }
 
@@ -100,7 +100,7 @@ const externalPR =
         ...makeEmbed(pr),
         footer: analecta.BringPR,
       });
-    } catch (_e) {
+    } catch {
       return false;
     }
 

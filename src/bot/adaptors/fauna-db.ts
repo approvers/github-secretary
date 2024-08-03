@@ -31,15 +31,15 @@ export class FaunaDB implements SubscriberRepository {
       await this.client.query(
         q.Create(q.Ref(q.Collection("users"), id), { data: { ...user } }),
       );
-    } catch (ignore) {
-      // Ignore
+    } catch (error) {
+      console.error(error);
     }
   }
 
   async unregister(id: DiscordId): Promise<boolean> {
     try {
       await this.client.query(q.Delete(q.Ref(q.Collection("users"), id)));
-    } catch (_err) {
+    } catch {
       return false;
     }
     return true;
@@ -51,7 +51,7 @@ export class FaunaDB implements SubscriberRepository {
         q.Get(q.Ref(q.Collection("users"), discordId)),
       )) as { data: GitHubUser };
       return data;
-    } catch (err) {
+    } catch {
       return null;
     }
   }
