@@ -69,7 +69,7 @@ const externalRepo =
         title: name,
         footer: analecta.BringRepo,
       });
-    } catch (_e) {
+    } catch {
       return false;
     }
 

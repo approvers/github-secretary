@@ -86,7 +86,7 @@ const externalBranchList =
         title: repoName,
         url: linkUrl,
       });
-    } catch (_e) {
+    } catch {
       return false;
     }
 
@@ -123,7 +123,7 @@ const externalBranch =
         title: name,
         url: html,
       });
-    } catch (_e) {
+    } catch {
       return false;
     }
 

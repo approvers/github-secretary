@@ -71,7 +71,7 @@ const externalIssueList =
       }
 
       await msg.sendPages(pages);
-    } catch (_e) {
+    } catch {
       return false;
     }
     return true;
@@ -94,7 +94,7 @@ const externalIssue =
         ...makeEmbed(issue),
         footer: analecta.BringIssue,
       });
-    } catch (_e) {
+    } catch {
       return false;
     }
 
