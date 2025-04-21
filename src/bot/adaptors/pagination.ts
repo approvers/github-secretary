@@ -1,28 +1,33 @@
-import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+} from "discord.js";
 import type { EmbedPage } from "../model/message.js";
 import { intoMessageEmbed } from "./message-convert.js";
 
-const CONTROLS = new MessageActionRow().addComponents(
-  new MessageButton()
-    .setStyle("SECONDARY")
+const CONTROLS = new ActionRowBuilder().addComponents(
+  new ButtonBuilder()
+    .setStyle(ButtonStyle.Secondary)
     .setCustomId("prev")
     .setLabel("戻る")
     .setEmoji("⏪"),
-  new MessageButton()
-    .setStyle("SECONDARY")
+  new ButtonBuilder()
+    .setStyle(ButtonStyle.Secondary)
     .setCustomId("next")
     .setLabel("進む")
     .setEmoji("⏩"),
 );
-const DISABLED_CONTROLS = new MessageActionRow().addComponents(
-  new MessageButton()
-    .setStyle("SECONDARY")
+const DISABLED_CONTROLS = new ActionRowBuilder().addComponents(
+  new ButtonBuilder()
+    .setStyle(ButtonStyle.Secondary)
     .setCustomId("prev")
     .setLabel("戻る")
     .setEmoji("⏪")
     .setDisabled(true),
-  new MessageButton()
-    .setStyle("SECONDARY")
+  new ButtonBuilder()
+    .setStyle(ButtonStyle.Secondary)
     .setCustomId("next")
     .setLabel("進む")
     .setEmoji("⏩")
@@ -41,7 +46,7 @@ const pagesFooter = (currentPage: number, pagesLength: number) =>
 
 const controlsHandler = (
   pagesLength: number,
-  generatePage: (index: number) => MessageEmbed,
+  generatePage: (index: number) => EmbedBuilder,
 ) => {
   let currentPage = 0;
 
@@ -70,15 +75,15 @@ const controlsHandler = (
 
 export interface PageEditor {
   (message: {
-    embeds?: MessageEmbed[];
-    components?: MessageActionRow[];
+    embeds?: EmbedBuilder[];
+    components?: ActionRowBuilder[];
   }): Promise<void>;
 }
 
 export interface PagesSender {
   send(message: {
-    embeds: MessageEmbed[];
-    components: MessageActionRow[];
+    embeds: EmbedBuilder[];
+    components: ActionRowBuilder[];
   }): Promise<void>;
   onClick(handler: (buttonId: ButtonId, edit: PageEditor) => void): void;
   onFinish(handler: (edit: PageEditor) => void): void;
