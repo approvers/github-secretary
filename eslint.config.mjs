@@ -1,11 +1,11 @@
 // @ts-check
 
 import eslint from "@eslint/js";
-import tsEslint from "typescript-eslint";
 import globals from "globals";
-import react from "eslint-plugin-react";
-import prettier from "eslint-plugin-prettier/recommended";
 import jsdoc from "eslint-plugin-jsdoc";
+import prettier from "eslint-plugin-prettier/recommended";
+import react from "eslint-plugin-react";
+import tsEslint from "typescript-eslint";
 
 export default tsEslint.config(
   eslint.configs.recommended,
