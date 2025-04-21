@@ -1,5 +1,5 @@
+import { EmbedBuilder } from "discord.js";
 import type { EmbedMessage } from "../model/message.js";
-import { MessageEmbed } from "discord.js";
 
 export const intoMessageEmbed = ({
   author,
@@ -9,8 +9,8 @@ export const intoMessageEmbed = ({
   footer,
   title,
   url,
-}: EmbedMessage): MessageEmbed => {
-  const embed = new MessageEmbed();
+}: EmbedMessage): EmbedBuilder => {
+  const embed = new EmbedBuilder();
   if (author) {
     embed.setAuthor({
       name: author.name,

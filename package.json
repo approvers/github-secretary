@@ -8,15 +8,15 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "dev:bot": "ts-node --esm src/bot/apps/release.ts",
+    "dev:bot": "bun --inspect src/bot/apps/release.ts",
     "build:bot": "esbuild --outfile=dist/bundle.js --format=esm --sourcemap --bundle src/bot/apps/release.ts --platform=node --target=node16 --external:./node_modules/*",
     "start:bot": "node dist/bundle.js",
     "dev:web": "next ./src/web",
     "build:web": "next build ./src/web",
     "start:web": "next start ./src/web",
     "test": "vitest run",
-    "lint": "eslint './src/**/*.{ts,tsx}'",
-    "lint:fix": "eslint --fix --ext .ts,.tsx --ignore-path .gitignore --ignore-path .eslintignore ./src/"
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "dependencies": {
     "@babel/core": "^7.22.9",
@@ -45,7 +45,6 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.33.0",
     "prettier": "^3.0.0",
-    "ts-node": "^10.9.1",
     "typescript": "^5.1.6",
     "typescript-eslint": "^8.0.0",
     "vitest": "^3.0.0"

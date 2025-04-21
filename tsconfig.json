@@ -16,21 +16,10 @@
     "noEmit": false,
     "baseUrl": ".",
     "paths": {
-      "mutex-promise": [
-        "types/mutex-promise"
-      ]
+      "mutex-promise": ["types/mutex-promise"]
     },
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/typings"
-    ]
+    "typeRoots": ["./node_modules/@types", "./src/typings"]
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
+  "exclude": ["node_modules"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
