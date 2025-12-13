@@ -31,6 +31,7 @@
     "toml": "^3.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@next/eslint-plugin-next": "^16.0.0",
     "@types/node": "^24.0.0",
     "@types/node-fetch": "^2.6.4",
@@ -44,6 +45,7 @@
     "eslint-plugin-jsdoc": "^61.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.33.0",
+    "globals": "^16.5.0",
     "prettier": "^3.0.0",
     "typescript": "^5.1.6",
     "typescript-eslint": "^8.0.0",
