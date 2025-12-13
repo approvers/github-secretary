@@ -8,7 +8,6 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "dev:bot": "bun --inspect src/bot/apps/release.ts",
     "build:bot": "esbuild --outfile=dist/bundle.js --format=esm --sourcemap --bundle src/bot/apps/release.ts --platform=node --target=node16 --external:./node_modules/*",
     "start:bot": "node dist/bundle.js",
     "dev:web": "next ./src/web",
