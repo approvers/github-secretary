@@ -1,0 +1,5 @@
+onlyBuiltDependencies:
+  - esbuild
+  - faunadb
+  - sharp
+  - unrs-resolver
