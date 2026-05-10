@@ -1,3 +1,8 @@
+allowBuilds:
+  esbuild: true
+  faunadb: true
+  sharp: true
+  unrs-resolver: true
 onlyBuiltDependencies:
   - esbuild
   - faunadb
