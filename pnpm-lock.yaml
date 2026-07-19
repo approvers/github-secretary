@@ -37,7 +37,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       toml:
         specifier: ^4.0.0
-        version: 4.1.2
+        version: 4.3.0
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.0
@@ -2686,8 +2686,8 @@ packages:
     resolution: {integrity: sha512-41wJyvKep3yT2tyPqX/4blcfybknGB4D+oETKLs7Q76UiPqRpUJK3hr1nxelyYO0PHKVzJwlu0aCeEAsGI6rpw==}
     engines: {node: '>=20'}
 
-  toml@4.1.2:
-    resolution: {integrity: sha512-m0vXfHODcw3gk+KONAOlVQ5yNHc3yS3B1ybM3HS1vqDoS0RWTDDVBVVTYi8hH0k+2OM1vmo9fb1WX9EVqjqfHA==}
+  toml@4.3.0:
+    resolution: {integrity: sha512-lVb8X9BsPVuH0M4BKeS91tXAmJvCjQ5UIyAbQFaxkKGyUFK2RPkhwaFSQH8vbpl1d23eu/IBH+dwVMHWaq9A5A==}
     engines: {node: '>=20'}
 
   tr46@0.0.3:
@@ -5683,7 +5683,7 @@ snapshots:
       '@sindresorhus/base62': 1.0.0
       reserved-identifiers: 1.2.0
 
-  toml@4.1.2: {}
+  toml@4.3.0: {}
 
   tr46@0.0.3: {}
 
